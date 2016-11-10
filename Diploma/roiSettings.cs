@@ -22,6 +22,7 @@ namespace Diploma
 
         private Point roiStart;
         private Rectangle roi = new Rectangle();
+        Image<Bgr, byte> actualCroppedImage;
 
         /////////////////////////////////////////////////////////////////////////////////////
         public roiSettings()
@@ -57,6 +58,7 @@ namespace Diploma
         private void ibCamera_MouseDown(object sender, MouseEventArgs e)
         {
             roiStart = e.Location;
+            Console.WriteLine(roiStart);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -73,20 +75,24 @@ namespace Diploma
                 coordinates.coordinatesManipulation.ZoomToRegular(ibCamera, roiStart, actualPoint, out regularRoiStart, out regularActualPoint);
 
                 //rectangle
-                roi.Location = new Point(Math.Min(roiStart.X, actualPoint.X), Math.Min(roiStart.Y, actualPoint.Y));
-                roi.Size = new Size(Math.Abs(roiStart.X - actualPoint.X), Math.Abs(roiStart.Y - actualPoint.Y));
+                roi.Location = new Point(Math.Min(regularRoiStart.X, regularActualPoint.X), Math.Min(regularRoiStart.Y, regularActualPoint.Y));
+                roi.Size = new Size(Math.Abs(regularRoiStart.X - regularActualPoint.X), Math.Abs(regularRoiStart.Y - regularActualPoint.Y));
 
                 //draw rectangle on image
-                Image<Bgr, byte> imgEntrada = setCameraInSpaceSettings.actualImage.ToImage<Bgr, byte>();
-                imgEntrada.Draw(roi, new Bgr(Color.Red));
-                ibCamera.Image = imgEntrada;
-
-                ((PictureBox)sender).Invalidate();
-
+                actualCroppedImage = setCameraInSpaceSettings.actualImage.ToImage<Bgr, byte>();
+                actualCroppedImage.Draw(roi, new Bgr(Color.Red));
+                ibCamera.Image = actualCroppedImage;
             }
             else {
                 return;
             }
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            actualCroppedImage.ROI = roi;
+            ibCamera.Image = actualCroppedImage;
         }
     }
 }

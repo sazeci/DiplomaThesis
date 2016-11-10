@@ -67,6 +67,11 @@ namespace Diploma
                 //actual point
                 Point actualPoint = e.Location;
 
+                //convert coordinates from ZOOM to regular image
+                Point regularRoiStart;
+                Point regularActualPoint;
+                coordinates.coordinatesManipulation.ZoomToRegular(ibCamera, roiStart, actualPoint, out regularRoiStart, out regularActualPoint);
+
                 //rectangle
                 roi.Location = new Point(Math.Min(roiStart.X, actualPoint.X), Math.Min(roiStart.Y, actualPoint.Y));
                 roi.Size = new Size(Math.Abs(roiStart.X - actualPoint.X), Math.Abs(roiStart.Y - actualPoint.Y));

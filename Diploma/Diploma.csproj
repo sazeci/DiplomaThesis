@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="camera\cameraSettings.cs" />
+    <Compile Include="coordinates\coordinatesManipulation.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>

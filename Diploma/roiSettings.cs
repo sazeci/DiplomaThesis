@@ -82,9 +82,11 @@ namespace Diploma
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
-        private void setCameraInSpaceSettings_FormClosing(object sender, FormClosingEventArgs e)
+        private void roiSettings_FormClosing(object sender, FormClosingEventArgs e)
         {
             Application.Exit();
         }
+
+
     }
 }

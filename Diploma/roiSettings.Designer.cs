@@ -139,6 +139,8 @@
             this.ibCamera.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ibCamera.TabIndex = 2;
             this.ibCamera.TabStop = false;
+            this.ibCamera.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ibCamera_MouseDown);
+            this.ibCamera.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ibCamera_MouseMove);
             // 
             // tableLayoutPanel4
             // 

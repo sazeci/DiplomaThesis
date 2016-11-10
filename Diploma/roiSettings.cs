@@ -18,8 +18,10 @@ namespace Diploma
     public partial class roiSettings : Form
     {
 
-        Capture capWebcam;
         private setCameraInSpaceSettings setCameraInSpaceSettings;
+
+        private Point roiStart;
+        private Rectangle roi = new Rectangle();
 
         /////////////////////////////////////////////////////////////////////////////////////
         public roiSettings()
@@ -31,47 +33,11 @@ namespace Diploma
         public roiSettings(setCameraInSpaceSettings setCameraInSpaceSettings)
         {
             InitializeComponent();
+            ibCamera.FunctionalMode = ImageBox.FunctionalModeOption.Minimum;
             this.setCameraInSpaceSettings = setCameraInSpaceSettings;
 
-            //show video
-            startCamera(setCameraInSpaceSettings._CameraIndex);
-        }
-
-        /////////////////////////////////////////////////////////////////////////////////////
-        private void startCamera(int _CameraIndex)
-        {
-            try
-            {
-                capWebcam = new Capture(_CameraIndex);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("unable to read from webcam, error: " + Environment.NewLine + Environment.NewLine +
-                                ex.Message + Environment.NewLine + Environment.NewLine +
-                                "exiting program");
-                Environment.Exit(0);
-                return;
-            }
-
-            Application.Idle += processFrameAndUpdateGUI;
-
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        void processFrameAndUpdateGUI(object sender, EventArgs arg)
-        {
-            Mat imgOriginal;
-
-            imgOriginal = capWebcam.QueryFrame();
-
-            if (imgOriginal == null)
-            {
-                MessageBox.Show("unable to read frame from webcam" + Environment.NewLine + Environment.NewLine +
-                                "exiting program");
-                Environment.Exit(0);
-                return;
-            }
-            ibCamera.Image = imgOriginal;
+            //showImage
+            ibCamera.Image = setCameraInSpaceSettings.actualImage;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -87,6 +53,35 @@ namespace Diploma
             Application.Exit();
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////
+        private void ibCamera_MouseDown(object sender, MouseEventArgs e)
+        {
+            roiStart = e.Location;
+        }
 
+        /////////////////////////////////////////////////////////////////////////////////////
+        private void ibCamera_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                //actual point
+                Point actualPoint = e.Location;
+
+                //rectangle
+                roi.Location = new Point(Math.Min(roiStart.X, actualPoint.X), Math.Min(roiStart.Y, actualPoint.Y));
+                roi.Size = new Size(Math.Abs(roiStart.X - actualPoint.X), Math.Abs(roiStart.Y - actualPoint.Y));
+
+                //draw rectangle on image
+                Image<Bgr, byte> imgEntrada = setCameraInSpaceSettings.actualImage.ToImage<Bgr, byte>();
+                imgEntrada.Draw(roi, new Bgr(Color.Red));
+                ibCamera.Image = imgEntrada;
+
+                ((PictureBox)sender).Invalidate();
+
+            }
+            else {
+                return;
+            }
+        }
     }
 }

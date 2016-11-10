@@ -20,6 +20,7 @@ namespace Diploma
         private selectCameraSettings selectCameraSettings;
         public int _CameraIndex;//ktera kamera se pouzije
         Capture capWebcam;
+        public Mat actualImage;
 
         /////////////////////////////////////////////////////////////////////////////////////
         public setCameraInSpaceSettings()
@@ -31,8 +32,11 @@ namespace Diploma
         public setCameraInSpaceSettings(selectCameraSettings selectCameraSettings)
         {
             InitializeComponent();
+            ibCamera.FunctionalMode = ImageBox.FunctionalModeOption.Minimum;
             this.selectCameraSettings = selectCameraSettings;
             _CameraIndex = selectCameraSettings._CameraIndex;
+
+            //start camera
             startCamera(selectCameraSettings._CameraIndex);
         }
 
@@ -70,6 +74,11 @@ namespace Diploma
                 Environment.Exit(0);
                 return;
             }
+
+            //for upcomming crop
+            actualImage = imgOriginal;
+
+            //show actual frame
             ibCamera.Image = imgOriginal;
         }
 

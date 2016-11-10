@@ -196,6 +196,7 @@
             // 
             this.ibCamera.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ibCamera.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ibCamera.Enabled = false;
             this.ibCamera.Location = new System.Drawing.Point(295, 5);
             this.ibCamera.Margin = new System.Windows.Forms.Padding(5);
             this.ibCamera.Name = "ibCamera";

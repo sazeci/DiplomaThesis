@@ -54,3 +54,4 @@ D:\GitHub\Diploma\obj\x64\Debug\Diploma.selectCameraSettings.resources
 D:\GitHub\Diploma\obj\x64\Debug\Diploma.setCameraInSpaceSettings.resources
 D:\GitHub\Diploma\obj\x64\Debug\Diploma.welcomeSettings.resources
 D:\GitHub\Diploma\obj\x64\Debug\Diploma.csproj.GenerateResource.Cache
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.bwTresholdSettings.resources

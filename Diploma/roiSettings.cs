@@ -91,8 +91,13 @@ namespace Diploma
         /////////////////////////////////////////////////////////////////////////////////////
         private void btnNext_Click(object sender, EventArgs e)
         {
-            actualCroppedImage.ROI = roi;
-            ibCamera.Image = actualCroppedImage;
+            //actualCroppedImage.ROI = roi;
+            //ibCamera.Image = actualCroppedImage;
+
+            //open new form
+            bwTresholdSettings bwTresholdSettings = new bwTresholdSettings(this);
+            bwTresholdSettings.Show();
+            this.Hide();
         }
     }
 }

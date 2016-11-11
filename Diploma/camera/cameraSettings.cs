@@ -16,6 +16,7 @@ namespace Diploma.camera
 {
     class cameraSettings
     {
+        public static int _DeviceIndex;
 
         /////////////////////////////////////////////////////////////////////////////////////
         internal List<KeyValuePair<int, string>> getListOfCameras()

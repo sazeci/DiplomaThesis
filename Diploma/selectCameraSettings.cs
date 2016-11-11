@@ -67,7 +67,7 @@ namespace Diploma
             //get index of selected camera
             KeyValuePair<int, string> SelectedItem = (KeyValuePair<int, string>)ComboBoxCameraList.SelectedItem;
             _CameraIndex = SelectedItem.Key;
-            Console.WriteLine(_CameraIndex);
+            camera.cameraSettings._DeviceIndex = _CameraIndex;
 
             //open new form
             setCameraInSpaceSettings setCameraInSpaceSettings = new setCameraInSpaceSettings(this);

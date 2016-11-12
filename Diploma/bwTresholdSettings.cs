@@ -56,6 +56,7 @@ namespace Diploma
         {
             roiSettings.Show();
             this.Hide();
+            this.Dispose();
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -132,23 +133,24 @@ namespace Diploma
 
 
             //show actual frame
+            ibCamera.Image = bwImage(imgOriginal);//nutno zavrit pokud back lepsi pro vse
 
-
-            Image<Bgr, byte> actualCroppedImage = imgOriginal.ToImage<Bgr, byte>();
-            actualCroppedImage.ROI = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi;
-            ibCamera.Image = actualCroppedImage;
-            //ibCamera.Image = imgOriginal;
+            //Image<Bgr, byte> actualCroppedImage = imgOriginal.ToImage<Bgr, byte>();
+            //actualCroppedImage.ROI = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi;
+            //ibCamera.Image = actualCroppedImage;
         }
 
-        //private IImage bwImage(Mat imgOriginal)
-        //{
-        //    if (this.rdbGlobal.Checked == true)
-        //    {
-        //        return(imageManipulation.bwTreshold.global(imgOriginal, this.tbGlobal.Value));
-        //    }
-        //    else if (this.rdbAdaptive.Checked == false) {
-
-        //    }
-        //}
+        private Mat bwImage(Mat imgOriginal)
+        {
+            if (this.rdbGlobal.Checked == true)
+            {
+                return (imageManipulation.bwTreshold.globalBwCrop(imgOriginal, this.tbGlobal.Value));
+            }
+            else if (this.rdbAdaptive.Checked == false)
+            {
+                return (imageManipulation.bwTreshold.adaptiveBwCrop(imgOriginal, this.tbAdaptive.Value));
+            }
+            return (imageManipulation.bwTreshold.globalBwCrop(imgOriginal, this.tbGlobal.Value));
+        }
     }
 }

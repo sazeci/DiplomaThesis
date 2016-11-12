@@ -33,6 +33,7 @@ namespace Diploma
             InitializeComponent();
             ibCamera.FunctionalMode = ImageBox.FunctionalModeOption.Minimum;
             this.roiSettings = roiSettings;
+            Mat actualImage = new Mat();
 
             //inicialize radiobuttons
             globalSelected();
@@ -98,21 +99,35 @@ namespace Diploma
         /////////////////////////////////////////////////////////////////////////////////////
         private void startCamera(int _CameraIndex)
         {
-            try
-            {
-                capWebcam = new Capture(_CameraIndex);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("unable to read from webcam, error: " + Environment.NewLine + Environment.NewLine +
-                                ex.Message + Environment.NewLine + Environment.NewLine +
-                                "exiting program");
-                Environment.Exit(0);
-                return;
-            }
+            //try
+            //{
+            //    capWebcam = new Capture(_CameraIndex);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("unable to read from webcam, error: " + Environment.NewLine + Environment.NewLine +
+            //                    ex.Message + Environment.NewLine + Environment.NewLine +
+            //                    "exiting program");
+            //    Environment.Exit(0);
+            //    return;
+            //}
 
-            Application.Idle += processFrameAndUpdateGUI;
+            //Application.Idle += processFrameAndUpdateGUI;
 
+            //Capture capture;
+            capWebcam = new Capture(_CameraIndex);
+            Application.Idle += ProcessFrame;
+
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        private void ProcessFrame(object sender, EventArgs e)
+        {
+            Mat imgOriginal = new Mat();
+            capWebcam.Grab();
+            capWebcam.Retrieve(imgOriginal, 0);
+            //Image<Bgr, Byte> frame = mat.ToImage<Bgr, Byte>();
+            ibCamera.Image = bwImage(imgOriginal);
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -144,13 +159,15 @@ namespace Diploma
         {
             if (this.rdbGlobal.Checked == true)
             {
+                Console.WriteLine("Global");
+                //testuju adaptive
                 return (imageManipulation.bwTreshold.globalBwCrop(imgOriginal, this.tbGlobal.Value));
             }
-            else if (this.rdbAdaptive.Checked == false)
+            else
             {
+                Console.WriteLine("adaptive");
                 return (imageManipulation.bwTreshold.adaptiveBwCrop(imgOriginal, this.tbAdaptive.Value));
             }
-            return (imageManipulation.bwTreshold.globalBwCrop(imgOriginal, this.tbGlobal.Value));
         }
     }
 }

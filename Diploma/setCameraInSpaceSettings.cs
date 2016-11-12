@@ -43,21 +43,40 @@ namespace Diploma
         /////////////////////////////////////////////////////////////////////////////////////
         private void startCamera(int _CameraIndex)
         {
-            try
-            {
-                capWebcam = new Capture(_CameraIndex);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("unable to read from webcam, error: " + Environment.NewLine + Environment.NewLine +
-                                ex.Message + Environment.NewLine + Environment.NewLine +
-                                "exiting program");
-                Environment.Exit(0);
-                return;
-            }
+            //try
+            //{
+            //    capWebcam = new Capture(_CameraIndex);
+            //    capWebcam.Grab();
+            //    capWebcam.Retrieve();
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("unable to read from webcam, error: " + Environment.NewLine + Environment.NewLine +
+            //                    ex.Message + Environment.NewLine + Environment.NewLine +
+            //                    "exiting program");
+            //    Environment.Exit(0);
+            //    return;
+            //}
 
-            Application.Idle += processFrameAndUpdateGUI;
+            //Application.Idle += processFrameAndUpdateGUI;
 
+            //Capture capture;
+            capWebcam = new Capture(_CameraIndex);
+            Application.Idle += ProcessFrame;
+
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        private void ProcessFrame(object sender, EventArgs e)
+        {
+            Mat imgOriginal = new Mat();
+            capWebcam.Grab();
+            capWebcam.Retrieve(imgOriginal, 0);
+            //Image<Bgr, Byte> frame = mat.ToImage<Bgr, Byte>();
+            ibCamera.Image = imgOriginal;
+
+            //for upcomming crop
+            actualImage = imgOriginal;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////

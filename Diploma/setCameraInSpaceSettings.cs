@@ -34,10 +34,10 @@ namespace Diploma
             InitializeComponent();
             ibCamera.FunctionalMode = ImageBox.FunctionalModeOption.Minimum;
             this.selectCameraSettings = selectCameraSettings;
-            _CameraIndex = selectCameraSettings._CameraIndex;
+            _CameraIndex = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera]._CameraIndex;
 
             //start camera
-            startCamera(selectCameraSettings._CameraIndex);
+            startCamera(_CameraIndex);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////

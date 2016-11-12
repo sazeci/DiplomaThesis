@@ -69,6 +69,9 @@ namespace Diploma
             _CameraIndex = SelectedItem.Key;
             camera.cameraSettings._DeviceIndex = _CameraIndex;
 
+            //create camera
+            camera.cameraSettings.addCamera(_CameraIndex);
+
             //open new form
             setCameraInSpaceSettings setCameraInSpaceSettings = new setCameraInSpaceSettings(this);
             setCameraInSpaceSettings.Show();

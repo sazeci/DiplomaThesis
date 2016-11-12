@@ -38,7 +38,7 @@ namespace Diploma
             globalSelected();
 
             //start camera
-            startCamera(camera.cameraSettings._DeviceIndex);
+            startCamera(camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera]._CameraIndex);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ namespace Diploma
         ///////////////////////////////////////////////////////////////////////////////////////////
         void processFrameAndUpdateGUI(object sender, EventArgs arg)
         {
-            IImage imgOriginal;
+            Mat imgOriginal;
 
             imgOriginal = capWebcam.QueryFrame();
 
@@ -132,7 +132,12 @@ namespace Diploma
 
 
             //show actual frame
-            ibCamera.Image = imgOriginal;
+
+
+            Image<Bgr, byte> actualCroppedImage = imgOriginal.ToImage<Bgr, byte>();
+            actualCroppedImage.ROI = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi;
+            ibCamera.Image = actualCroppedImage;
+            //ibCamera.Image = imgOriginal;
         }
 
         //private IImage bwImage(Mat imgOriginal)

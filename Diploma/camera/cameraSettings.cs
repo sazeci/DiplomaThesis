@@ -17,6 +17,8 @@ namespace Diploma.camera
     class cameraSettings
     {
         public static int _DeviceIndex;
+        public static int ActiveCamera;//which camere is now in setting mode
+        public static List<camera> cameraList = new List<camera>();
 
         /////////////////////////////////////////////////////////////////////////////////////
         internal List<KeyValuePair<int, string>> getListOfCameras()
@@ -36,6 +38,11 @@ namespace Diploma.camera
             return ListCamerasData;
         }
 
-
+        internal static void addCamera(int _CameraIndex)
+        {
+            ActiveCamera = _CameraIndex;
+            camera newCamera = new camera(_CameraIndex);
+            cameraList.Add(newCamera);
+        }
     }
 }

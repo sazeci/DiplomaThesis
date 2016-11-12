@@ -78,6 +78,10 @@ namespace Diploma
                 roi.Location = new Point(Math.Min(regularRoiStart.X, regularActualPoint.X), Math.Min(regularRoiStart.Y, regularActualPoint.Y));
                 roi.Size = new Size(Math.Abs(regularRoiStart.X - regularActualPoint.X), Math.Abs(regularRoiStart.Y - regularActualPoint.Y));
 
+                //add roi to camera
+                camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi.Location = roi.Location;
+                camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi.Size = roi.Size;
+
                 //draw rectangle on image
                 actualCroppedImage = setCameraInSpaceSettings.actualImage.ToImage<Bgr, byte>();
                 actualCroppedImage.Draw(roi, new Bgr(Color.Red));

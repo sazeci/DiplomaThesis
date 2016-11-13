@@ -23,22 +23,32 @@ namespace Diploma.imageManipulation
             //treshold value 1-100
             //grayscale
             actualCroppedImage = imgOriginal.ToImage<Gray, byte>();//TODO tady to haze errory
+            //equalize hist
+            actualCroppedImage._EqualizeHist();
             //crop
             actualCroppedImage.ROI = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi;
-            CvInvoke.GaussianBlur(actualCroppedImage, imgBlurred, new Size(5, 5), 1.5);
+            //blue gaussian
+            //CvInvoke.GaussianBlur(actualCroppedImage, imgBlurred, new Size(5, 5), 1.5);
+            imgBlurred = actualCroppedImage;//jen pro test
             //bwGlobal
             thresholdValue = globalThreshold * 255 / 100;
             //Console.WriteLine("thresholdValue " + thresholdValue + " globalTreshold = " + globalThreshold);
             imgBlurred = imgBlurred.ThresholdBinary(new Gray(thresholdValue), new Gray(255));
+            //blur2
+            //CvInvoke.GaussianBlur(imgBlurred, imgBlurred, new Size(5, 5), 1.5);
 
             return (imgBlurred.Mat);
         }
 
         internal Mat adaptiveBwCrop(Mat imgOriginal, int adaptiveThreshold)
         {
+            //TODO
+
             //treshold value 1-100
             //grayscale
             actualCroppedImage = imgOriginal.ToImage<Gray, byte>();//TODO tady to haze errory
+            //equalize hist
+            actualCroppedImage._EqualizeHist();
             //crop
             actualCroppedImage.ROI = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi;
             CvInvoke.GaussianBlur(actualCroppedImage, imgBlurred, new Size(5, 5), 1.5);

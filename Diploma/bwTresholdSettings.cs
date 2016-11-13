@@ -20,6 +20,7 @@ namespace Diploma
         private roiSettings roiSettings;
         Capture capWebcam;
         public Mat actualImage;
+        private imageManipulation.bwThresholding bwThresholding;
 
         /////////////////////////////////////////////////////////////////////////////////////
         public bwTresholdSettings()
@@ -116,6 +117,8 @@ namespace Diploma
 
             //Capture capture;
             capWebcam = new Capture(_CameraIndex);
+            bwThresholding = new imageManipulation.bwThresholding();
+
             Application.Idle += ProcessFrame;
 
         }
@@ -159,14 +162,13 @@ namespace Diploma
         {
             if (this.rdbGlobal.Checked == true)
             {
-                Console.WriteLine("Global");
-                //testuju adaptive
-                return (imageManipulation.bwTreshold.globalBwCrop(imgOriginal, this.tbGlobal.Value));
+                Console.WriteLine("Global");                
+                return (bwThresholding.globalBwCrop(imgOriginal, this.tbGlobal.Value));
             }
             else
             {
                 Console.WriteLine("adaptive");
-                return (imageManipulation.bwTreshold.adaptiveBwCrop(imgOriginal, this.tbAdaptive.Value));
+                return (bwThresholding.adaptiveBwCrop(imgOriginal, this.tbAdaptive.Value));
             }
         }
     }

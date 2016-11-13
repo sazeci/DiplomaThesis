@@ -62,6 +62,16 @@ namespace Diploma
 
             //Capture capture;
             capWebcam = new Capture(_CameraIndex);
+
+            //test
+            //capWebcam.Start();
+            //Mat imgOriginal = new Mat();
+            //capWebcam.
+            //capWebcam.Grab();
+            //capWebcam.Retrieve(imgOriginal, 0);
+            ////Image<Bgr, Byte> frame = mat.ToImage<Bgr, Byte>();
+            //ibCamera.Image = imgOriginal;
+
             Application.Idle += ProcessFrame;
 
         }
@@ -120,6 +130,7 @@ namespace Diploma
             //open new form
             roiSettings roiSettings = new roiSettings(this);
             roiSettings.Show();
+
             this.Hide();
         }
     }

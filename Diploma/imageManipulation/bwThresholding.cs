@@ -28,14 +28,11 @@ namespace Diploma.imageManipulation
             //crop
             actualCroppedImage.ROI = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi;
             //blue gaussian
-            //CvInvoke.GaussianBlur(actualCroppedImage, imgBlurred, new Size(5, 5), 1.5);
-            imgBlurred = actualCroppedImage;//jen pro test
+            CvInvoke.GaussianBlur(actualCroppedImage, imgBlurred, new Size(5, 5), 1.5);
             //bwGlobal
             thresholdValue = globalThreshold * 255 / 100;
             //Console.WriteLine("thresholdValue " + thresholdValue + " globalTreshold = " + globalThreshold);
             imgBlurred = imgBlurred.ThresholdBinary(new Gray(thresholdValue), new Gray(255));
-            //blur2
-            //CvInvoke.GaussianBlur(imgBlurred, imgBlurred, new Size(5, 5), 1.5);
 
             return (imgBlurred.Mat);
         }
@@ -51,14 +48,17 @@ namespace Diploma.imageManipulation
             actualCroppedImage._EqualizeHist();
             //crop
             actualCroppedImage.ROI = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi;
-            CvInvoke.GaussianBlur(actualCroppedImage, imgBlurred, new Size(5, 5), 1.5);
+            //CvInvoke.GaussianBlur(actualCroppedImage, imgBlurred, new Size(5, 5), 1.5);
+            imgBlurred = actualCroppedImage;
+
             //bwGlobal
             thresholdValue = adaptiveThreshold * 255 / 100;
-            //Console.WriteLine("thresholdValue " + thresholdValue + " globalTreshold = " + globalThreshold);
-            //imgBlurred = imgBlurred.ThresholdBinary(new Gray(thresholdValue), new Gray(255));
-            imgBlurred.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.MeanC, ThresholdType.Binary, 10, new Gray(thresholdValue));
+            Console.WriteLine("thresholdValue " + thresholdValue + " globalTreshold = " + adaptiveThreshold);
+            imgBlurred = imgBlurred.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.MeanC, ThresholdType.Binary, 23, new Gray(thresholdValue));                   
 
-            return (imgBlurred.Mat);
+            //CvInvoke.GaussianBlur(imgBlurred, imgBlurred, new Size(5, 5), 1.5);
+
+                return (imgBlurred.Mat);
         }
     }
 }

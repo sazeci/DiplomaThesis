@@ -62,7 +62,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(914, 429);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(784, 461);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // tableLayoutPanel2
@@ -73,18 +73,18 @@
             this.tableLayoutPanel2.Controls.Add(this.btnBack, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnNext, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 362);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 394);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 64F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(908, 64);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(778, 64);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // btnBack
             // 
             this.btnBack.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnBack.Location = new System.Drawing.Point(189, 20);
+            this.btnBack.Location = new System.Drawing.Point(157, 20);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(75, 23);
             this.btnBack.TabIndex = 0;
@@ -95,7 +95,7 @@
             // btnNext
             // 
             this.btnNext.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnNext.Location = new System.Drawing.Point(643, 20);
+            this.btnNext.Location = new System.Drawing.Point(546, 20);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(75, 23);
             this.btnNext.TabIndex = 1;
@@ -108,7 +108,7 @@
             this.lblTitle.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lblTitle.Location = new System.Drawing.Point(308, 25);
+            this.lblTitle.Location = new System.Drawing.Point(243, 25);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(297, 20);
             this.lblTitle.TabIndex = 1;
@@ -126,17 +126,17 @@
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(908, 283);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(778, 315);
             this.tableLayoutPanel3.TabIndex = 2;
             // 
             // ibCamera
             // 
             this.ibCamera.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ibCamera.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ibCamera.Location = new System.Drawing.Point(277, 5);
+            this.ibCamera.Location = new System.Drawing.Point(238, 5);
             this.ibCamera.Margin = new System.Windows.Forms.Padding(5);
             this.ibCamera.Name = "ibCamera";
-            this.ibCamera.Size = new System.Drawing.Size(626, 273);
+            this.ibCamera.Size = new System.Drawing.Size(535, 305);
             this.ibCamera.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ibCamera.TabIndex = 2;
             this.ibCamera.TabStop = false;
@@ -159,7 +159,7 @@
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(266, 277);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(227, 309);
             this.tableLayoutPanel4.TabIndex = 3;
             // 
             // lblText1
@@ -168,7 +168,7 @@
             this.lblText1.Location = new System.Drawing.Point(5, 5);
             this.lblText1.Margin = new System.Windows.Forms.Padding(5);
             this.lblText1.Name = "lblText1";
-            this.lblText1.Size = new System.Drawing.Size(239, 26);
+            this.lblText1.Size = new System.Drawing.Size(217, 26);
             this.lblText1.TabIndex = 0;
             this.lblText1.Text = "Select a patient monitor with a selection tool with respect to the following cond" +
     "itions:";
@@ -176,20 +176,20 @@
             // lblText2
             // 
             this.lblText2.AutoSize = true;
-            this.lblText2.Location = new System.Drawing.Point(5, 74);
+            this.lblText2.Location = new System.Drawing.Point(5, 82);
             this.lblText2.Margin = new System.Windows.Forms.Padding(5);
             this.lblText2.Name = "lblText2";
-            this.lblText2.Size = new System.Drawing.Size(238, 26);
+            this.lblText2.Size = new System.Drawing.Size(217, 26);
             this.lblText2.TabIndex = 1;
             this.lblText2.Text = "• Whole screen of patient monitor must be in the chosen selection";
             // 
             // lblText3
             // 
             this.lblText3.AutoSize = true;
-            this.lblText3.Location = new System.Drawing.Point(5, 143);
+            this.lblText3.Location = new System.Drawing.Point(5, 159);
             this.lblText3.Margin = new System.Windows.Forms.Padding(5);
             this.lblText3.Name = "lblText3";
-            this.lblText3.Size = new System.Drawing.Size(246, 26);
+            this.lblText3.Size = new System.Drawing.Size(181, 26);
             this.lblText3.TabIndex = 2;
             this.lblText3.Text = "• It is desirable to select the smallest possible area around the monitor";
             // 
@@ -197,7 +197,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(914, 429);
+            this.ClientSize = new System.Drawing.Size(784, 461);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "roiSettings";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

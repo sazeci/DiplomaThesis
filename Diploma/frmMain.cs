@@ -28,5 +28,12 @@ namespace Diploma
             welcomeSettings.Show();
             this.Hide();
         }
+
+        private void btnTest_Click(object sender, EventArgs e)
+        {
+            testImageBox testImageBox = new testImageBox();
+            testImageBox.Show();
+            this.Hide();
+        }
     }
 }

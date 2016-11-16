@@ -66,7 +66,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(958, 505);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(784, 461);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // tableLayoutPanel2
@@ -77,18 +77,18 @@
             this.tableLayoutPanel2.Controls.Add(this.btnBack, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnNext, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 438);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 394);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 64F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(952, 64);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(778, 64);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // btnBack
             // 
             this.btnBack.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnBack.Location = new System.Drawing.Point(200, 20);
+            this.btnBack.Location = new System.Drawing.Point(157, 20);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(75, 23);
             this.btnBack.TabIndex = 0;
@@ -99,7 +99,7 @@
             // btnNext
             // 
             this.btnNext.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnNext.Location = new System.Drawing.Point(676, 20);
+            this.btnNext.Location = new System.Drawing.Point(546, 20);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(75, 23);
             this.btnNext.TabIndex = 1;
@@ -111,7 +111,7 @@
             this.lblTitle.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lblTitle.Location = new System.Drawing.Point(376, 25);
+            this.lblTitle.Location = new System.Drawing.Point(289, 25);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(205, 20);
             this.lblTitle.TabIndex = 1;
@@ -130,7 +130,7 @@
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(952, 359);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(778, 315);
             this.tableLayoutPanel3.TabIndex = 2;
             // 
             // tableLayoutPanel4
@@ -151,14 +151,14 @@
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(279, 353);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(227, 309);
             this.tableLayoutPanel4.TabIndex = 0;
             // 
             // rdbGlobal
             // 
             this.rdbGlobal.AutoSize = true;
             this.rdbGlobal.Checked = true;
-            this.rdbGlobal.Location = new System.Drawing.Point(5, 198);
+            this.rdbGlobal.Location = new System.Drawing.Point(5, 154);
             this.rdbGlobal.Margin = new System.Windows.Forms.Padding(5);
             this.rdbGlobal.Name = "rdbGlobal";
             this.rdbGlobal.Size = new System.Drawing.Size(109, 17);
@@ -172,7 +172,7 @@
             // rdbAdaptive
             // 
             this.rdbAdaptive.AutoSize = true;
-            this.rdbAdaptive.Location = new System.Drawing.Point(5, 278);
+            this.rdbAdaptive.Location = new System.Drawing.Point(5, 234);
             this.rdbAdaptive.Margin = new System.Windows.Forms.Padding(5);
             this.rdbAdaptive.Name = "rdbAdaptive";
             this.rdbAdaptive.Size = new System.Drawing.Size(121, 17);
@@ -185,21 +185,21 @@
             // tbGlobal
             // 
             this.tbGlobal.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbGlobal.Location = new System.Drawing.Point(5, 238);
+            this.tbGlobal.Location = new System.Drawing.Point(5, 194);
             this.tbGlobal.Margin = new System.Windows.Forms.Padding(5);
             this.tbGlobal.Maximum = 100;
             this.tbGlobal.Name = "tbGlobal";
-            this.tbGlobal.Size = new System.Drawing.Size(269, 30);
+            this.tbGlobal.Size = new System.Drawing.Size(217, 30);
             this.tbGlobal.TabIndex = 2;
             // 
             // tbAdaptive
             // 
             this.tbAdaptive.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbAdaptive.Location = new System.Drawing.Point(5, 318);
+            this.tbAdaptive.Location = new System.Drawing.Point(5, 274);
             this.tbAdaptive.Margin = new System.Windows.Forms.Padding(5);
             this.tbAdaptive.Maximum = 100;
             this.tbAdaptive.Name = "tbAdaptive";
-            this.tbAdaptive.Size = new System.Drawing.Size(269, 30);
+            this.tbAdaptive.Size = new System.Drawing.Size(217, 30);
             this.tbAdaptive.TabIndex = 3;
             // 
             // lblText
@@ -208,7 +208,7 @@
             this.lblText.Location = new System.Drawing.Point(5, 5);
             this.lblText.Margin = new System.Windows.Forms.Padding(5);
             this.lblText.Name = "lblText";
-            this.lblText.Size = new System.Drawing.Size(269, 39);
+            this.lblText.Size = new System.Drawing.Size(209, 52);
             this.lblText.TabIndex = 4;
             this.lblText.Text = "Please select thresholding method and its value, so that the patient monitor scre" +
     "en is clearly separated from its environment by uninterrupted border";
@@ -216,9 +216,9 @@
             // ibCamera
             // 
             this.ibCamera.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ibCamera.Location = new System.Drawing.Point(288, 3);
+            this.ibCamera.Location = new System.Drawing.Point(236, 3);
             this.ibCamera.Name = "ibCamera";
-            this.ibCamera.Size = new System.Drawing.Size(661, 353);
+            this.ibCamera.Size = new System.Drawing.Size(539, 309);
             this.ibCamera.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ibCamera.TabIndex = 2;
             this.ibCamera.TabStop = false;
@@ -227,7 +227,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(958, 505);
+            this.ClientSize = new System.Drawing.Size(784, 461);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "bwTresholdSettings";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

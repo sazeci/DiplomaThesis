@@ -55,13 +55,13 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(736, 370);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(784, 461);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // btnBack
             // 
             this.btnBack.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnBack.Location = new System.Drawing.Point(146, 323);
+            this.btnBack.Location = new System.Drawing.Point(158, 414);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(75, 23);
             this.btnBack.TabIndex = 0;
@@ -72,7 +72,7 @@
             // btnNext
             // 
             this.btnNext.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnNext.Location = new System.Drawing.Point(514, 323);
+            this.btnNext.Location = new System.Drawing.Point(550, 414);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(75, 23);
             this.btnNext.TabIndex = 1;
@@ -86,7 +86,7 @@
             this.lblTitle.AutoSize = true;
             this.tableLayoutPanel1.SetColumnSpan(this.lblTitle, 2);
             this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lblTitle.Location = new System.Drawing.Point(250, 5);
+            this.lblTitle.Location = new System.Drawing.Point(274, 5);
             this.lblTitle.Margin = new System.Windows.Forms.Padding(5);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(235, 20);
@@ -107,7 +107,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(730, 224);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(778, 315);
             this.tableLayoutPanel2.TabIndex = 3;
             // 
             // label1
@@ -123,7 +123,7 @@
             // ComboBoxCameraList
             // 
             this.ComboBoxCameraList.FormattingEnabled = true;
-            this.ComboBoxCameraList.Location = new System.Drawing.Point(5, 159);
+            this.ComboBoxCameraList.Location = new System.Drawing.Point(5, 250);
             this.ComboBoxCameraList.Margin = new System.Windows.Forms.Padding(5);
             this.ComboBoxCameraList.Name = "ComboBoxCameraList";
             this.ComboBoxCameraList.Size = new System.Drawing.Size(121, 21);
@@ -133,7 +133,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(736, 370);
+            this.ClientSize = new System.Drawing.Size(784, 461);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "selectCameraSettings";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

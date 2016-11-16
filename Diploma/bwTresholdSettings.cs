@@ -21,6 +21,7 @@ namespace Diploma
         Capture capWebcam;
         public Mat actualImage;
         private imageManipulation.bwThresholding bwThresholding;
+        private imageManipulation.findMarkers findMarkers;
         Image<Gray, byte> actualImageGray;
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +120,7 @@ namespace Diploma
             //Capture capture;
             capWebcam = new Capture(_CameraIndex);
             bwThresholding = new imageManipulation.bwThresholding();
+            findMarkers = new imageManipulation.findMarkers();
 
             Application.Idle += ProcessFrame;
 
@@ -132,36 +134,9 @@ namespace Diploma
             capWebcam.Retrieve(imgOriginal, 0);
             //Image<Bgr, Byte> frame = mat.ToImage<Bgr, Byte>();
 
-            //actualImage = imgOriginal;
             actualImage = bwImage(imgOriginal);
+            //actualImage = findMarkers.findTemplate(actualImage);//in test
 
-
-            //houghtest--------------------------------------------------------------------------------------------
-            //morphological close
-            Mat kernel1 = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Rectangle, new Size(20, 20), new Point(1, 1));
-            //CvInvoke.MorphologyEx(actualImage, actualImage, MorphOp.Blackhat, kernel1, new Point(-1, -1), 1, BorderType.Default, new MCvScalar());
-            //Console.WriteLine("Heigh = " + camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi.Size.Height + " MinSizeLine = " + (double)camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi.Size.Height * (0.5));
-            double cannyThresholdLinking = 200.0;
-            double cannyThreshold = 100.0;
-            double lineLength = (double)camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi.Size.Height * (0.5);
-            double maxGap = (double)camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi.Size.Height * (0.05);
-            UMat cannyEdges = new UMat();
-            CvInvoke.Canny(actualImage, cannyEdges, cannyThreshold, cannyThresholdLinking);
-
-            LineSegment2D[] lines = CvInvoke.HoughLinesP(
-               cannyEdges,
-               1, //Distance resolution in pixel-related units
-               Math.PI / 45.0, //Angle resolution measured in radians.Math.PI / 45.0
-               80, //threshold
-               lineLength, //min Line width
-               50);
-
-            //show lines in image
-            actualImageGray = cannyEdges.ToImage<Gray, byte>();
-            foreach (LineSegment2D line in lines)
-                actualImageGray.Draw(line, new Gray(150), 2);
-
-            //houghtest - end--------------------------------------------------------------------------------------
 
 
             ibCamera.Image = actualImage;
@@ -186,17 +161,6 @@ namespace Diploma
 
             //show actual frame
             actualImage = bwImage(imgOriginal);
-
-
-
-
-
-
-            //ibCamera.Image = actualImage;//nutno zavrit pokud back lepsi pro vse
-
-            //Image<Bgr, byte> actualCroppedImage = imgOriginal.ToImage<Bgr, byte>();
-            //actualCroppedImage.ROI = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi;
-            //ibCamera.Image = actualCroppedImage;
         }
 
         private Mat bwImage(Mat imgOriginal)
@@ -210,6 +174,14 @@ namespace Diploma
             {
                 //Console.WriteLine("adaptive");
                 return (bwThresholding.adaptiveBwCrop(imgOriginal, this.tbAdaptive.Value));
+
+                ////jen helpa
+                //actualImageGray = imgOriginal.ToImage<Gray, byte>();//TODO tady to haze errory
+                ////equalize hist
+                //actualImageGray._EqualizeHist();
+                ////crop
+                //actualImageGray.ROI = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].roi;
+                //return actualImageGray.Mat;
             }
         }
     }

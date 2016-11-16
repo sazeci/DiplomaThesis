@@ -48,3 +48,4 @@ D:\GitHub\Diploma\obj\x64\Debug\Diploma.csproj.GenerateResource.Cache
 D:\GitHub\Diploma\obj\x64\Debug\Diploma.bwTresholdSettings.resources
 D:\GitHub\Diploma\bin\x64\Debug\Emgu.CV.World.dll
 D:\GitHub\Diploma\bin\x64\Debug\Emgu.CV.World.xml
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.testImageBox.resources

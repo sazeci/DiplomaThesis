@@ -63,7 +63,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(973, 500);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(784, 461);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // lblTitle
@@ -71,7 +71,7 @@
             this.lblTitle.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.lblTitle.AutoSize = true;
             this.lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.lblTitle.Location = new System.Drawing.Point(343, 25);
+            this.lblTitle.Location = new System.Drawing.Point(248, 25);
             this.lblTitle.Margin = new System.Windows.Forms.Padding(5);
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(287, 20);
@@ -86,18 +86,18 @@
             this.tableLayoutPanel2.Controls.Add(this.btnBack, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnNext, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 433);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 394);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 64F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(967, 64);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(778, 64);
             this.tableLayoutPanel2.TabIndex = 3;
             // 
             // btnBack
             // 
             this.btnBack.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnBack.Location = new System.Drawing.Point(204, 20);
+            this.btnBack.Location = new System.Drawing.Point(157, 20);
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(75, 23);
             this.btnBack.TabIndex = 0;
@@ -108,7 +108,7 @@
             // btnNext
             // 
             this.btnNext.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnNext.Location = new System.Drawing.Point(687, 20);
+            this.btnNext.Location = new System.Drawing.Point(546, 20);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(75, 23);
             this.btnNext.TabIndex = 1;
@@ -128,7 +128,7 @@
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(967, 354);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(778, 315);
             this.tableLayoutPanel3.TabIndex = 4;
             // 
             // tableLayoutPanel4
@@ -148,7 +148,7 @@
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(284, 348);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(227, 309);
             this.tableLayoutPanel4.TabIndex = 0;
             // 
             // lblText1
@@ -157,7 +157,7 @@
             this.lblText1.Location = new System.Drawing.Point(5, 5);
             this.lblText1.Margin = new System.Windows.Forms.Padding(5);
             this.lblText1.Name = "lblText1";
-            this.lblText1.Size = new System.Drawing.Size(273, 26);
+            this.lblText1.Size = new System.Drawing.Size(217, 26);
             this.lblText1.TabIndex = 0;
             this.lblText1.Text = "Please set the camera in the space to best according to the following recommendat" +
     "ions:";
@@ -165,30 +165,30 @@
             // lblText2
             // 
             this.lblText2.AutoSize = true;
-            this.lblText2.Location = new System.Drawing.Point(5, 92);
+            this.lblText2.Location = new System.Drawing.Point(5, 82);
             this.lblText2.Margin = new System.Windows.Forms.Padding(5);
             this.lblText2.Name = "lblText2";
-            this.lblText2.Size = new System.Drawing.Size(252, 26);
+            this.lblText2.Size = new System.Drawing.Size(181, 26);
             this.lblText2.TabIndex = 1;
             this.lblText2.Text = "• The camera should be as close as possible to the patient monitor";
             // 
             // lblText3
             // 
             this.lblText3.AutoSize = true;
-            this.lblText3.Location = new System.Drawing.Point(5, 179);
+            this.lblText3.Location = new System.Drawing.Point(5, 159);
             this.lblText3.Margin = new System.Windows.Forms.Padding(5);
             this.lblText3.Name = "lblText3";
-            this.lblText3.Size = new System.Drawing.Size(274, 26);
+            this.lblText3.Size = new System.Drawing.Size(204, 26);
             this.lblText3.TabIndex = 2;
             this.lblText3.Text = "• The camera should scans the patient monitor as much as possible from the front";
             // 
             // lblText4
             // 
             this.lblText4.AutoSize = true;
-            this.lblText4.Location = new System.Drawing.Point(5, 266);
+            this.lblText4.Location = new System.Drawing.Point(5, 236);
             this.lblText4.Margin = new System.Windows.Forms.Padding(5);
             this.lblText4.Name = "lblText4";
-            this.lblText4.Size = new System.Drawing.Size(248, 13);
+            this.lblText4.Size = new System.Drawing.Size(214, 26);
             this.lblText4.TabIndex = 3;
             this.lblText4.Text = "• The camera must scans the entire patient monitor";
             // 
@@ -197,10 +197,10 @@
             this.ibCamera.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ibCamera.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ibCamera.Enabled = false;
-            this.ibCamera.Location = new System.Drawing.Point(295, 5);
+            this.ibCamera.Location = new System.Drawing.Point(238, 5);
             this.ibCamera.Margin = new System.Windows.Forms.Padding(5);
             this.ibCamera.Name = "ibCamera";
-            this.ibCamera.Size = new System.Drawing.Size(667, 344);
+            this.ibCamera.Size = new System.Drawing.Size(535, 305);
             this.ibCamera.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ibCamera.TabIndex = 2;
             this.ibCamera.TabStop = false;
@@ -209,7 +209,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(973, 500);
+            this.ClientSize = new System.Drawing.Size(784, 461);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "setCameraInSpaceSettings";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

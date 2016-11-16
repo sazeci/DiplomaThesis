@@ -35,6 +35,7 @@ namespace Diploma
             ibCamera.FunctionalMode = ImageBox.FunctionalModeOption.Minimum;
             this.selectCameraSettings = selectCameraSettings;
             _CameraIndex = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera]._CameraIndex;
+            Console.WriteLine(_CameraIndex);
 
             //start camera
             startCamera(_CameraIndex);

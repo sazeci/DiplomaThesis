@@ -98,6 +98,7 @@
     </Compile>
     <Compile Include="imageManipulation\bwThresholding.cs" />
     <Compile Include="imageManipulation\bwTreshold.cs" />
+    <Compile Include="imageManipulation\findMarkers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="roiSettings.cs">
@@ -117,6 +118,12 @@
     </Compile>
     <Compile Include="setCameraInSpaceSettings.Designer.cs">
       <DependentUpon>setCameraInSpaceSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="testImageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="testImageBox.Designer.cs">
+      <DependentUpon>testImageBox.cs</DependentUpon>
     </Compile>
     <Compile Include="welcomeSettings.cs">
       <SubType>Form</SubType>
@@ -147,6 +154,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="setCameraInSpaceSettings.resx">
       <DependentUpon>setCameraInSpaceSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="testImageBox.resx">
+      <DependentUpon>testImageBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="welcomeSettings.resx">
       <DependentUpon>welcomeSettings.cs</DependentUpon>

@@ -123,10 +123,13 @@ namespace Diploma
             else {//dont use centroids, snail is better because of iner labels
                 pointRow = regularRoiStart.Y;
                 pointCollum = regularRoiStart.X;
+                int help;
 
                 while (closestLabel == 0) {
                     //top
-                    for (int i = pointRow; i < height; i++) {
+                    help = pointRow + height;
+                    for (int i = pointRow; i < help; i++) {
+                        //Console.WriteLine(pointRow + " x " + pointCollum);
                         if (labelsImg.Data[pointRow, pointCollum, 0] != 0) {
                             closestLabel = labelsImg.Data[pointRow, pointCollum, 0];
                             break;
@@ -135,8 +138,10 @@ namespace Diploma
                     }
                     height++;
                     //right
-                    for (int i = pointCollum; i < width; i++)
+                    help = pointCollum + width;
+                    for (int i = pointCollum; i < help; i++)
                     {
+                        //Console.WriteLine(pointRow + " x " + pointCollum);
                         if (labelsImg.Data[pointRow, pointCollum, 0] != 0)
                         {
                             closestLabel = labelsImg.Data[pointRow, pointCollum, 0];
@@ -146,8 +151,10 @@ namespace Diploma
                     }
                     width++;
                     //down
-                    for (int i = pointRow; i < height; i++)
+                    help = pointRow + height;
+                    for (int i = pointRow; i < help; i++)
                     {
+                        //Console.WriteLine(pointRow + " x " + pointCollum);
                         if (labelsImg.Data[pointRow, pointCollum, 0] != 0)
                         {
                             closestLabel = labelsImg.Data[pointRow, pointCollum, 0];
@@ -157,8 +164,10 @@ namespace Diploma
                     }
                     height++;
                     //left
-                    for (int i = pointCollum; i < width; i++)
+                    help = pointCollum + width;
+                    for (int i = pointCollum; i < help; i++)
                     {
+                        //Console.WriteLine(pointRow + " x " + pointCollum);
                         if (labelsImg.Data[pointRow, pointCollum, 0] != 0)
                         {
                             closestLabel = labelsImg.Data[pointRow, pointCollum, 0];

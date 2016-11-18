@@ -12,6 +12,7 @@ using Emgu.CV;                  //
 using Emgu.CV.CvEnum;           // usual Emgu CV imports
 using Emgu.CV.Structure;        //
 using Emgu.CV.UI;               //
+using System.Collections;
 
 namespace Diploma
 {
@@ -109,7 +110,7 @@ namespace Diploma
             Image<Gray, Int16> centroidsImg = centroids.ToImage<Gray, Int16>();
 
             //closest centroid to click
-            int actualLabel;
+            int actualLabel = 0;
             int closestLabel = 0;
             int pointRow;
             int pointCollum;
@@ -181,9 +182,61 @@ namespace Diploma
                 Console.WriteLine("Closest label: " + closestLabel);
             }
 
-        
+            ///find possible candidates
+            if (actualLabel == 0 && closestLabel != 0) {
+                actualLabel = closestLabel;
+            }
 
+            //help to understand stats
+            //Console.WriteLine("Stats: " + statsImg.Data[actualLabel, 0, 0] + " | " + statsImg.Data[actualLabel, 1, 0] + " | " + statsImg.Data[actualLabel, 2, 0] + " | " + statsImg.Data[actualLabel, 3, 0] + " | " + statsImg.Data[actualLabel, 4, 0]);
+            //LEFT_x, top_Y, Width, height, area
 
+            //go to the left(max distance is equal to letter width) and check if: size, color 
+            ArrayList candidates = new ArrayList();
+            candidates.Add(actualLabel);
+            int startRow;
+            int startCollum;
+            int startLabel = actualLabel;
+
+            startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
+            startCollum = statsImg.Data[startLabel, 0, 0];
+
+            for (int i = startCollum-1; i > startCollum - statsImg.Data[actualLabel, 2, 0]; i--) {
+                Console.WriteLine("row= " + startRow + " collum= " + i);
+                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20) {//not background and bigger than 20px
+                    //TODO next conditions
+                    candidates.Add(labelsImg.Data[startRow, i, 0]);
+                    //choose new initial letter and cotinue to left
+                    actualLabel = labelsImg.Data[startRow, i, 0];
+                    startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
+                    startCollum = statsImg.Data[actualLabel, 0, 0];
+                    i = startCollum - 1;
+                }
+            }
+            //go to the right(max distance is equal to letter width) and check if: size, color 
+            startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
+            startCollum = statsImg.Data[startLabel, 0, 0];
+            actualLabel = startLabel;
+            for (int i = startCollum + statsImg.Data[actualLabel, 2, 0] + 1; i < startCollum + 2*statsImg.Data[actualLabel, 2, 0]; i++)
+            {
+                Console.WriteLine("row= " + startRow + " collum= " + i);
+                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
+                {//not background and bigger than 20px
+                    //TODO next conditions
+                    candidates.Add(labelsImg.Data[startRow, i, 0]);
+                    //choose new initial letter and cotinue to left
+                    actualLabel = labelsImg.Data[startRow, i, 0];
+                    startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
+                    startCollum = statsImg.Data[actualLabel, 0, 0];
+                    i = startCollum + 1;
+                }
+            }
+
+            //print candidates
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                Console.WriteLine(candidates[i]);
+            }
 
             /////select selest closest area
             ////Console.WriteLine("Number of labels = " + numberOfLabels);

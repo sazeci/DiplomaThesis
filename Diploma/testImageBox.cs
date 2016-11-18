@@ -94,17 +94,35 @@ namespace Diploma
             Mat binarized = bwThresholding.adaptiveBwCrop(actualImage,0);
             ibCamera.Image = binarized;
 
+            //convert to real coordinates from ouse click
+            Point regularRoiStart;
+            Point regularActualPoint;
+            coordinates.coordinatesManipulation.ZoomToRegular(ibCamera, click, click, out regularRoiStart, out regularActualPoint);
+
             //label image
             Mat labels = new Mat();
             Mat stats = new Mat();
             Mat centroids = new Mat();
             int numberOfLabels;
-            numberOfLabels = CvInvoke.ConnectedComponentsWithStats(binarized, labels, stats, centroids, LineType.EightConnected, DepthType.Cv32S);
+            //IOutputArray centroids = null;
+            numberOfLabels = CvInvoke.ConnectedComponentsWithStats(binarized, labels, stats, centroids, LineType.EightConnected);
 
-            //conver to real coordinates from ouse click
-            Point regularRoiStart;
-            Point regularActualPoint;
-            coordinates.coordinatesManipulation.ZoomToRegular(ibCamera, click, click, out regularRoiStart, out regularActualPoint);
+            //select selest closest area
+            Image<Bgr, Byte> img = labels.ToImage<Bgr, Byte>();
+            Console.WriteLine("Number of labels = " + numberOfLabels);
+            Console.WriteLine("Size of labels = " + labels.Size + " element size: " + labels.ElementSize + " Number of dimension: " + labels.SizeOfDimemsion);
+            Console.WriteLine("Size of stats = " + stats.Size + " element size: " + stats.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
+            Console.WriteLine("Size of centroids = " + centroids.Size + " element size: " + centroids.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
+
+            Point dodo = new Point();
+            dodo.X = 187;
+            dodo.Y = 634;
+
+            centroids.GetRow(0);
+            Console.WriteLine(img.Data[434, 760, 0] + " | " + img.Data[434, 760, 1] + " | " + img.Data[434, 760, 2]);//row, collum
+            Console.WriteLine(img.Data[187, 634, 0] + " | " + img.Data[187, 634, 1] + " | " + img.Data[187, 634, 2]);//row, collum
+            //stats(0, ConnectecComponentsTypes.Area);
+
         }
 
         private void ibCamera_MouseDown(object sender, MouseEventArgs e)

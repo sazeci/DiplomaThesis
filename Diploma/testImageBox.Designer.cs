@@ -34,8 +34,9 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnNewCapture = new System.Windows.Forms.Button();
             this.btnMarkers = new System.Windows.Forms.Button();
-            this.ofdOpenFile = new System.Windows.Forms.OpenFileDialog();
             this.ibMarker = new Emgu.CV.UI.ImageBox();
+            this.ofdOpenFile = new System.Windows.Forms.OpenFileDialog();
+            this.btnSelectText = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ibCamera)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
@@ -69,6 +70,7 @@
             this.ibCamera.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ibCamera.TabIndex = 2;
             this.ibCamera.TabStop = false;
+            this.ibCamera.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ibCamera_MouseDown);
             // 
             // tableLayoutPanel2
             // 
@@ -81,6 +83,7 @@
             this.tableLayoutPanel2.Controls.Add(this.btnNewCapture, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnMarkers, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.ibMarker, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.btnSelectText, 3, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -112,10 +115,6 @@
             this.btnMarkers.UseVisualStyleBackColor = true;
             this.btnMarkers.Click += new System.EventHandler(this.btnMarkers_Click);
             // 
-            // ofdOpenFile
-            // 
-            this.ofdOpenFile.FileName = "ofdOpenFile";
-            // 
             // ibMarker
             // 
             this.ibMarker.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -126,6 +125,21 @@
             this.ibMarker.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ibMarker.TabIndex = 2;
             this.ibMarker.TabStop = false;
+            // 
+            // ofdOpenFile
+            // 
+            this.ofdOpenFile.FileName = "ofdOpenFile";
+            // 
+            // btnSelectText
+            // 
+            this.btnSelectText.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnSelectText.Location = new System.Drawing.Point(505, 20);
+            this.btnSelectText.Name = "btnSelectText";
+            this.btnSelectText.Size = new System.Drawing.Size(75, 23);
+            this.btnSelectText.TabIndex = 3;
+            this.btnSelectText.Text = "select text";
+            this.btnSelectText.UseVisualStyleBackColor = true;
+            this.btnSelectText.Click += new System.EventHandler(this.btnSelectText_Click);
             // 
             // testImageBox
             // 
@@ -154,5 +168,6 @@
         private System.Windows.Forms.Button btnMarkers;
         private System.Windows.Forms.OpenFileDialog ofdOpenFile;
         private Emgu.CV.UI.ImageBox ibMarker;
+        private System.Windows.Forms.Button btnSelectText;
     }
 }

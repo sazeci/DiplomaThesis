@@ -1,0 +1,6 @@
+D:\GitHub\Diploma\bin\x64\Debug\Diploma.exe.config
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.exe
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.pdb
+D:\GitHub\Diploma - Copy\bin\x64\Debug\Diploma.exe.config
+D:\GitHub\Diploma - Copy\obj\x64\Debug\Diploma.exe
+D:\GitHub\Diploma - Copy\obj\x64\Debug\Diploma.pdb

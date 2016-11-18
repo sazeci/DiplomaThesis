@@ -21,6 +21,7 @@ namespace Diploma
         Capture capWebcam;
         public Mat actualImage;
         Image<Gray, Byte> colorResult;
+        Point click;
 
         public testImageBox()
         {
@@ -84,6 +85,32 @@ namespace Diploma
             //find red things
             ibCamera.Image = findMarkers.findColor(actualImage);
 
+        }
+
+        private void btnSelectText_Click(object sender, EventArgs e)
+        {
+            //binarize image
+            imageManipulation.bwThresholding bwThresholding = new imageManipulation.bwThresholding();
+            Mat binarized = bwThresholding.adaptiveBwCrop(actualImage,0);
+            ibCamera.Image = binarized;
+
+            //label image
+            Mat labels = new Mat();
+            Mat stats = new Mat();
+            Mat centroids = new Mat();
+            int numberOfLabels;
+            numberOfLabels = CvInvoke.ConnectedComponentsWithStats(binarized, labels, stats, centroids, LineType.EightConnected, DepthType.Cv32S);
+
+            //conver to real coordinates from ouse click
+            Point regularRoiStart;
+            Point regularActualPoint;
+            coordinates.coordinatesManipulation.ZoomToRegular(ibCamera, click, click, out regularRoiStart, out regularActualPoint);
+        }
+
+        private void ibCamera_MouseDown(object sender, MouseEventArgs e)
+        {
+            click = e.Location;
+            Console.WriteLine(click);
         }
     }
 }

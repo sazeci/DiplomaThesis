@@ -93,51 +93,117 @@ namespace Diploma
             imageManipulation.bwThresholding bwThresholding = new imageManipulation.bwThresholding();
             Mat binarized = bwThresholding.adaptiveBwCrop(actualImage,0);
             ibCamera.Image = binarized;
-            Image<Gray,Int16> dodo = binarized.ToImage<Gray, Int16>();
-            Console.WriteLine(dodo.Data[434, 760, 0]);//row, collum
-            Console.WriteLine(dodo.Data[187, 634, 0]);//row, collum
 
             //convert to real coordinates from ouse click
             Point regularRoiStart;
-            Point regularActualPoint;
-            coordinates.coordinatesManipulation.ZoomToRegular(ibCamera, click, click, out regularRoiStart, out regularActualPoint);
+            coordinates.coordinatesManipulation.ZoomToRegular(ibCamera, click, click, out regularRoiStart, out regularRoiStart);
 
             //label image
             Mat labels = new Mat();
             Mat stats = new Mat();
             Mat centroids = new Mat();
             int numberOfLabels;
-            //IOutputArray centroids = null;
             numberOfLabels = CvInvoke.ConnectedComponentsWithStats(binarized, labels, stats, centroids, LineType.EightConnected, DepthType.Cv32S);
-
-            ///select selest closest area
-            //Console.WriteLine("Number of labels = " + numberOfLabels);
-            //Console.WriteLine("Size of labels = " + labels.Size + " element size: " + labels.ElementSize + " Number of dimension: " + labels.SizeOfDimemsion);
-            //Console.WriteLine("Size of stats = " + stats.Size + " element size: " + stats.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
-            //Console.WriteLine("Size of centroids = " + centroids.Size + " element size: " + centroids.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
-            //pres obrazek = jde pres int
-            Image<Gray, Int16> img = labels.ToImage<Gray, Int16>();
-            Console.WriteLine(img.Data[181, 581, 0]);//row, collum
-            Console.WriteLine(img.Data[206, 917, 0]);//row, collum
-            //test zda jdou stats
-            Console.WriteLine("Size of stats = " + stats.Size + " element size: " + stats.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
+            Image<Gray, Int16> labelsImg = labels.ToImage<Gray, Int16>();
             Image<Gray, Int16> statsImg = stats.ToImage<Gray, Int16>();
-            //test zda jdou centroids
             Image<Gray, Int16> centroidsImg = centroids.ToImage<Gray, Int16>();
 
-
-            double max = 0;
-            double helpa;
-            //max value in
-            for (int i = 0; i < centroidsImg.Rows; i++) {
-                for (int j = 0; j < centroidsImg.Cols; j++) {
-                    helpa = centroidsImg.Data[i, j, 0];
-                    if (helpa > max) {
-                        max = helpa;
-                    }
-                }        
+            //closest centroid to click
+            int actualLabel;
+            int closestLabel = 0;
+            int pointRow;
+            int pointCollum;
+            int width = 1;
+            int height = 1;
+            if (labelsImg.Data[regularRoiStart.Y, regularRoiStart.X, 0] != 0)
+            {
+                Console.WriteLine("Click on label: " + labelsImg.Data[regularRoiStart.Y, regularRoiStart.X, 0]);
+                actualLabel = labelsImg.Data[regularRoiStart.Y, regularRoiStart.X, 0];
             }
-            Console.WriteLine("Max label = " + max);
+            else {//dont use centroids, snail is better because of iner labels
+                pointRow = regularRoiStart.Y;
+                pointCollum = regularRoiStart.X;
+
+                while (closestLabel == 0) {
+                    //top
+                    for (int i = pointRow; i < height; i++) {
+                        if (labelsImg.Data[pointRow, pointCollum, 0] != 0) {
+                            closestLabel = labelsImg.Data[pointRow, pointCollum, 0];
+                            break;
+                        }
+                        pointRow--;
+                    }
+                    height++;
+                    //right
+                    for (int i = pointCollum; i < width; i++)
+                    {
+                        if (labelsImg.Data[pointRow, pointCollum, 0] != 0)
+                        {
+                            closestLabel = labelsImg.Data[pointRow, pointCollum, 0];
+                            break;
+                        }
+                        pointCollum++;
+                    }
+                    width++;
+                    //down
+                    for (int i = pointRow; i < height; i++)
+                    {
+                        if (labelsImg.Data[pointRow, pointCollum, 0] != 0)
+                        {
+                            closestLabel = labelsImg.Data[pointRow, pointCollum, 0];
+                            break;
+                        }
+                        pointRow++;
+                    }
+                    height++;
+                    //left
+                    for (int i = pointCollum; i < width; i++)
+                    {
+                        if (labelsImg.Data[pointRow, pointCollum, 0] != 0)
+                        {
+                            closestLabel = labelsImg.Data[pointRow, pointCollum, 0];
+                            break;
+                        }
+                        pointCollum--;
+                    }
+                    width++;
+                }
+
+                Console.WriteLine("Closest label: " + closestLabel);
+            }
+
+        
+
+
+
+            /////select selest closest area
+            ////Console.WriteLine("Number of labels = " + numberOfLabels);
+            ////Console.WriteLine("Size of labels = " + labels.Size + " element size: " + labels.ElementSize + " Number of dimension: " + labels.SizeOfDimemsion);
+            ////Console.WriteLine("Size of stats = " + stats.Size + " element size: " + stats.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
+            ////Console.WriteLine("Size of centroids = " + centroids.Size + " element size: " + centroids.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
+            ////pres obrazek = jde pres int
+            //Image<Gray, Int16> img = labels.ToImage<Gray, Int16>();
+            //Console.WriteLine(img.Data[181, 581, 0]);//row, collum
+            //Console.WriteLine(img.Data[206, 917, 0]);//row, collum
+            ////test zda jdou stats
+            //Console.WriteLine("Size of stats = " + stats.Size + " element size: " + stats.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
+            //Image<Gray, Int16> statsImg = stats.ToImage<Gray, Int16>();
+            ////test zda jdou centroids
+            //Image<Gray, Int16> centroidsImg = centroids.ToImage<Gray, Int16>();
+
+
+            //double max = 0;
+            //double helpa;
+            ////max value in
+            //for (int i = 0; i < centroidsImg.Rows; i++) {
+            //    for (int j = 0; j < centroidsImg.Cols; j++) {
+            //        helpa = centroidsImg.Data[i, j, 0];
+            //        if (helpa > max) {
+            //            max = helpa;
+            //        }
+            //    }        
+            //}
+            //Console.WriteLine("Max label = " + max);
         }
 
         private void ibCamera_MouseDown(object sender, MouseEventArgs e)

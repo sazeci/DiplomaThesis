@@ -111,27 +111,27 @@ namespace Diploma
             numberOfLabels = CvInvoke.ConnectedComponentsWithStats(binarized, labels, stats, centroids, LineType.EightConnected, DepthType.Cv32S);
 
             ///select selest closest area
-            Console.WriteLine("Number of labels = " + numberOfLabels);
-            Console.WriteLine("Size of labels = " + labels.Size + " element size: " + labels.ElementSize + " Number of dimension: " + labels.SizeOfDimemsion);
-            Console.WriteLine("Size of stats = " + stats.Size + " element size: " + stats.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
-            Console.WriteLine("Size of centroids = " + centroids.Size + " element size: " + centroids.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
-            //pres obrazek = nejde
+            //Console.WriteLine("Number of labels = " + numberOfLabels);
+            //Console.WriteLine("Size of labels = " + labels.Size + " element size: " + labels.ElementSize + " Number of dimension: " + labels.SizeOfDimemsion);
+            //Console.WriteLine("Size of stats = " + stats.Size + " element size: " + stats.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
+            //Console.WriteLine("Size of centroids = " + centroids.Size + " element size: " + centroids.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
+            //pres obrazek = jde pres int
             Image<Gray, Int16> img = labels.ToImage<Gray, Int16>();
-            centroids.GetRow(0);
             Console.WriteLine(img.Data[181, 581, 0]);//row, collum
             Console.WriteLine(img.Data[206, 917, 0]);//row, collum
-            //pres matrix = nejde
-            Matrix<Byte> matrix = new Matrix<Byte>(labels.Rows, labels.Cols, labels.NumberOfChannels);
-            labels.CopyTo(matrix);
-            Console.WriteLine("Matrixsize: " + matrix.Size + " matrixwidth: " + matrix.Width);
-            Console.WriteLine(matrix.Data[434, 760] + " | " + matrix.Data[434, 760] + " | " + matrix.Data[434, 760]);//row, collum
-            Console.WriteLine(matrix.Data[187, 634] + " | " + matrix.Data[187, 634] + " | " + matrix.Data[187, 634]);//row, collum
+            //test zda jdou stats
+            Console.WriteLine("Size of stats = " + stats.Size + " element size: " + stats.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
+            Image<Gray, Int16> statsImg = stats.ToImage<Gray, Int16>();
+            //test zda jdou centroids
+            Image<Gray, Int16> centroidsImg = centroids.ToImage<Gray, Int16>();
+
+
             double max = 0;
             double helpa;
             //max value in
-            for (int i = 0; i < img.Rows; i++) {
-                for (int j = 0; j < img.Cols; j++) {
-                    helpa = img.Data[i, j, 0];
+            for (int i = 0; i < centroidsImg.Rows; i++) {
+                for (int j = 0; j < centroidsImg.Cols; j++) {
+                    helpa = centroidsImg.Data[i, j, 0];
                     if (helpa > max) {
                         max = helpa;
                     }

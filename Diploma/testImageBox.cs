@@ -93,6 +93,9 @@ namespace Diploma
             imageManipulation.bwThresholding bwThresholding = new imageManipulation.bwThresholding();
             Mat binarized = bwThresholding.adaptiveBwCrop(actualImage,0);
             ibCamera.Image = binarized;
+            Image<Gray,Int16> dodo = binarized.ToImage<Gray, Int16>();
+            Console.WriteLine(dodo.Data[434, 760, 0]);//row, collum
+            Console.WriteLine(dodo.Data[187, 634, 0]);//row, collum
 
             //convert to real coordinates from ouse click
             Point regularRoiStart;
@@ -105,24 +108,36 @@ namespace Diploma
             Mat centroids = new Mat();
             int numberOfLabels;
             //IOutputArray centroids = null;
-            numberOfLabels = CvInvoke.ConnectedComponentsWithStats(binarized, labels, stats, centroids, LineType.EightConnected);
+            numberOfLabels = CvInvoke.ConnectedComponentsWithStats(binarized, labels, stats, centroids, LineType.EightConnected, DepthType.Cv32S);
 
-            //select selest closest area
-            Image<Bgr, Byte> img = labels.ToImage<Bgr, Byte>();
+            ///select selest closest area
             Console.WriteLine("Number of labels = " + numberOfLabels);
             Console.WriteLine("Size of labels = " + labels.Size + " element size: " + labels.ElementSize + " Number of dimension: " + labels.SizeOfDimemsion);
             Console.WriteLine("Size of stats = " + stats.Size + " element size: " + stats.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
             Console.WriteLine("Size of centroids = " + centroids.Size + " element size: " + centroids.ElementSize + " Number of dimension: " + stats.SizeOfDimemsion);
-
-            Point dodo = new Point();
-            dodo.X = 187;
-            dodo.Y = 634;
-
+            //pres obrazek = nejde
+            Image<Gray, Int16> img = labels.ToImage<Gray, Int16>();
             centroids.GetRow(0);
-            Console.WriteLine(img.Data[434, 760, 0] + " | " + img.Data[434, 760, 1] + " | " + img.Data[434, 760, 2]);//row, collum
-            Console.WriteLine(img.Data[187, 634, 0] + " | " + img.Data[187, 634, 1] + " | " + img.Data[187, 634, 2]);//row, collum
-            //stats(0, ConnectecComponentsTypes.Area);
-
+            Console.WriteLine(img.Data[181, 581, 0]);//row, collum
+            Console.WriteLine(img.Data[206, 917, 0]);//row, collum
+            //pres matrix = nejde
+            Matrix<Byte> matrix = new Matrix<Byte>(labels.Rows, labels.Cols, labels.NumberOfChannels);
+            labels.CopyTo(matrix);
+            Console.WriteLine("Matrixsize: " + matrix.Size + " matrixwidth: " + matrix.Width);
+            Console.WriteLine(matrix.Data[434, 760] + " | " + matrix.Data[434, 760] + " | " + matrix.Data[434, 760]);//row, collum
+            Console.WriteLine(matrix.Data[187, 634] + " | " + matrix.Data[187, 634] + " | " + matrix.Data[187, 634]);//row, collum
+            double max = 0;
+            double helpa;
+            //max value in
+            for (int i = 0; i < img.Rows; i++) {
+                for (int j = 0; j < img.Cols; j++) {
+                    helpa = img.Data[i, j, 0];
+                    if (helpa > max) {
+                        max = helpa;
+                    }
+                }        
+            }
+            Console.WriteLine("Max label = " + max);
         }
 
         private void ibCamera_MouseDown(object sender, MouseEventArgs e)

@@ -202,7 +202,7 @@ namespace Diploma
             startCollum = statsImg.Data[startLabel, 0, 0];
 
             for (int i = startCollum-1; i > startCollum - statsImg.Data[actualLabel, 2, 0]; i--) {
-                Console.WriteLine("row= " + startRow + " collum= " + i);
+                //Console.WriteLine("row= " + startRow + " collum= " + i);
                 if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20) {//not background and bigger than 20px
                     //TODO next conditions
                     candidates.Add(labelsImg.Data[startRow, i, 0]);
@@ -215,9 +215,9 @@ namespace Diploma
             }
             //go to the right(max distance is equal to letter width) and check if: size, color 
             startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
-            startCollum = statsImg.Data[startLabel, 0, 0];
+            startCollum = statsImg.Data[startLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
             actualLabel = startLabel;
-            for (int i = startCollum + statsImg.Data[actualLabel, 2, 0] + 1; i < startCollum + 2*statsImg.Data[actualLabel, 2, 0]; i++)
+            for (int i = startCollum + 1; i < startCollum + statsImg.Data[actualLabel, 2, 0]; i++)
             {
                 Console.WriteLine("row= " + startRow + " collum= " + i);
                 if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
@@ -227,7 +227,7 @@ namespace Diploma
                     //choose new initial letter and cotinue to left
                     actualLabel = labelsImg.Data[startRow, i, 0];
                     startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
-                    startCollum = statsImg.Data[actualLabel, 0, 0];
+                    startCollum = statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
                     i = startCollum + 1;
                 }
             }

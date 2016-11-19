@@ -14,13 +14,10 @@ namespace Diploma.camera
 {
     class label
     {
+        public Point clickedPonint;//clicked point
         public string name;
         //ROI in regular image
         public Rectangle roi;
-        //public int topRowRoi;
-        //public int leftCollumRoi;
-        //public int widthRoi;
-        //public int heightRoi;
         //selected Bounding box letter by letter in regular image
         public Point centroid;
         public int topRowBB;
@@ -31,10 +28,6 @@ namespace Diploma.camera
         public Color colorRef;
         public int widthRef;
         public int heightRef;
-        private int y;
-        private int x;
-        private int width;
-        private int height;
 
         public label(Rectangle roi)
         {

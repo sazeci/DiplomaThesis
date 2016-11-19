@@ -160,6 +160,8 @@ namespace Diploma
             dodo = "btnSave" + actualLabel;
             Button btnx = this.Controls.Find(dodo, true).FirstOrDefault() as Button;
             btnx.Visible = true;
+
+            ibCamera.Enabled = false;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////

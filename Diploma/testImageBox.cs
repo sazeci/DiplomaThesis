@@ -95,7 +95,7 @@ namespace Diploma
             Mat binarized = bwThresholding.adaptiveBwCrop(actualImage,0);
             ibCamera.Image = binarized;
 
-            //convert to real coordinates from ouse click
+            //convert to real coordinates from our click
             Point regularRoiStart;
             coordinates.coordinatesManipulation.ZoomToRegular(ibCamera, click, click, out regularRoiStart, out regularRoiStart);
 

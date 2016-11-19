@@ -25,6 +25,7 @@ namespace Diploma
         private Rectangle roi = new Rectangle();
         private bool isStreamEnabled = true;
         private int actualLabel = 1;
+        private bool isStepThree = false;
 
         /////////////////////////////////////////////////////////////////////////////////////
         public addAreasSettings()
@@ -99,8 +100,39 @@ namespace Diploma
         /////////////////////////////////////////////////////////////////////////////////////
         private void ibCamera_MouseDown_1(object sender, MouseEventArgs e)
         {
-            roiStart = e.Location;
-            Console.WriteLine(roiStart);
+            if (isStepThree == false)
+            {
+                roiStart = e.Location;
+            }
+            else {
+                Point regularRoiStart;
+                coordinates.coordinatesManipulation.ZoomToRegular(ibCamera, e.Location, e.Location, out regularRoiStart, out regularRoiStart);
+                Point localPoint = regularRoiStart;
+                regularRoiStart.X = regularRoiStart.X + camera.labelSettings.labelList[actualLabel - 1].roi.Location.X;
+                regularRoiStart.Y = regularRoiStart.Y + camera.labelSettings.labelList[actualLabel - 1].roi.Location.Y;
+                //set point color and others of label
+                camera.labelSettings.labelList[actualLabel - 1].addClickedPoint(regularRoiStart, localPoint, actualImage);
+
+                lblInstruction.Text = "4) Write down the name of the label and click save";
+                //visible TB
+                string dodo = "tb" + actualLabel;
+                TextBox tbx = this.Controls.Find(dodo, true).FirstOrDefault() as TextBox;
+                tbx.Visible = true;
+                //show cropped image
+                dodo = "ib" + actualLabel;
+                Image<Bgr, byte> selectedLabel = actualImage.ToImage<Bgr, byte>();
+                selectedLabel.ROI = camera.labelSettings.labelList[actualLabel - 1].roi;
+                ImageBox ibx = this.Controls.Find(dodo, true).FirstOrDefault() as ImageBox;
+                ibx.Image = selectedLabel;
+                //activate the button
+                //visible save button
+                dodo = "btnSave" + actualLabel;
+                Button btnx = this.Controls.Find(dodo, true).FirstOrDefault() as Button;
+                btnx.Visible = true;
+
+                ibCamera.Enabled = false;
+                isStepThree = false;
+            }
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -144,24 +176,32 @@ namespace Diploma
         private void ibCamera_MouseUp(object sender, MouseEventArgs e)
         {
             camera.labelSettings.addLabel(roi);
-            lblInstruction.Text = "3) Write down the name of the label and click save";
-            //visible TB
-            string dodo = "tb" + actualLabel;
-            TextBox tbx = this.Controls.Find(dodo, true).FirstOrDefault() as TextBox;
-            tbx.Visible = true;
-            //show cropped image
-            dodo = "ib" + actualLabel;
+            lblInstruction.Text = "3) Click at required symbol/as close as possible";
+            isStepThree = true;
+
             Image<Bgr, byte> selectedLabel = actualImage.ToImage<Bgr, byte>();
             selectedLabel.ROI = camera.labelSettings.labelList[actualLabel - 1].roi;
-            ImageBox ibx = this.Controls.Find(dodo, true).FirstOrDefault() as ImageBox;
-            ibx.Image = selectedLabel;
-            //activate the button
-            //visible save button
-            dodo = "btnSave" + actualLabel;
-            Button btnx = this.Controls.Find(dodo, true).FirstOrDefault() as Button;
-            btnx.Visible = true;
+            ibCamera.Image = selectedLabel;
 
-            ibCamera.Enabled = false;
+            //camera.labelSettings.addLabel(roi);
+            //lblInstruction.Text = "3) Write down the name of the label and click save";
+            ////visible TB
+            //string dodo = "tb" + actualLabel;
+            //TextBox tbx = this.Controls.Find(dodo, true).FirstOrDefault() as TextBox;
+            //tbx.Visible = true;
+            ////show cropped image
+            //dodo = "ib" + actualLabel;
+            //Image<Bgr, byte> selectedLabel = actualImage.ToImage<Bgr, byte>();
+            //selectedLabel.ROI = camera.labelSettings.labelList[actualLabel - 1].roi;
+            //ImageBox ibx = this.Controls.Find(dodo, true).FirstOrDefault() as ImageBox;
+            //ibx.Image = selectedLabel;
+            ////activate the button
+            ////visible save button
+            //dodo = "btnSave" + actualLabel;
+            //Button btnx = this.Controls.Find(dodo, true).FirstOrDefault() as Button;
+            //btnx.Visible = true;
+
+            //ibCamera.Enabled = false;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -182,10 +222,12 @@ namespace Diploma
                 btnAddArea.Enabled = true;
                 lblInstruction.Text = "1) Click on Add area";
                 actualLabel++;
+                //turn on camera
+                isStreamEnabled = true;
             }
             else
             {
-                lblInstruction.Text = "3) Write down the name of the label BEFORE click save";
+                lblInstruction.Text = "4) Write down the name of the label BEFORE click save";
             }
         }
 

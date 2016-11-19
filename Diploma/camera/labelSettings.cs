@@ -19,10 +19,9 @@ namespace Diploma.camera
             Point newLeftTop = new Point();
             newLeftTop.X = bigRoi.Location.X + roi.Location.X;
             newLeftTop.Y = bigRoi.Location.Y + roi.Location.Y;
-            //roi.Location = newLeftTop;
-            //x = collum;
+            roi.Location = newLeftTop;
 
-            label newCamera = new label(newLeftTop.Y, newLeftTop.X, roi.Width, roi.Height);
+            label newCamera = new label(roi);
             labelList.Add(newCamera);
         }
 

@@ -24,6 +24,7 @@ namespace Diploma
         private Point roiStart;
         private Rectangle roi = new Rectangle();
         private bool isStreamEnabled = true;
+        private int actualLabel = 1;
 
         /////////////////////////////////////////////////////////////////////////////////////
         public addAreasSettings()
@@ -143,6 +144,88 @@ namespace Diploma
         private void ibCamera_MouseUp(object sender, MouseEventArgs e)
         {
             camera.labelSettings.addLabel(roi);
+            lblInstruction.Text = "3) Write down the name of the label and click save";
+            //visible TB
+            string dodo = "tb" + actualLabel;
+            TextBox tbx = this.Controls.Find(dodo, true).FirstOrDefault() as TextBox;
+            tbx.Visible = true;
+            //show cropped image
+            dodo = "ib" + actualLabel;
+            Image<Bgr, byte> selectedLabel = actualImage.ToImage<Bgr, byte>();
+            selectedLabel.ROI = camera.labelSettings.labelList[actualLabel - 1].roi;
+            ImageBox ibx = this.Controls.Find(dodo, true).FirstOrDefault() as ImageBox;
+            ibx.Image = selectedLabel;
+            //activate the button
+            //visible save button
+            dodo = "btnSave" + actualLabel;
+            Button btnx = this.Controls.Find(dodo, true).FirstOrDefault() as Button;
+            btnx.Visible = true;
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////
+        private void saveAction()
+        {
+            string dodo = "tb" + actualLabel;
+            TextBox tbx = this.Controls.Find(dodo, true).FirstOrDefault() as TextBox;
+
+            if (tbx.Text.Length > 0)
+            {
+                dodo = "btnSave" + actualLabel;
+                Button btnx = this.Controls.Find(dodo, true).FirstOrDefault() as Button;
+
+                camera.labelSettings.labelList[actualLabel - 1].name = tbx.Text;
+                btnx.Enabled = false;
+                tbx.Enabled = false;
+                //enable add
+                btnAddArea.Enabled = true;
+                lblInstruction.Text = "1) Click on Add area";
+                actualLabel++;
+            }
+            else
+            {
+                lblInstruction.Text = "3) Write down the name of the label BEFORE click save";
+            }
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////
+        private void btnSave1_Click(object sender, EventArgs e)
+        {
+            saveAction();
+        }
+
+        private void btnSave2_Click(object sender, EventArgs e)
+        {
+            saveAction();
+        }
+
+        private void btnSave3_Click(object sender, EventArgs e)
+        {
+            saveAction();
+        }
+
+        private void btnSave4_Click(object sender, EventArgs e)
+        {
+            saveAction();
+        }
+
+        private void btnSave5_Click(object sender, EventArgs e)
+        {
+            saveAction();
+        }
+
+        private void btnSave6_Click(object sender, EventArgs e)
+        {
+            saveAction();
+        }
+
+        private void btnSave7_Click(object sender, EventArgs e)
+        {
+            saveAction();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            saveAction();
         }
     }
 }

@@ -43,14 +43,6 @@
             this.ib6 = new Emgu.CV.UI.ImageBox();
             this.ib7 = new Emgu.CV.UI.ImageBox();
             this.ib8 = new Emgu.CV.UI.ImageBox();
-            this.lbl1 = new System.Windows.Forms.Label();
-            this.lbl2 = new System.Windows.Forms.Label();
-            this.lbl3 = new System.Windows.Forms.Label();
-            this.lbl4 = new System.Windows.Forms.Label();
-            this.lbl5 = new System.Windows.Forms.Label();
-            this.lbl6 = new System.Windows.Forms.Label();
-            this.lbl7 = new System.Windows.Forms.Label();
-            this.lbl8 = new System.Windows.Forms.Label();
             this.btnAddArea = new System.Windows.Forms.Button();
             this.btnSave1 = new System.Windows.Forms.Button();
             this.btnSave2 = new System.Windows.Forms.Button();
@@ -61,6 +53,14 @@
             this.btnSave7 = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.lblInstruction = new System.Windows.Forms.Label();
+            this.tb1 = new System.Windows.Forms.TextBox();
+            this.tb2 = new System.Windows.Forms.TextBox();
+            this.tb3 = new System.Windows.Forms.TextBox();
+            this.tb4 = new System.Windows.Forms.TextBox();
+            this.tb5 = new System.Windows.Forms.TextBox();
+            this.tb6 = new System.Windows.Forms.TextBox();
+            this.tb7 = new System.Windows.Forms.TextBox();
+            this.tb8 = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ibCamera)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
@@ -157,14 +157,6 @@
             this.tableLayoutPanel2.Controls.Add(this.ib6, 0, 5);
             this.tableLayoutPanel2.Controls.Add(this.ib7, 0, 6);
             this.tableLayoutPanel2.Controls.Add(this.ib8, 0, 7);
-            this.tableLayoutPanel2.Controls.Add(this.lbl1, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.lbl2, 1, 1);
-            this.tableLayoutPanel2.Controls.Add(this.lbl3, 1, 2);
-            this.tableLayoutPanel2.Controls.Add(this.lbl4, 1, 3);
-            this.tableLayoutPanel2.Controls.Add(this.lbl5, 1, 4);
-            this.tableLayoutPanel2.Controls.Add(this.lbl6, 1, 5);
-            this.tableLayoutPanel2.Controls.Add(this.lbl7, 1, 6);
-            this.tableLayoutPanel2.Controls.Add(this.lbl8, 1, 7);
             this.tableLayoutPanel2.Controls.Add(this.btnAddArea, 0, 8);
             this.tableLayoutPanel2.Controls.Add(this.btnSave1, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnSave2, 2, 1);
@@ -175,6 +167,14 @@
             this.tableLayoutPanel2.Controls.Add(this.btnSave7, 2, 6);
             this.tableLayoutPanel2.Controls.Add(this.btnSave, 2, 7);
             this.tableLayoutPanel2.Controls.Add(this.lblInstruction, 1, 8);
+            this.tableLayoutPanel2.Controls.Add(this.tb1, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.tb2, 1, 1);
+            this.tableLayoutPanel2.Controls.Add(this.tb3, 1, 2);
+            this.tableLayoutPanel2.Controls.Add(this.tb4, 1, 3);
+            this.tableLayoutPanel2.Controls.Add(this.tb5, 1, 4);
+            this.tableLayoutPanel2.Controls.Add(this.tb6, 1, 5);
+            this.tableLayoutPanel2.Controls.Add(this.tb7, 1, 6);
+            this.tableLayoutPanel2.Controls.Add(this.tb8, 1, 7);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(5, 75);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(5);
@@ -272,78 +272,6 @@
             this.ib8.TabIndex = 2;
             this.ib8.TabStop = false;
             // 
-            // lbl1
-            // 
-            this.lbl1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lbl1.AutoSize = true;
-            this.lbl1.Location = new System.Drawing.Point(196, 11);
-            this.lbl1.Name = "lbl1";
-            this.lbl1.Size = new System.Drawing.Size(0, 13);
-            this.lbl1.TabIndex = 3;
-            // 
-            // lbl2
-            // 
-            this.lbl2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lbl2.AutoSize = true;
-            this.lbl2.Location = new System.Drawing.Point(196, 46);
-            this.lbl2.Name = "lbl2";
-            this.lbl2.Size = new System.Drawing.Size(0, 13);
-            this.lbl2.TabIndex = 4;
-            // 
-            // lbl3
-            // 
-            this.lbl3.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lbl3.AutoSize = true;
-            this.lbl3.Location = new System.Drawing.Point(196, 81);
-            this.lbl3.Name = "lbl3";
-            this.lbl3.Size = new System.Drawing.Size(0, 13);
-            this.lbl3.TabIndex = 5;
-            // 
-            // lbl4
-            // 
-            this.lbl4.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lbl4.AutoSize = true;
-            this.lbl4.Location = new System.Drawing.Point(196, 116);
-            this.lbl4.Name = "lbl4";
-            this.lbl4.Size = new System.Drawing.Size(0, 13);
-            this.lbl4.TabIndex = 6;
-            // 
-            // lbl5
-            // 
-            this.lbl5.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lbl5.AutoSize = true;
-            this.lbl5.Location = new System.Drawing.Point(196, 151);
-            this.lbl5.Name = "lbl5";
-            this.lbl5.Size = new System.Drawing.Size(0, 13);
-            this.lbl5.TabIndex = 7;
-            // 
-            // lbl6
-            // 
-            this.lbl6.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lbl6.AutoSize = true;
-            this.lbl6.Location = new System.Drawing.Point(196, 186);
-            this.lbl6.Name = "lbl6";
-            this.lbl6.Size = new System.Drawing.Size(0, 13);
-            this.lbl6.TabIndex = 8;
-            // 
-            // lbl7
-            // 
-            this.lbl7.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lbl7.AutoSize = true;
-            this.lbl7.Location = new System.Drawing.Point(196, 221);
-            this.lbl7.Name = "lbl7";
-            this.lbl7.Size = new System.Drawing.Size(0, 13);
-            this.lbl7.TabIndex = 9;
-            // 
-            // lbl8
-            // 
-            this.lbl8.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.lbl8.AutoSize = true;
-            this.lbl8.Location = new System.Drawing.Point(196, 256);
-            this.lbl8.Name = "lbl8";
-            this.lbl8.Size = new System.Drawing.Size(0, 13);
-            this.lbl8.TabIndex = 10;
-            // 
             // btnAddArea
             // 
             this.btnAddArea.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -365,6 +293,7 @@
             this.btnSave1.Text = "save";
             this.btnSave1.UseVisualStyleBackColor = true;
             this.btnSave1.Visible = false;
+            this.btnSave1.Click += new System.EventHandler(this.btnSave1_Click);
             // 
             // btnSave2
             // 
@@ -376,6 +305,7 @@
             this.btnSave2.Text = "save";
             this.btnSave2.UseVisualStyleBackColor = true;
             this.btnSave2.Visible = false;
+            this.btnSave2.Click += new System.EventHandler(this.btnSave2_Click);
             // 
             // btnSave3
             // 
@@ -387,6 +317,7 @@
             this.btnSave3.Text = "save";
             this.btnSave3.UseVisualStyleBackColor = true;
             this.btnSave3.Visible = false;
+            this.btnSave3.Click += new System.EventHandler(this.btnSave3_Click);
             // 
             // btnSave4
             // 
@@ -398,6 +329,7 @@
             this.btnSave4.Text = "save";
             this.btnSave4.UseVisualStyleBackColor = true;
             this.btnSave4.Visible = false;
+            this.btnSave4.Click += new System.EventHandler(this.btnSave4_Click);
             // 
             // btnSave5
             // 
@@ -409,6 +341,7 @@
             this.btnSave5.Text = "save";
             this.btnSave5.UseVisualStyleBackColor = true;
             this.btnSave5.Visible = false;
+            this.btnSave5.Click += new System.EventHandler(this.btnSave5_Click);
             // 
             // btnSave6
             // 
@@ -419,6 +352,7 @@
             this.btnSave6.Text = "save";
             this.btnSave6.UseVisualStyleBackColor = true;
             this.btnSave6.Visible = false;
+            this.btnSave6.Click += new System.EventHandler(this.btnSave6_Click);
             // 
             // btnSave7
             // 
@@ -430,6 +364,7 @@
             this.btnSave7.Text = "save";
             this.btnSave7.UseVisualStyleBackColor = true;
             this.btnSave7.Visible = false;
+            this.btnSave7.Click += new System.EventHandler(this.btnSave7_Click);
             // 
             // btnSave
             // 
@@ -441,6 +376,7 @@
             this.btnSave.Text = "save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Visible = false;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // lblInstruction
             // 
@@ -453,6 +389,78 @@
             this.lblInstruction.Size = new System.Drawing.Size(123, 13);
             this.lblInstruction.TabIndex = 20;
             this.lblInstruction.Text = "1) Click on Add area";
+            // 
+            // tb1
+            // 
+            this.tb1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tb1.Location = new System.Drawing.Point(146, 7);
+            this.tb1.Name = "tb1";
+            this.tb1.Size = new System.Drawing.Size(100, 20);
+            this.tb1.TabIndex = 21;
+            this.tb1.Visible = false;
+            // 
+            // tb2
+            // 
+            this.tb2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tb2.Location = new System.Drawing.Point(146, 42);
+            this.tb2.Name = "tb2";
+            this.tb2.Size = new System.Drawing.Size(100, 20);
+            this.tb2.TabIndex = 22;
+            this.tb2.Visible = false;
+            // 
+            // tb3
+            // 
+            this.tb3.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tb3.Location = new System.Drawing.Point(146, 77);
+            this.tb3.Name = "tb3";
+            this.tb3.Size = new System.Drawing.Size(100, 20);
+            this.tb3.TabIndex = 23;
+            this.tb3.Visible = false;
+            // 
+            // tb4
+            // 
+            this.tb4.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tb4.Location = new System.Drawing.Point(146, 112);
+            this.tb4.Name = "tb4";
+            this.tb4.Size = new System.Drawing.Size(100, 20);
+            this.tb4.TabIndex = 24;
+            this.tb4.Visible = false;
+            // 
+            // tb5
+            // 
+            this.tb5.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tb5.Location = new System.Drawing.Point(146, 147);
+            this.tb5.Name = "tb5";
+            this.tb5.Size = new System.Drawing.Size(100, 20);
+            this.tb5.TabIndex = 25;
+            this.tb5.Visible = false;
+            // 
+            // tb6
+            // 
+            this.tb6.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tb6.Location = new System.Drawing.Point(146, 182);
+            this.tb6.Name = "tb6";
+            this.tb6.Size = new System.Drawing.Size(100, 20);
+            this.tb6.TabIndex = 26;
+            this.tb6.Visible = false;
+            // 
+            // tb7
+            // 
+            this.tb7.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tb7.Location = new System.Drawing.Point(146, 217);
+            this.tb7.Name = "tb7";
+            this.tb7.Size = new System.Drawing.Size(100, 20);
+            this.tb7.TabIndex = 27;
+            this.tb7.Visible = false;
+            // 
+            // tb8
+            // 
+            this.tb8.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tb8.Location = new System.Drawing.Point(146, 252);
+            this.tb8.Name = "tb8";
+            this.tb8.Size = new System.Drawing.Size(100, 20);
+            this.tb8.TabIndex = 28;
+            this.tb8.Visible = false;
             // 
             // addAreasSettings
             // 
@@ -497,14 +505,6 @@
         private Emgu.CV.UI.ImageBox ib6;
         private Emgu.CV.UI.ImageBox ib7;
         private Emgu.CV.UI.ImageBox ib8;
-        private System.Windows.Forms.Label lbl1;
-        private System.Windows.Forms.Label lbl2;
-        private System.Windows.Forms.Label lbl3;
-        private System.Windows.Forms.Label lbl4;
-        private System.Windows.Forms.Label lbl5;
-        private System.Windows.Forms.Label lbl6;
-        private System.Windows.Forms.Label lbl7;
-        private System.Windows.Forms.Label lbl8;
         private System.Windows.Forms.Button btnAddArea;
         private System.Windows.Forms.Button btnSave1;
         private System.Windows.Forms.Button btnSave2;
@@ -515,5 +515,13 @@
         private System.Windows.Forms.Button btnSave7;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Label lblInstruction;
+        private System.Windows.Forms.TextBox tb1;
+        private System.Windows.Forms.TextBox tb2;
+        private System.Windows.Forms.TextBox tb3;
+        private System.Windows.Forms.TextBox tb4;
+        private System.Windows.Forms.TextBox tb5;
+        private System.Windows.Forms.TextBox tb6;
+        private System.Windows.Forms.TextBox tb7;
+        private System.Windows.Forms.TextBox tb8;
     }
 }

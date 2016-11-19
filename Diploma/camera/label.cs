@@ -16,10 +16,11 @@ namespace Diploma.camera
     {
         public string name;
         //ROI in regular image
-        public int topRowRoi;
-        public int leftCollumRoi;
-        public int widthRoi;
-        public int heightRoi;
+        public Rectangle roi;
+        //public int topRowRoi;
+        //public int leftCollumRoi;
+        //public int widthRoi;
+        //public int heightRoi;
         //selected Bounding box letter by letter in regular image
         public Point centroid;
         public int topRowBB;
@@ -35,12 +36,9 @@ namespace Diploma.camera
         private int width;
         private int height;
 
-        public label(int topRowRoi, int leftCollumRoi, int widthRoi, int heightRoi)
+        public label(Rectangle roi)
         {
-            this.topRowRoi = topRowRoi;
-            this.leftCollumRoi = leftCollumRoi;
-            this.widthRoi = widthRoi;
-            this.heightRoi = heightRoi;
+            this.roi = roi;
         }
         //selected labels - TODO
     }

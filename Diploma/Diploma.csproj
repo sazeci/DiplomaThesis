@@ -95,6 +95,8 @@
     </Compile>
     <Compile Include="camera\camera.cs" />
     <Compile Include="camera\cameraSettings.cs" />
+    <Compile Include="camera\label.cs" />
+    <Compile Include="camera\labelSettings.cs" />
     <Compile Include="coordinates\coordinatesManipulation.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>

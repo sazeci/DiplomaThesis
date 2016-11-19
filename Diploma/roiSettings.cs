@@ -98,9 +98,14 @@ namespace Diploma
             //actualCroppedImage.ROI = roi;
             //ibCamera.Image = actualCroppedImage;
 
-            //open new form
-            bwTresholdSettings bwTresholdSettings = new bwTresholdSettings(this);
-            bwTresholdSettings.Show();
+            //open new form BW - useless
+            //bwTresholdSettings bwTresholdSettings = new bwTresholdSettings(this);
+            //bwTresholdSettings.Show();
+            //this.Hide();
+
+            //open new form areas
+            addAreasSettings addAreasSettings = new addAreasSettings(this);
+            addAreasSettings.Show();
             this.Hide();
         }
     }

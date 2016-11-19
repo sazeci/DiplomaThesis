@@ -81,6 +81,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="addAreasSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="addAreasSettings.Designer.cs">
+      <DependentUpon>addAreasSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="bwTresholdSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -131,6 +137,9 @@
     <Compile Include="welcomeSettings.Designer.cs">
       <DependentUpon>welcomeSettings.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="addAreasSettings.resx">
+      <DependentUpon>addAreasSettings.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="bwTresholdSettings.resx">
       <DependentUpon>bwTresholdSettings.cs</DependentUpon>
     </EmbeddedResource>

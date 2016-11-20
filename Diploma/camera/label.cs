@@ -9,6 +9,7 @@ using Emgu.CV.CvEnum;           // usual Emgu CV imports
 using Emgu.CV.Structure;        //
 using Emgu.CV.UI;               //
 using System.Drawing;
+using System.Collections;
 
 namespace Diploma.camera
 {
@@ -20,8 +21,9 @@ namespace Diploma.camera
         //ROI in regular image
         public Rectangle roi;
         //selected Bounding box letter by letter in regular image
-        public Point centroid;
+        public Point centroidBB;
         public int topRowBB;
+        private int lowRowBB;
         public int leftCollumBB;
         public int widthBB;
         public int heightBB;
@@ -53,6 +55,7 @@ namespace Diploma.camera
 
         internal void addClickedPoint(Point regularRoiStart, Point localPoint, Mat actualImage)
         {
+            centroidBB = new Point();
             clickedPoint = regularRoiStart;
             this.localPoint = localPoint;
 
@@ -60,6 +63,100 @@ namespace Diploma.camera
             markAreas();
             findSymbolBySnail();
             getRefColor();
+            findBounding();
+        }
+
+        private void findBounding()
+        {
+            //go to the left(max distance is equal to letter width) and check if: size, color 
+            ArrayList candidates = new ArrayList();
+            candidates.Add(actualLabel);
+            int startRow;
+            int startCollum;
+            int startLabel = actualLabel;
+            int step = 0;
+
+            startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
+            startCollum = statsImg.Data[startLabel, 0, 0];
+            //initial bounding
+            topRowBB = startRow;
+            leftCollumBB = startCollum;
+            widthBB = (int)statsImg.Data[startLabel, 2, 0];
+            heightBB = (int)statsImg.Data[startLabel, 3, 0];
+            lowRowBB = topRowBB + heightBB;
+            centroidBB.Y = (topRowBB + heightBB) / 2;
+            centroidBB.Y = (leftCollumBB + widthBB) / 2;
+
+
+            for (int i = startCollum - 1; i > startCollum - statsImg.Data[actualLabel, 2, 0]; i--)
+            {
+                if (i <= 0) {
+                    break;
+                }
+
+                //Console.WriteLine("row= " + startRow + " collum= " + i);
+                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
+                {//not background and bigger than 20px
+                    //TODO next conditions
+                    candidates.Add(labelsImg.Data[startRow, i, 0]);
+                    //choose new initial letter and cotinue to left
+                    actualLabel = labelsImg.Data[startRow, i, 0];
+                    startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
+                    startCollum = statsImg.Data[actualLabel, 0, 0];
+                    i = startCollum - 1;
+                    //set new BB
+                    if (startRow < topRowBB)
+                    {
+                        topRowBB = startRow;
+                    }
+                    if (startRow + (int)statsImg.Data[startLabel, 3, 0] > lowRowBB) {
+                        lowRowBB = startRow + (int)statsImg.Data[startLabel, 3, 0];
+                    }
+                    leftCollumBB = startCollum;
+                    widthBB = widthBB + step + (int)statsImg.Data[startLabel, 2, 0];
+                    heightBB = lowRowBB - topRowBB;
+                    centroidBB.Y = (topRowBB + heightBB) / 2;
+                    centroidBB.Y = (leftCollumBB + widthBB) / 2;
+                }
+                step++;
+            }
+            //go to the right(max distance is equal to letter width) and check if: size, color 
+            step = 0;
+            startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
+            startCollum = statsImg.Data[startLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
+            actualLabel = startLabel;
+            for (int i = startCollum + 1; i < startCollum + statsImg.Data[actualLabel, 2, 0]; i++)
+            {
+                if (i >= actualCroppedImage.Width) {
+                    break;
+                }
+
+                Console.WriteLine("row= " + startRow + " collum= " + i);
+                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
+                {//not background and bigger than 20px
+                    //TODO next conditions
+                    candidates.Add(labelsImg.Data[startRow, i, 0]);
+                    //choose new initial letter and cotinue to left
+                    actualLabel = labelsImg.Data[startRow, i, 0];
+                    startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
+                    startCollum = statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
+                    i = startCollum + 1;
+                    //set new BB
+                    if (startRow < topRowBB)
+                    {
+                        topRowBB = startRow;
+                    }
+                    if (startRow + (int)statsImg.Data[startLabel, 3, 0] > lowRowBB)
+                    {
+                        lowRowBB = startRow + (int)statsImg.Data[startLabel, 3, 0];
+                    }
+                    widthBB = widthBB + step + (int)statsImg.Data[startLabel, 2, 0];
+                    heightBB = lowRowBB - topRowBB;
+                    centroidBB.Y = (topRowBB + heightBB) / 2;
+                    centroidBB.Y = (leftCollumBB + widthBB) / 2;
+                }
+                step++;
+            }
         }
 
         private void getRefColor()

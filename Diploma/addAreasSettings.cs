@@ -273,5 +273,13 @@ namespace Diploma
         {
             saveAction();
         }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            //open new form
+            checkTrackingSettings checkTrackingSettings = new checkTrackingSettings(this);
+            checkTrackingSettings.Show();
+            this.Hide();
+        }
     }
 }

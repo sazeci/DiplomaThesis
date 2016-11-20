@@ -27,6 +27,7 @@ namespace Diploma.camera
         public int leftCollumBB;
         public int widthBB;
         public int heightBB;
+        public Rectangle BB;
         //first selected letter
         public int blueRef;
         public int greenRef;
@@ -51,6 +52,7 @@ namespace Diploma.camera
             labels = new Mat();
             stats = new Mat();
             centroids = new Mat();
+            BB = new Rectangle();
         }
 
         internal void addClickedPoint(Point regularRoiStart, Point localPoint, Mat actualImage)
@@ -79,7 +81,7 @@ namespace Diploma.camera
             startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
             startCollum = statsImg.Data[startLabel, 0, 0];
             //initial bounding
-            topRowBB = startRow;
+            topRowBB = statsImg.Data[startLabel, 1, 0];
             leftCollumBB = startCollum;
             widthBB = (int)statsImg.Data[startLabel, 2, 0];
             heightBB = (int)statsImg.Data[startLabel, 3, 0];
@@ -105,15 +107,16 @@ namespace Diploma.camera
                     startCollum = statsImg.Data[actualLabel, 0, 0];
                     i = startCollum - 1;
                     //set new BB
-                    if (startRow < topRowBB)
+                    if (statsImg.Data[actualLabel, 1, 0] < topRowBB)
                     {
-                        topRowBB = startRow;
+                        topRowBB = statsImg.Data[actualLabel, 1, 0];
                     }
-                    if (startRow + (int)statsImg.Data[startLabel, 3, 0] > lowRowBB) {
-                        lowRowBB = startRow + (int)statsImg.Data[startLabel, 3, 0];
+                    if (topRowBB + (int)statsImg.Data[startLabel, 3, 0] > lowRowBB)
+                    {
+                        lowRowBB = topRowBB + (int)statsImg.Data[startLabel, 3, 0];
                     }
                     leftCollumBB = startCollum;
-                    widthBB = widthBB + step + (int)statsImg.Data[startLabel, 2, 0];
+                    widthBB = widthBB + (int)statsImg.Data[startLabel, 2, 0];
                     heightBB = lowRowBB - topRowBB;
                     centroidBB.Y = (topRowBB + heightBB) / 2;
                     centroidBB.Y = (leftCollumBB + widthBB) / 2;
@@ -142,21 +145,31 @@ namespace Diploma.camera
                     startCollum = statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
                     i = startCollum + 1;
                     //set new BB
-                    if (startRow < topRowBB)
+                    if (statsImg.Data[actualLabel, 1, 0] < topRowBB)
                     {
-                        topRowBB = startRow;
+                        topRowBB = statsImg.Data[actualLabel, 1, 0];
                     }
-                    if (startRow + (int)statsImg.Data[startLabel, 3, 0] > lowRowBB)
+                    if (topRowBB + (int)statsImg.Data[startLabel, 3, 0] > lowRowBB)
                     {
-                        lowRowBB = startRow + (int)statsImg.Data[startLabel, 3, 0];
+                        lowRowBB = topRowBB + (int)statsImg.Data[startLabel, 3, 0];
                     }
-                    widthBB = widthBB + step + (int)statsImg.Data[startLabel, 2, 0];
+                    widthBB = widthBB + step + (int)statsImg.Data[startLabel, 2, 0] -1;
                     heightBB = lowRowBB - topRowBB;
                     centroidBB.Y = (topRowBB + heightBB) / 2;
                     centroidBB.Y = (leftCollumBB + widthBB) / 2;
                 }
                 step++;
             }
+
+            topRowBB = topRowBB + roi.Location.Y;
+            leftCollumBB = leftCollumBB + roi.Location.X;
+
+            //Point location = new Point();
+            //location.Y = topRowBB;
+            //location.X = leftCollumBB;
+            BB.Location = new Point(leftCollumBB, topRowBB);
+            BB.Size = new Size(widthBB, heightBB);
+
         }
 
         private void getRefColor()
@@ -297,7 +310,7 @@ namespace Diploma.camera
             actualCroppedImage = actualImage.ToImage<Gray, byte>();
             actualCroppedImage.ROI = roi;
             //equalize hist
-            actualCroppedImage._EqualizeHist();
+            //actualCroppedImage._EqualizeHist();
             //threshold
             actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
         }

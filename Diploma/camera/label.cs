@@ -28,6 +28,7 @@ namespace Diploma.camera
         public int widthBB;
         public int heightBB;
         public Rectangle BB;
+        public Image<Gray, byte> actualBBFill;
         //first selected letter
         public int blueRef;
         public int greenRef;
@@ -65,10 +66,10 @@ namespace Diploma.camera
             markAreas();
             findSymbolBySnail();
             getRefColor();
-            findBounding();
+            findBounding(actualImage);
         }
 
-        private void findBounding()
+        private void findBounding(Mat actualImage)
         {
             //go to the left(max distance is equal to letter width) and check if: size, color 
             ArrayList candidates = new ArrayList();
@@ -78,19 +79,31 @@ namespace Diploma.camera
             int startLabel = actualLabel;
             int step = 0;
 
-            startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
+            if (statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2 < actualImage.Width)
+            {
+                startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
+            }
+            else {
+                startRow = actualImage.Width - 1;
+            }
             startCollum = statsImg.Data[startLabel, 0, 0];
             //initial bounding
             topRowBB = statsImg.Data[startLabel, 1, 0];
             leftCollumBB = startCollum;
             widthBB = (int)statsImg.Data[startLabel, 2, 0];
             heightBB = (int)statsImg.Data[startLabel, 3, 0];
-            lowRowBB = topRowBB + heightBB;
-            centroidBB.Y = (topRowBB + heightBB) / 2;
-            centroidBB.Y = (leftCollumBB + widthBB) / 2;
+            if (topRowBB + heightBB < actualImage.Height)
+            {
+                lowRowBB = topRowBB + heightBB;
+            }
+            else {
+                lowRowBB = actualImage.Height - 1;
+            }
+            centroidBB.Y = (int)(topRowBB + heightBB) / 2;
+            centroidBB.X = (int)(leftCollumBB + widthBB) / 2;
 
 
-            for (int i = startCollum - 1; i > startCollum - 2*statsImg.Data[actualLabel, 2, 0]; i--)
+            for (int i = startCollum - 1; i > startCollum - 2*statsImg.Data[actualLabel, 2, 0] || i > 0; i--)
             {
                 if (i <= 0) {
                     break;
@@ -105,7 +118,13 @@ namespace Diploma.camera
                     step = (statsImg.Data[actualLabel, 0, 0] - (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0]));
                     //choose new initial letter and cotinue to left
                     actualLabel = labelsImg.Data[startRow, i, 0];
-                    startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
+                    if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2 < actualImage.Height)
+                    {
+                        startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
+                    }
+                    else {
+                        startRow = actualImage.Height - 1;
+                    }
                     startCollum = statsImg.Data[actualLabel, 0, 0];
                     i = startCollum - 1;
                     //set new BB
@@ -113,7 +132,7 @@ namespace Diploma.camera
                     {
                         topRowBB = statsImg.Data[actualLabel, 1, 0];
                     }
-                    if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB)
+                    if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB && statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] < actualImage.Height)
                     {
                         lowRowBB = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0];
                     }
@@ -121,7 +140,7 @@ namespace Diploma.camera
                     widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
                     heightBB = lowRowBB - topRowBB;
                     centroidBB.Y = (topRowBB + heightBB) / 2;
-                    centroidBB.Y = (leftCollumBB + widthBB) / 2;
+                    centroidBB.X = (leftCollumBB + widthBB) / 2;
                 }
                 step++;
             }
@@ -136,7 +155,7 @@ namespace Diploma.camera
                     break;
                 }
 
-                Console.WriteLine("row= " + startRow + " collum= " + i);
+                //Console.WriteLine("row= " + startRow + " collum= " + i);
                 if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
                 {//not background and bigger than 20px
                     //TODO next conditions
@@ -159,7 +178,7 @@ namespace Diploma.camera
                     widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
                     heightBB = lowRowBB - topRowBB;
                     centroidBB.Y = (topRowBB + heightBB) / 2;
-                    centroidBB.Y = (leftCollumBB + widthBB) / 2;
+                    centroidBB.X = (leftCollumBB + widthBB) / 2;
                 }
                 step++;
             }
@@ -173,6 +192,62 @@ namespace Diploma.camera
             BB.Location = new Point(leftCollumBB, topRowBB);
             BB.Size = new Size(widthBB, heightBB);
             Console.WriteLine("candidates " + candidates.Count);
+        }
+
+        internal void actualizeLabel(Mat actualImage)
+        {
+            Console.WriteLine("topRowBB " + topRowBB + " leftCollumBB " + leftCollumBB + " widthBB " +widthBB + " heightBB " + heightBB + "CENTROID = " + centroidBB);
+
+            //new clicked point
+            localPoint = centroidBB;
+            //new roi from old bounding
+            newRoi(actualImage);
+            //actualize roi + gray
+            actualizeGrayCrop(actualImage);
+            markAreas();
+            findSymbolBySnail();
+            findBounding(actualImage);
+            saveBBFill(actualImage);
+        }
+
+
+        private void actualizeGrayCrop(Mat actualImage)
+        {
+            //binarize image
+            actualCroppedImage = actualImage.ToImage<Gray, byte>();
+            actualCroppedImage.ROI = roi;
+            //equalize hist
+            //actualCroppedImage._EqualizeHist();
+            //threshold
+            actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+        }
+
+        private void newRoi(Mat actualImage)
+        {
+            //checks if roi is in the image
+            int leftRoi = 1;
+            if (leftCollumBB - heightBB > 0) {
+                leftRoi = leftCollumBB - heightBB;
+            }
+
+            int topRoi = 1;
+            if (topRowBB - heightBB > 0) {
+                topRoi = topRowBB - heightBB;
+            }
+
+            int widthRoi = actualImage.Width - 1;
+            if (leftCollumBB + widthBB + heightBB < actualImage.Width) {
+                widthRoi = leftCollumBB + widthBB + heightBB;
+            }
+
+            int heightRoi = actualImage.Height - 1;
+            if (topRowBB + 2*heightBB < actualImage.Height)
+            {
+                heightRoi = topRowBB + 2 * heightBB;
+            }
+            //define new roi
+            roi.Location = new Point(leftRoi, topRoi);
+            roi.Size = new Size(widthRoi, heightRoi);
         }
 
         private void getRefColor()
@@ -222,9 +297,10 @@ namespace Diploma.camera
             int pointCollum;
             int width = 1;
             int height = 1;
+            Console.WriteLine(" localPoint.Y " + localPoint.Y + " localPoint.X " + localPoint.X + " height " + labelsImg.Height + " width " + labelsImg.Width);
             if (labelsImg.Data[localPoint.Y, localPoint.X, 0] != 0)
             {
-                Console.WriteLine("Click on label: " + labelsImg.Data[localPoint.Y, localPoint.X, 0]);
+                //Console.WriteLine("Click on label: " + labelsImg.Data[localPoint.Y, localPoint.X, 0]);
                 actualLabel = labelsImg.Data[localPoint.Y, localPoint.X, 0];
             }
             else
@@ -302,6 +378,13 @@ namespace Diploma.camera
             widthRef = (int)statsImg.Data[actualLabel, 3, 0];
             heightRef = (int)statsImg.Data[actualLabel, 4, 0];
 
+        }
+
+        internal void saveBBFill(Mat actualImage)
+        {
+            actualBBFill = actualImage.ToImage<Gray, byte>();
+            actualBBFill.ROI = BB;
+            actualBBFill = actualBBFill.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
         }
 
         private void binarizeCrop(Mat actualImage)

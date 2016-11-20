@@ -226,6 +226,9 @@ namespace Diploma
                 isStreamEnabled = true;
                 //check
                 Console.WriteLine("topRowBB " + camera.labelSettings.labelList[actualLabel - 2].topRowBB + " leftCollumBB " + camera.labelSettings.labelList[actualLabel - 2].leftCollumBB + " widthBB " + camera.labelSettings.labelList[actualLabel - 2].widthBB + " heightBB " + camera.labelSettings.labelList[actualLabel - 2].heightBB);
+
+                //save actual contain of BB
+                camera.labelSettings.labelList[actualLabel - 2].saveBBFill(actualImage);
             }
             else
             {

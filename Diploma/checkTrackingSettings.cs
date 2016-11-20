@@ -63,16 +63,29 @@ namespace Diploma
 
         private void trackLabels()
         {
-            isStreamEnabled = false;
+            //pause for testing
+            //isStreamEnabled = false;
+
             for (int i = 0; i < camera.labelSettings.labelList.Count; i++) {
                 //get roi from image
                 actualCroppedImage = actualImage.ToImage<Gray, byte>();
                 actualCroppedImage.ROI = camera.labelSettings.labelList[i].BB;
                 //binarize image
                 actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
-                ibCamera.Image = actualCroppedImage;
                 //compare to old one
-
+                var a = camera.labelSettings.labelList[i].actualBBFill.AbsDiff(actualCroppedImage);
+                int[] nonZeroPixels = a.CountNonzero();
+                double percent = (nonZeroPixels.Max()*100)/ (actualCroppedImage.Width * actualCroppedImage.Height);
+                //nonZeroPixels.Max() / (actualCroppedImage.Width * actualCroppedImage.Height);
+                if (percent > 5)
+                {
+                    Console.WriteLine("nonZeroPixels.Max() " + nonZeroPixels.Max() + " number of pixels " + (actualCroppedImage.Width * actualCroppedImage.Height) + " CHANGE CHANGE percent: " + percent);
+                    camera.labelSettings.labelList[i].actualizeLabel(actualImage);
+                }
+                if (actualCroppedImage.Size.Height * actualCroppedImage.Size.Width > 100)
+                {
+                    ibCamera.Image = actualCroppedImage;
+                }
                 //refresh
             }
         }

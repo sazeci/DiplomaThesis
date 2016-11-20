@@ -67,6 +67,7 @@ namespace Diploma.camera
             findSymbolBySnail();
             getRefColor();
             findBounding(actualImage);
+            Console.WriteLine("topRowBB " + topRowBB + " leftCollumBB " + leftCollumBB + " widthBB " + widthBB + " heightBB " + heightBB + "CENTROID = " + centroidBB);
         }
 
         private void findBounding(Mat actualImage)
@@ -196,10 +197,6 @@ namespace Diploma.camera
 
         internal void actualizeLabel(Mat actualImage)
         {
-            Console.WriteLine("topRowBB " + topRowBB + " leftCollumBB " + leftCollumBB + " widthBB " +widthBB + " heightBB " + heightBB + "CENTROID = " + centroidBB);
-
-            //new clicked point
-            localPoint = centroidBB;
             //new roi from old bounding
             newRoi(actualImage);
             //actualize roi + gray
@@ -208,6 +205,7 @@ namespace Diploma.camera
             findSymbolBySnail();
             findBounding(actualImage);
             saveBBFill(actualImage);
+            Console.WriteLine("topRowBB " + topRowBB + " leftCollumBB " + leftCollumBB + " widthBB " + widthBB + " heightBB " + heightBB + "CENTROID = " + centroidBB);
         }
 
 
@@ -236,18 +234,22 @@ namespace Diploma.camera
             }
 
             int widthRoi = actualImage.Width - 1;
-            if (leftCollumBB + widthBB + heightBB < actualImage.Width) {
-                widthRoi = leftCollumBB + widthBB + heightBB;
+            if (widthBB + 2*heightBB < actualImage.Width) {
+                widthRoi = widthBB + 2*heightBB;
             }
 
             int heightRoi = actualImage.Height - 1;
-            if (topRowBB + 2*heightBB < actualImage.Height)
+            if (3*heightBB < actualImage.Height)
             {
-                heightRoi = topRowBB + 2 * heightBB;
+                heightRoi = 3*heightBB;
             }
             //define new roi
             roi.Location = new Point(leftRoi, topRoi);
             roi.Size = new Size(widthRoi, heightRoi);
+
+            //new clicked point
+            localPoint.X = roi.Size.Width / 2;
+            localPoint.Y = roi.Size.Height / 2;
         }
 
         private void getRefColor()

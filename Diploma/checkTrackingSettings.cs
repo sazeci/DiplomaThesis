@@ -77,11 +77,11 @@ namespace Diploma
                 int[] nonZeroPixels = a.CountNonzero();
                 double percent = (nonZeroPixels.Max()*100)/ (actualCroppedImage.Width * actualCroppedImage.Height);
                 //nonZeroPixels.Max() / (actualCroppedImage.Width * actualCroppedImage.Height);
-                if (percent > 5)
-                {
+                //if (percent > 3)
+                //{
                     Console.WriteLine("nonZeroPixels.Max() " + nonZeroPixels.Max() + " number of pixels " + (actualCroppedImage.Width * actualCroppedImage.Height) + " CHANGE CHANGE percent: " + percent);
                     camera.labelSettings.labelList[i].actualizeLabel(actualImage);
-                }
+                //}
                 if (actualCroppedImage.Size.Height * actualCroppedImage.Size.Width > 100)
                 {
                     ibCamera.Image = actualCroppedImage;

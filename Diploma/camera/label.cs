@@ -90,7 +90,7 @@ namespace Diploma.camera
             centroidBB.Y = (leftCollumBB + widthBB) / 2;
 
 
-            for (int i = startCollum - 1; i > startCollum - statsImg.Data[actualLabel, 2, 0]; i--)
+            for (int i = startCollum - 1; i > startCollum - 2*statsImg.Data[actualLabel, 2, 0]; i--)
             {
                 if (i <= 0) {
                     break;
@@ -101,8 +101,9 @@ namespace Diploma.camera
                 {//not background and bigger than 20px
                     //TODO next conditions
                     candidates.Add(labelsImg.Data[startRow, i, 0]);
-                    //choose new initial letter and cotinue to left
+                    //calculate distance between chars
                     step = (statsImg.Data[actualLabel, 0, 0] - (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0]));
+                    //choose new initial letter and cotinue to left
                     actualLabel = labelsImg.Data[startRow, i, 0];
                     startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
                     startCollum = statsImg.Data[actualLabel, 0, 0];
@@ -117,7 +118,7 @@ namespace Diploma.camera
                         lowRowBB = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0];
                     }
                     leftCollumBB = startCollum;
-                    widthBB = widthBB + (int)statsImg.Data[startLabel, 2, 0] + step;
+                    widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
                     heightBB = lowRowBB - topRowBB;
                     centroidBB.Y = (topRowBB + heightBB) / 2;
                     centroidBB.Y = (leftCollumBB + widthBB) / 2;
@@ -129,7 +130,7 @@ namespace Diploma.camera
             startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
             startCollum = statsImg.Data[startLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
             actualLabel = startLabel;
-            for (int i = startCollum + 1; i < startCollum + statsImg.Data[actualLabel, 2, 0]; i++)
+            for (int i = startCollum + 1; i < startCollum + 2*statsImg.Data[actualLabel, 2, 0]; i++)
             {
                 if (i >= actualCroppedImage.Width) {
                     break;
@@ -141,7 +142,7 @@ namespace Diploma.camera
                     //TODO next conditions
                     candidates.Add(labelsImg.Data[startRow, i, 0]);
                     //choose new initial letter and cotinue to left
-                    step = (statsImg.Data[actualLabel, 0, 0] - (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0]));
+                    step = (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] - (statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0]));
                     actualLabel = labelsImg.Data[startRow, i, 0];
                     startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
                     startCollum = statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
@@ -171,7 +172,7 @@ namespace Diploma.camera
             //location.X = leftCollumBB;
             BB.Location = new Point(leftCollumBB, topRowBB);
             BB.Size = new Size(widthBB, heightBB);
-
+            Console.WriteLine("candidates " + candidates.Count);
         }
 
         private void getRefColor()

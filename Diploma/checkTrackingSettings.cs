@@ -63,6 +63,7 @@ namespace Diploma
 
         private void trackLabels()
         {
+            isStreamEnabled = false;
             for (int i = 0; i < camera.labelSettings.labelList.Count; i++) {
                 //get roi from image
                 actualCroppedImage = actualImage.ToImage<Gray, byte>();

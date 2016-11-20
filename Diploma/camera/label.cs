@@ -102,6 +102,7 @@ namespace Diploma.camera
                     //TODO next conditions
                     candidates.Add(labelsImg.Data[startRow, i, 0]);
                     //choose new initial letter and cotinue to left
+                    step = (statsImg.Data[actualLabel, 0, 0] - (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0]));
                     actualLabel = labelsImg.Data[startRow, i, 0];
                     startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
                     startCollum = statsImg.Data[actualLabel, 0, 0];
@@ -111,12 +112,12 @@ namespace Diploma.camera
                     {
                         topRowBB = statsImg.Data[actualLabel, 1, 0];
                     }
-                    if (topRowBB + (int)statsImg.Data[startLabel, 3, 0] > lowRowBB)
+                    if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB)
                     {
-                        lowRowBB = topRowBB + (int)statsImg.Data[startLabel, 3, 0];
+                        lowRowBB = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0];
                     }
                     leftCollumBB = startCollum;
-                    widthBB = widthBB + (int)statsImg.Data[startLabel, 2, 0];
+                    widthBB = widthBB + (int)statsImg.Data[startLabel, 2, 0] + step;
                     heightBB = lowRowBB - topRowBB;
                     centroidBB.Y = (topRowBB + heightBB) / 2;
                     centroidBB.Y = (leftCollumBB + widthBB) / 2;
@@ -140,6 +141,7 @@ namespace Diploma.camera
                     //TODO next conditions
                     candidates.Add(labelsImg.Data[startRow, i, 0]);
                     //choose new initial letter and cotinue to left
+                    step = (statsImg.Data[actualLabel, 0, 0] - (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0]));
                     actualLabel = labelsImg.Data[startRow, i, 0];
                     startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
                     startCollum = statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
@@ -149,11 +151,11 @@ namespace Diploma.camera
                     {
                         topRowBB = statsImg.Data[actualLabel, 1, 0];
                     }
-                    if (topRowBB + (int)statsImg.Data[startLabel, 3, 0] > lowRowBB)
+                    if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB)
                     {
-                        lowRowBB = topRowBB + (int)statsImg.Data[startLabel, 3, 0];
+                        lowRowBB = topRowBB + (int)statsImg.Data[actualLabel, 3, 0];
                     }
-                    widthBB = widthBB + step + (int)statsImg.Data[startLabel, 2, 0] -1;
+                    widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
                     heightBB = lowRowBB - topRowBB;
                     centroidBB.Y = (topRowBB + heightBB) / 2;
                     centroidBB.Y = (leftCollumBB + widthBB) / 2;

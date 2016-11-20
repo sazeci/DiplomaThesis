@@ -111,7 +111,7 @@ namespace Diploma.camera
                 }
 
                 //Console.WriteLine("row= " + startRow + " collum= " + i);
-                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
+                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef*0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.25) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
                 {//not background and bigger than 20px
                     //TODO next conditions
                     candidates.Add(labelsImg.Data[startRow, i, 0]);
@@ -157,7 +157,7 @@ namespace Diploma.camera
                 }
 
                 //Console.WriteLine("row= " + startRow + " collum= " + i);
-                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
+                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.25) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
                 {//not background and bigger than 20px
                     //TODO next conditions
                     candidates.Add(labelsImg.Data[startRow, i, 0]);
@@ -377,8 +377,8 @@ namespace Diploma.camera
 
 
             //ref width and height
-            widthRef = (int)statsImg.Data[actualLabel, 3, 0];
-            heightRef = (int)statsImg.Data[actualLabel, 4, 0];
+            widthRef = (int)statsImg.Data[actualLabel, 2, 0];
+            heightRef = (int)statsImg.Data[actualLabel, 3, 0];
 
         }
 

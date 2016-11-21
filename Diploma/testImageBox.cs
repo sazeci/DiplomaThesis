@@ -13,6 +13,7 @@ using Emgu.CV.CvEnum;           // usual Emgu CV imports
 using Emgu.CV.Structure;        //
 using Emgu.CV.UI;               //
 using System.Collections;
+using Emgu.CV.OCR;
 
 namespace Diploma
 {
@@ -23,12 +24,17 @@ namespace Diploma
         public Mat actualImage;
         Image<Gray, Byte> colorResult;
         Point click;
+        private Tesseract ocr;
 
         public testImageBox()
         {
             InitializeComponent();
             ibCamera.FunctionalMode = ImageBox.FunctionalModeOption.Minimum;
             _CameraIndex = 0;
+
+            //tessarect
+            ocr = new Tesseract("", "eng", OcrEngineMode.TesseractCubeCombined);
+            ocr.SetVariable("tessedit_char_whitelist", "0123456789");
         }
 
         private void testImageBox_FormClosing(object sender, FormClosingEventArgs e)
@@ -272,6 +278,20 @@ namespace Diploma
         {
             click = e.Location;
             Console.WriteLine(click);
+        }
+
+        private void btnOCR_Click(object sender, EventArgs e)
+        {
+            DialogResult drChosenFile;
+            drChosenFile = ofdOpenFile.ShowDialog();
+            Mat imgOriginal;
+            imgOriginal = new Mat(ofdOpenFile.FileName, LoadImageType.Color);
+            //Mat invert = new Mat();
+            //CvInvoke.BitwiseNot(imgOriginal, invert);
+            ibCamera.Image = imgOriginal;
+
+            ocr.Recognize(imgOriginal);
+            Console.WriteLine("Text = " + ocr.GetText());
         }
     }
 }

@@ -184,14 +184,15 @@ namespace Diploma.camera
                 step++;
             }
 
-            topRowBB = topRowBB + roi.Location.Y;
-            leftCollumBB = leftCollumBB + roi.Location.X;
+            //ATENTIONE + point to bounding
+            topRowBB = topRowBB + roi.Location.Y -2;
+            leftCollumBB = leftCollumBB + roi.Location.X -2;
 
             //Point location = new Point();
             //location.Y = topRowBB;
             //location.X = leftCollumBB;
             BB.Location = new Point(leftCollumBB, topRowBB);
-            BB.Size = new Size(widthBB, heightBB);
+            BB.Size = new Size(widthBB+4, heightBB+4);
             Console.WriteLine("candidates " + candidates.Count);
         }
 

@@ -12,6 +12,7 @@ using Emgu.CV;                  //
 using Emgu.CV.CvEnum;           // usual Emgu CV imports
 using Emgu.CV.Structure;        //
 using Emgu.CV.UI;               //
+using Emgu.CV.OCR;
 
 namespace Diploma
 {
@@ -22,6 +23,9 @@ namespace Diploma
         Capture capWebcam;
         Image<Gray, byte> actualCroppedImage;
         private bool isStreamEnabled = true;
+        private Tesseract ocr;
+
+        private int counter = 0;
 
         public checkTrackingSettings()
         {
@@ -35,6 +39,10 @@ namespace Diploma
             actualImage = new Mat();
             //start camera
             startCamera(camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera]._CameraIndex);
+
+            //tessarect
+            ocr = new Tesseract("", "eng", OcrEngineMode.TesseractOnly, "0123456789");
+            //ocr.SetVariable("tessedit_char_whitelist", "0123456789");
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -77,14 +85,16 @@ namespace Diploma
                 int[] nonZeroPixels = a.CountNonzero();
                 double percent = (nonZeroPixels.Max()*100)/ (actualCroppedImage.Width * actualCroppedImage.Height);
                 //nonZeroPixels.Max() / (actualCroppedImage.Width * actualCroppedImage.Height);
-                //if (percent > 3)
-                //{
+                if (percent > 3)
+                {
                     Console.WriteLine("nonZeroPixels.Max() " + nonZeroPixels.Max() + " number of pixels " + (actualCroppedImage.Width * actualCroppedImage.Height) + " CHANGE CHANGE percent: " + percent);
                     camera.labelSettings.labelList[i].actualizeLabel(actualImage);
-                //}
+                    actualCroppedImage.Save(camera.labelSettings.labelList[i].name + counter + ".jpeg");
+                    counter++;
+                }
                 if (actualCroppedImage.Size.Height * actualCroppedImage.Size.Width > 100)
                 {
-                    ibCamera.Image = actualCroppedImage;
+                    //ibCamera.Image = actualCroppedImage;
                 }
                 //refresh
             }
@@ -93,6 +103,15 @@ namespace Diploma
         private void checkTrackingSettings_FormClosing(object sender, FormClosingEventArgs e)
         {
             Application.Exit();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            Mat invert = new Mat();
+            CvInvoke.BitwiseNot(camera.labelSettings.labelList[0].actualBBFill, invert);
+            ocr.Recognize(invert);
+            ibCamera.Image = camera.labelSettings.labelList[0].actualBBFill;
+            Console.WriteLine("Text = " + ocr.GetText());
         }
     }
 }

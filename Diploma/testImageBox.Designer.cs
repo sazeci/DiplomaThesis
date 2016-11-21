@@ -35,8 +35,9 @@
             this.btnNewCapture = new System.Windows.Forms.Button();
             this.btnMarkers = new System.Windows.Forms.Button();
             this.ibMarker = new Emgu.CV.UI.ImageBox();
-            this.ofdOpenFile = new System.Windows.Forms.OpenFileDialog();
             this.btnSelectText = new System.Windows.Forms.Button();
+            this.ofdOpenFile = new System.Windows.Forms.OpenFileDialog();
+            this.btnOCR = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ibCamera)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
@@ -84,6 +85,7 @@
             this.tableLayoutPanel2.Controls.Add(this.btnMarkers, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.ibMarker, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnSelectText, 3, 0);
+            this.tableLayoutPanel2.Controls.Add(this.btnOCR, 4, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -126,10 +128,6 @@
             this.ibMarker.TabIndex = 2;
             this.ibMarker.TabStop = false;
             // 
-            // ofdOpenFile
-            // 
-            this.ofdOpenFile.FileName = "ofdOpenFile";
-            // 
             // btnSelectText
             // 
             this.btnSelectText.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -140,6 +138,21 @@
             this.btnSelectText.Text = "select text";
             this.btnSelectText.UseVisualStyleBackColor = true;
             this.btnSelectText.Click += new System.EventHandler(this.btnSelectText_Click);
+            // 
+            // ofdOpenFile
+            // 
+            this.ofdOpenFile.FileName = "ofdOpenFile";
+            // 
+            // btnOCR
+            // 
+            this.btnOCR.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnOCR.Location = new System.Drawing.Point(661, 20);
+            this.btnOCR.Name = "btnOCR";
+            this.btnOCR.Size = new System.Drawing.Size(75, 23);
+            this.btnOCR.TabIndex = 4;
+            this.btnOCR.Text = "btnOCR";
+            this.btnOCR.UseVisualStyleBackColor = true;
+            this.btnOCR.Click += new System.EventHandler(this.btnOCR_Click);
             // 
             // testImageBox
             // 
@@ -169,5 +182,6 @@
         private System.Windows.Forms.OpenFileDialog ofdOpenFile;
         private Emgu.CV.UI.ImageBox ibMarker;
         private System.Windows.Forms.Button btnSelectText;
+        private System.Windows.Forms.Button btnOCR;
     }
 }

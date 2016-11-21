@@ -47,6 +47,8 @@ namespace Diploma.camera
         Image<Gray, Int16> centroidsImg;
         int actualLabel;
 
+        bool initialStep = true;
+
         public label(Rectangle roi)
         {
             this.roi = roi;
@@ -110,40 +112,44 @@ namespace Diploma.camera
                     break;
                 }
 
-                //Console.WriteLine("row= " + startRow + " collum= " + i);
-                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef*0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.25) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
+                //Console.WriteLine("heighRef= " + heightRef + " (int)(heightRef * 1.5)= " + (int)(heightRef * 1.5));
+                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
                 {//not background and bigger than 20px
-                    //TODO next conditions
-                    candidates.Add(labelsImg.Data[startRow, i, 0]);
-                    //calculate distance between chars
-                    step = (statsImg.Data[actualLabel, 0, 0] - (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0]));
-                    //choose new initial letter and cotinue to left
-                    actualLabel = labelsImg.Data[startRow, i, 0];
-                    if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2 < actualImage.Height)
-                    {
-                        startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
+                    //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
+                    //{
+                        //TODO next conditions
+                        candidates.Add(labelsImg.Data[startRow, i, 0]);
+                        //calculate distance between chars
+                        step = (statsImg.Data[actualLabel, 0, 0] - (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0]));
+                        //choose new initial letter and cotinue to left
+                        actualLabel = labelsImg.Data[startRow, i, 0];
+                        if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2 < actualImage.Height)
+                        {
+                            startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
+                        }
+                        else
+                        {
+                            startRow = actualImage.Height - 1;
+                        }
+                        startCollum = statsImg.Data[actualLabel, 0, 0];
+                        i = startCollum - 1;
+                        //set new BB
+                        if (statsImg.Data[actualLabel, 1, 0] < topRowBB)
+                        {
+                            topRowBB = statsImg.Data[actualLabel, 1, 0];
+                        }
+                        if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB && statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] < actualImage.Height)
+                        {
+                            lowRowBB = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0];
+                        }
+                        leftCollumBB = startCollum;
+                        widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
+                        heightBB = lowRowBB - topRowBB;
+                        centroidBB.Y = (topRowBB + heightBB) / 2;
+                        centroidBB.X = (leftCollumBB + widthBB) / 2;
                     }
-                    else {
-                        startRow = actualImage.Height - 1;
-                    }
-                    startCollum = statsImg.Data[actualLabel, 0, 0];
-                    i = startCollum - 1;
-                    //set new BB
-                    if (statsImg.Data[actualLabel, 1, 0] < topRowBB)
-                    {
-                        topRowBB = statsImg.Data[actualLabel, 1, 0];
-                    }
-                    if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB && statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] < actualImage.Height)
-                    {
-                        lowRowBB = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0];
-                    }
-                    leftCollumBB = startCollum;
-                    widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
-                    heightBB = lowRowBB - topRowBB;
-                    centroidBB.Y = (topRowBB + heightBB) / 2;
-                    centroidBB.X = (leftCollumBB + widthBB) / 2;
-                }
-                step++;
+                    step++;
+                //}
             }
             //go to the right(max distance is equal to letter width) and check if: size, color 
             step = 0;
@@ -157,31 +163,34 @@ namespace Diploma.camera
                 }
 
                 //Console.WriteLine("row= " + startRow + " collum= " + i);
-                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.25) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
+                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
                 {//not background and bigger than 20px
-                    //TODO next conditions
-                    candidates.Add(labelsImg.Data[startRow, i, 0]);
-                    //choose new initial letter and cotinue to left
-                    step = (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] - (statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0]));
-                    actualLabel = labelsImg.Data[startRow, i, 0];
-                    startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
-                    startCollum = statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
-                    i = startCollum + 1;
-                    //set new BB
-                    if (statsImg.Data[actualLabel, 1, 0] < topRowBB)
-                    {
-                        topRowBB = statsImg.Data[actualLabel, 1, 0];
+                    //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
+                    //{
+                        //TODO next conditions
+                        candidates.Add(labelsImg.Data[startRow, i, 0]);
+                        //choose new initial letter and cotinue to left
+                        step = (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] - (statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0]));
+                        actualLabel = labelsImg.Data[startRow, i, 0];
+                        startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
+                        startCollum = statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
+                        i = startCollum + 1;
+                        //set new BB
+                        if (statsImg.Data[actualLabel, 1, 0] < topRowBB)
+                        {
+                            topRowBB = statsImg.Data[actualLabel, 1, 0];
+                        }
+                        if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB)
+                        {
+                            lowRowBB = topRowBB + (int)statsImg.Data[actualLabel, 3, 0];
+                        }
+                        widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
+                        heightBB = lowRowBB - topRowBB;
+                        centroidBB.Y = (topRowBB + heightBB) / 2;
+                        centroidBB.X = (leftCollumBB + widthBB) / 2;
                     }
-                    if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB)
-                    {
-                        lowRowBB = topRowBB + (int)statsImg.Data[actualLabel, 3, 0];
-                    }
-                    widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
-                    heightBB = lowRowBB - topRowBB;
-                    centroidBB.Y = (topRowBB + heightBB) / 2;
-                    centroidBB.X = (leftCollumBB + widthBB) / 2;
-                }
-                step++;
+                    step++;
+                //}
             }
 
             //ATENTIONE + point to bounding
@@ -212,13 +221,16 @@ namespace Diploma.camera
 
         private void actualizeGrayCrop(Mat actualImage)
         {
+            //clop color one
+            actualCroppedImageColor = actualImage.ToImage<Rgb, Int16>();
+            actualCroppedImageColor.ROI = roi;
             //binarize image
             actualCroppedImage = actualImage.ToImage<Gray, byte>();
             actualCroppedImage.ROI = roi;
             //equalize hist
             //actualCroppedImage._EqualizeHist();
             //threshold
-            actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+            actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));//101
         }
 
         private void newRoi(Mat actualImage)
@@ -271,9 +283,9 @@ namespace Diploma.camera
                 }
             }
 
-            blueRef = blue / counter;
-            greenRef = green / counter;
             redRef = red / counter;
+            greenRef = green / counter;
+            blueRef = blue / counter;
             Console.WriteLine(" red = " + redRef + " green = " + greenRef + "blue = " + blueRef + " COUNTER = " + counter);
         }
 
@@ -378,8 +390,22 @@ namespace Diploma.camera
 
 
             //ref width and height
-            widthRef = (int)statsImg.Data[actualLabel, 2, 0];
-            heightRef = (int)statsImg.Data[actualLabel, 3, 0];
+            if (initialStep == false)
+            {
+                if (Math.Abs((int)statsImg.Data[actualLabel, 2, 0] - widthRef) < 3)
+                {
+                    widthRef = (int)statsImg.Data[actualLabel, 2, 0];
+                }
+                if (Math.Abs((int)statsImg.Data[actualLabel, 3, 0] - heightRef) < 3)
+                {
+                    heightRef = (int)statsImg.Data[actualLabel, 3, 0];
+                }
+            }
+            else {
+                widthRef = (int)statsImg.Data[actualLabel, 2, 0];
+                heightRef = (int)statsImg.Data[actualLabel, 3, 0];
+                initialStep = false;
+            }
 
         }
 

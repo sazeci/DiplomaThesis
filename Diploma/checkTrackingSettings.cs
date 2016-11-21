@@ -77,26 +77,34 @@ namespace Diploma
             for (int i = 0; i < camera.labelSettings.labelList.Count; i++) {
                 //get roi from image
                 actualCroppedImage = actualImage.ToImage<Gray, byte>();
-                actualCroppedImage.ROI = camera.labelSettings.labelList[i].BB;
+                actualCroppedImage.ROI = camera.labelSettings.labelList[i].roi;
                 //binarize image
                 actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
                 //compare to old one
-                var a = camera.labelSettings.labelList[i].actualBBFill.AbsDiff(actualCroppedImage);
-                int[] nonZeroPixels = a.CountNonzero();
-                double percent = (nonZeroPixels.Max()*100)/ (actualCroppedImage.Width * actualCroppedImage.Height);
+                //var a = camera.labelSettings.labelList[i].actualBBFill.AbsDiff(actualCroppedImage);
+                //int[] nonZeroPixels = a.CountNonzero();
+                //double percent = (nonZeroPixels.Max()*100)/ (actualCroppedImage.Width * actualCroppedImage.Height);
                 //nonZeroPixels.Max() / (actualCroppedImage.Width * actualCroppedImage.Height);
-                if (percent > 3)
-                {
-                    Console.WriteLine("nonZeroPixels.Max() " + nonZeroPixels.Max() + " number of pixels " + (actualCroppedImage.Width * actualCroppedImage.Height) + " CHANGE CHANGE percent: " + percent);
+                //if (percent > 3)
+                //{
+                    //Console.WriteLine("nonZeroPixels.Max() " + nonZeroPixels.Max() + " number of pixels " + (actualCroppedImage.Width * actualCroppedImage.Height) + " CHANGE CHANGE percent: " + percent);
                     camera.labelSettings.labelList[i].actualizeLabel(actualImage);
-                    actualCroppedImage.Save(camera.labelSettings.labelList[i].name + counter + ".jpeg");
+                    //actualCroppedImage.Save(camera.labelSettings.labelList[i].name + counter + ".jpeg");
                     counter++;
-                }
+                //}
                 if (actualCroppedImage.Size.Height * actualCroppedImage.Size.Width > 100)
                 {
-                    //ibCamera.Image = actualCroppedImage;
+                    ibCamera.Image = actualCroppedImage;
                 }
                 //refresh
+
+                //bounding
+                Image<Gray, byte> boundingImage;
+                boundingImage = actualImage.ToImage<Gray, byte>();
+                boundingImage.ROI = camera.labelSettings.labelList[i].BB;
+                //binarize image
+                boundingImage = boundingImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+                ibCamera2.Image = boundingImage;
             }
         }
 
@@ -110,7 +118,7 @@ namespace Diploma
             Mat invert = new Mat();
             CvInvoke.BitwiseNot(camera.labelSettings.labelList[0].actualBBFill, invert);
             ocr.Recognize(invert);
-            ibCamera.Image = camera.labelSettings.labelList[0].actualBBFill;
+            //ibCamera.Image = camera.labelSettings.labelList[0].actualBBFill;
             Console.WriteLine("Text = " + ocr.GetText());
         }
     }

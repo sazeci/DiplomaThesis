@@ -25,6 +25,8 @@ namespace Diploma
         Image<Gray, Byte> colorResult;
         Point click;
         private Tesseract ocr;
+        List<Image<Gray, byte>> listOfImages;
+        private int listCounter;
 
         public testImageBox()
         {
@@ -292,6 +294,125 @@ namespace Diploma
 
             ocr.Recognize(imgOriginal);
             Console.WriteLine("Text = " + ocr.GetText());
+        }
+
+        private void btnTemplates_Click(object sender, EventArgs e)
+        {
+            DialogResult drChosenFile;
+            drChosenFile = ofdOpenFile.ShowDialog();
+            Mat imgOriginal;
+            imgOriginal = new Mat(ofdOpenFile.FileName, LoadImageType.Color);
+
+            Image<Gray, byte> actualCroppedImage = imgOriginal.ToImage<Gray, byte>();
+            actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+            ibCamera.Image = actualCroppedImage;
+
+            //label image
+            Mat labels = new Mat();
+            Mat stats = new Mat();
+            Mat centroids = new Mat();
+            int numberOfLabels;
+            numberOfLabels = CvInvoke.ConnectedComponentsWithStats(actualCroppedImage, labels, stats, centroids, LineType.EightConnected, DepthType.Cv32S);
+            Image<Gray, Int16> labelsImg = labels.ToImage<Gray, Int16>();
+            Image<Gray, Int16> statsImg = stats.ToImage<Gray, Int16>();
+            Image<Gray, Int16> centroidsImg = centroids.ToImage<Gray, Int16>();
+
+            Rectangle roicek = new Rectangle();
+            Image<Gray, byte> cropped = actualCroppedImage;
+            for (int i = 0; i < numberOfLabels; i++) {
+                cropped = actualCroppedImage;
+                //define new roi
+                roicek.Location = new Point(statsImg.Data[i, 0, 0], statsImg.Data[i, 1, 0]);//left top
+                roicek.Size = new Size(statsImg.Data[i, 2, 0], statsImg.Data[i, 3, 0]);//width height
+                cropped.ROI = roicek;
+                cropped.Save("Template" + i + ".jpeg");
+            }
+
+            //resize work
+            cropped = cropped.Resize(50, 50, Emgu.CV.CvEnum.Inter.Cubic);
+        }
+
+        private void btnDiff_Click(object sender, EventArgs e)
+        {
+            ////load all templates to array
+            //number of files in directory
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo("TemplatesTestMonitor");
+            int count = dir.GetFiles().Length;
+            Console.WriteLine(count);
+            //load all templates
+            Mat imgOriginal;
+            listOfImages = new List<Image<Gray, byte>>();
+            for (int i = 0; i < count; i++) {
+                imgOriginal = new Mat("./TemplatesTestMonitor/" + (i+1) + ".jpeg", LoadImageType.Color);
+                listOfImages.Add(imgOriginal.ToImage<Gray, byte>());
+            }
+            //test if its loaded
+            //listCounter = 0;
+            //timer1.Enabled = true;
+
+            //dialog to open new file with candidates
+            DialogResult drChosenFile;
+            drChosenFile = ofdOpenFile.ShowDialog();
+            imgOriginal = new Mat(ofdOpenFile.FileName, LoadImageType.Color);
+
+            Image<Gray, byte> actualCroppedImage = imgOriginal.ToImage<Gray, byte>();
+            actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+            ibCamera.Image = actualCroppedImage;
+
+            //label image
+            Mat labels = new Mat();
+            Mat stats = new Mat();
+            Mat centroids = new Mat();
+            int numberOfLabels;
+            numberOfLabels = CvInvoke.ConnectedComponentsWithStats(actualCroppedImage, labels, stats, centroids, LineType.EightConnected, DepthType.Cv32S);
+            Image<Gray, Int16> labelsImg = labels.ToImage<Gray, Int16>();
+            Image<Gray, Int16> statsImg = stats.ToImage<Gray, Int16>();
+            Image<Gray, Int16> centroidsImg = centroids.ToImage<Gray, Int16>();
+
+            Rectangle roicek = new Rectangle();
+            Image<Gray, byte> cropped = actualCroppedImage;
+            Image<Gray, byte> template;
+            Console.WriteLine("Number of candidates = " + numberOfLabels);
+            for (int i = 0; i < numberOfLabels; i++)
+            {
+                if (statsImg.Data[i, 4, 0] > 20)
+                {
+                    //crop candidate
+                    cropped = actualCroppedImage;
+                    //define new roi
+                    roicek.Location = new Point(statsImg.Data[i, 0, 0], statsImg.Data[i, 1, 0]);//left top
+                    roicek.Size = new Size(statsImg.Data[i, 2, 0], statsImg.Data[i, 3, 0]);//width height
+                    cropped.ROI = roicek;
+
+
+                    //compare to candidates
+                    for (int j = 0; j < listOfImages.Count; j++)
+                    {
+                        template = listOfImages[j].Resize(statsImg.Data[i, 2, 0], statsImg.Data[i, 3, 0], Emgu.CV.CvEnum.Inter.Cubic);
+                        var a = cropped.AbsDiff(template);
+                        //morphological open
+                        Mat kernel1 = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Ellipse, new Size(2, 2), new Point(1, 1));
+                        CvInvoke.MorphologyEx(a, a, MorphOp.Open, kernel1, new Point(0, 0), 2, BorderType.Default, new MCvScalar());
+                        int[] nonZeroPixels = a.CountNonzero();
+                        double percent = (nonZeroPixels.Max() * 100) / (template.Width * template.Height);
+                        //Console.WriteLine("Percent = " + percent);
+                        //if (percent < 20)
+                        //{
+                            a.Save("DiffFor" + j + " = " + percent + "%.jpeg");
+                        //}
+                    }
+                }
+            }
+            Console.WriteLine("END");
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (listCounter < listOfImages.Count)
+            {
+                ibCamera.Image = listOfImages[listCounter];
+                listCounter++;
+            }
         }
     }
 }

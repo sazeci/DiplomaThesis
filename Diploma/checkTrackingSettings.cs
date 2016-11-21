@@ -77,7 +77,7 @@ namespace Diploma
             for (int i = 0; i < camera.labelSettings.labelList.Count; i++) {
                 //get roi from image
                 actualCroppedImage = actualImage.ToImage<Gray, byte>();
-                actualCroppedImage.ROI = camera.labelSettings.labelList[i].roi;
+                actualCroppedImage.ROI = camera.labelSettings.labelList[i].BB;
                 //binarize image
                 actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
                 //compare to old one
@@ -89,7 +89,7 @@ namespace Diploma
                 //{
                     //Console.WriteLine("nonZeroPixels.Max() " + nonZeroPixels.Max() + " number of pixels " + (actualCroppedImage.Width * actualCroppedImage.Height) + " CHANGE CHANGE percent: " + percent);
                     camera.labelSettings.labelList[i].actualizeLabel(actualImage);
-                    //actualCroppedImage.Save(camera.labelSettings.labelList[i].name + counter + ".jpeg");
+                    actualCroppedImage.Save(camera.labelSettings.labelList[i].name + counter + ".jpeg");
                     counter++;
                 //}
                 if (actualCroppedImage.Size.Height * actualCroppedImage.Size.Width > 100)

@@ -35,8 +35,8 @@ namespace Diploma
             _CameraIndex = 0;
 
             //tessarect
-            ocr = new Tesseract("", "eng", OcrEngineMode.TesseractCubeCombined);
-            ocr.SetVariable("tessedit_char_whitelist", "0123456789");
+            ocr = new Tesseract("", "eng", OcrEngineMode.TesseractOnly);
+            ocr.SetVariable("tessedit_char_whitelist", "0123456789/()");
         }
 
         private void testImageBox_FormClosing(object sender, FormClosingEventArgs e)
@@ -290,8 +290,13 @@ namespace Diploma
             imgOriginal = new Mat(ofdOpenFile.FileName, LoadImageType.Color);
             //Mat invert = new Mat();
             //CvInvoke.BitwiseNot(imgOriginal, invert);
+            //give black border
+            var valueScalar = new MCvScalar(0);
+            CvInvoke.CopyMakeBorder(imgOriginal, imgOriginal, 100, 100, 100, 100, BorderType.Constant, valueScalar);
+            Image<Gray, byte> cropped = imgOriginal.ToImage<Gray, byte>();
+            //make it bigger
+            cropped.Resize(5, Inter.Cubic);
             ibCamera.Image = imgOriginal;
-
             ocr.Recognize(imgOriginal);
             Console.WriteLine("Text = " + ocr.GetText());
         }

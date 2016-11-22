@@ -8,6 +8,7 @@ using Emgu.CV;                  //
 using Emgu.CV.CvEnum;           // usual Emgu CV imports
 using Emgu.CV.Structure;        //
 using Emgu.CV.UI;               //
+using Emgu.CV.OCR;
 using System.Drawing;
 using System.Collections;
 
@@ -38,7 +39,7 @@ namespace Diploma.camera
         //helpy
         Image<Gray, byte> actualCroppedImage;
         Image<Rgb, Int16> actualCroppedImageColor;
-        private int thresholdValue;
+        private int counterFirstCharSave;
         Mat labels;
         Mat stats;
         Mat centroids;
@@ -46,6 +47,9 @@ namespace Diploma.camera
         Image<Gray, Int16> statsImg;
         Image<Gray, Int16> centroidsImg;
         int actualLabel;
+        //tesseract
+        private Tesseract ocr;
+        private Rectangle oneChar;
 
         bool initialStep = true;
 
@@ -56,6 +60,11 @@ namespace Diploma.camera
             stats = new Mat();
             centroids = new Mat();
             BB = new Rectangle();
+            oneChar = new Rectangle();
+
+            //tessarect
+            ocr = new Tesseract("", "eng", OcrEngineMode.TesseractOnly);
+            ocr.SetVariable("tessedit_char_whitelist", "0123456789/()");
         }
 
         internal void addClickedPoint(Point regularRoiStart, Point localPoint, Mat actualImage)
@@ -69,7 +78,7 @@ namespace Diploma.camera
             findSymbolBySnail();
             getRefColor();
             findBounding(actualImage);
-            Console.WriteLine("topRowBB " + topRowBB + " leftCollumBB " + leftCollumBB + " widthBB " + widthBB + " heightBB " + heightBB + "CENTROID = " + centroidBB);
+            //Console.WriteLine("topRowBB " + topRowBB + " leftCollumBB " + leftCollumBB + " widthBB " + widthBB + " heightBB " + heightBB + "CENTROID = " + centroidBB);
         }
 
         private void findBounding(Mat actualImage)
@@ -104,6 +113,8 @@ namespace Diploma.camera
             }
             centroidBB.Y = (int)(topRowBB + heightBB) / 2;
             centroidBB.X = (int)(leftCollumBB + widthBB) / 2;
+            checkIfChar(startLabel);
+
 
 
             for (int i = startCollum - 1; i > startCollum - 2*statsImg.Data[actualLabel, 2, 0] || i > 0; i--)
@@ -194,15 +205,31 @@ namespace Diploma.camera
             }
 
             //ATENTIONE + point to bounding
-            topRowBB = topRowBB + roi.Location.Y -2;
-            leftCollumBB = leftCollumBB + roi.Location.X -2;
+            topRowBB = topRowBB + roi.Location.Y;
+            leftCollumBB = leftCollumBB + roi.Location.X;
 
             //Point location = new Point();
             //location.Y = topRowBB;
             //location.X = leftCollumBB;
             BB.Location = new Point(leftCollumBB, topRowBB);
-            BB.Size = new Size(widthBB+4, heightBB+4);
-            Console.WriteLine("candidates " + candidates.Count);
+            BB.Size = new Size(widthBB, heightBB);
+            //Console.WriteLine("candidates " + candidates.Count);
+        }
+
+        private void checkIfChar(int startLabel)
+        {
+            oneChar.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);
+            oneChar.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);
+            Image<Gray, byte> cropNew = actualCroppedImage;
+            cropNew.ROI = oneChar;
+            cropNew = cropNew.Resize(5, Inter.Cubic);
+
+            Mat invert = cropNew.Mat;
+            CvInvoke.CopyMakeBorder(invert, invert, 50, 50, 50, 50, BorderType.Constant, new MCvScalar(0));
+            ocr.Recognize(invert);
+            counterFirstCharSave++;
+            cropNew.Save("FirstChar" + counterFirstCharSave + ".jpeg");
+            Console.WriteLine("First char = " + ocr.GetText());
         }
 
         internal void actualizeLabel(Mat actualImage)
@@ -215,7 +242,7 @@ namespace Diploma.camera
             findSymbolBySnail();
             findBounding(actualImage);
             saveBBFill(actualImage);
-            Console.WriteLine("topRowBB " + topRowBB + " leftCollumBB " + leftCollumBB + " widthBB " + widthBB + " heightBB " + heightBB + "CENTROID = " + centroidBB);
+            //Console.WriteLine("topRowBB " + topRowBB + " leftCollumBB " + leftCollumBB + " widthBB " + widthBB + " heightBB " + heightBB + "CENTROID = " + centroidBB);
         }
 
 
@@ -286,7 +313,7 @@ namespace Diploma.camera
             redRef = red / counter;
             greenRef = green / counter;
             blueRef = blue / counter;
-            Console.WriteLine(" red = " + redRef + " green = " + greenRef + "blue = " + blueRef + " COUNTER = " + counter);
+            //Console.WriteLine(" red = " + redRef + " green = " + greenRef + "blue = " + blueRef + " COUNTER = " + counter);
         }
 
         private void markAreas()
@@ -312,7 +339,7 @@ namespace Diploma.camera
             int pointCollum;
             int width = 1;
             int height = 1;
-            Console.WriteLine(" localPoint.Y " + localPoint.Y + " localPoint.X " + localPoint.X + " height " + labelsImg.Height + " width " + labelsImg.Width);
+            //Console.WriteLine(" localPoint.Y " + localPoint.Y + " localPoint.X " + localPoint.X + " height " + labelsImg.Height + " width " + labelsImg.Width);
             if (labelsImg.Data[localPoint.Y, localPoint.X, 0] != 0)
             {
                 //Console.WriteLine("Click on label: " + labelsImg.Data[localPoint.Y, localPoint.X, 0]);
@@ -380,7 +407,7 @@ namespace Diploma.camera
                     width++;
                 }
 
-                Console.WriteLine("Closest label: " + closestLabel);
+                //Console.WriteLine("Closest label: " + closestLabel);
             }
             ///find possible candidates
             if (actualLabel == 0 && closestLabel != 0)
@@ -413,7 +440,7 @@ namespace Diploma.camera
         {
             actualBBFill = actualImage.ToImage<Gray, byte>();
             actualBBFill.ROI = BB;
-            actualBBFill = actualBBFill.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+            //actualBBFill = actualBBFill.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
         }
 
         private void binarizeCrop(Mat actualImage)

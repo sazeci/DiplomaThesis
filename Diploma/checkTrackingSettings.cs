@@ -41,8 +41,8 @@ namespace Diploma
             startCamera(camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera]._CameraIndex);
 
             //tessarect
-            ocr = new Tesseract("", "eng", OcrEngineMode.TesseractOnly, "0123456789");
-            //ocr.SetVariable("tessedit_char_whitelist", "0123456789");
+            ocr = new Tesseract("", "eng", OcrEngineMode.TesseractOnly);
+            ocr.SetVariable("tessedit_char_whitelist", "0123456789/()");
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ namespace Diploma
                 //{
                     //Console.WriteLine("nonZeroPixels.Max() " + nonZeroPixels.Max() + " number of pixels " + (actualCroppedImage.Width * actualCroppedImage.Height) + " CHANGE CHANGE percent: " + percent);
                     camera.labelSettings.labelList[i].actualizeLabel(actualImage);
-                    actualCroppedImage.Save(camera.labelSettings.labelList[i].name + counter + ".jpeg");
+                    //actualCroppedImage.Save(camera.labelSettings.labelList[i].name + counter + ".jpeg");
                     counter++;
                 //}
                 if (actualCroppedImage.Size.Height * actualCroppedImage.Size.Width > 100)
@@ -115,8 +115,17 @@ namespace Diploma
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            Mat invert = new Mat();
-            CvInvoke.BitwiseNot(camera.labelSettings.labelList[0].actualBBFill, invert);
+            //Mat invert = new Mat();
+            //CvInvoke.BitwiseNot(camera.labelSettings.labelList[0].actualBBFill, invert);
+
+            Mat invert = camera.labelSettings.labelList[0].actualBBFill.Mat;
+            //add border to better rocognition
+            CvInvoke.CopyMakeBorder(invert, invert, 100, 100, 100, 100, BorderType.Constant, new MCvScalar(0));
+            ////rescale
+            //Image<Gray, byte> cropped = invert.ToImage<Gray, byte>();
+            ////make it bigger
+            //cropped.Resize(5, Inter.Cubic);
+
             ocr.Recognize(invert);
             //ibCamera.Image = camera.labelSettings.labelList[0].actualBBFill;
             Console.WriteLine("Text = " + ocr.GetText());

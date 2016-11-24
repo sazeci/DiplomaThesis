@@ -457,9 +457,13 @@ namespace Diploma
 
             Console.WriteLine(numberOfLabels);
             Image<Rgb,byte> imgOriginalColor = imgOriginal.ToImage<Rgb, byte>();
-            int redRef;
-            int greenRef;
-            int blueRef;
+            int redRef = 91;
+            int greenRef = 233;
+            int blueRef = 17;
+
+            int redAvg;
+            int greenAvg;
+            int blueAvg;
             for (int i = 0; i < numberOfLabels; i++) {
                 //too small
                 if (statsImg.Data[i, 4, 0] < 20) {
@@ -481,23 +485,18 @@ namespace Diploma
                     oneChar.Size = new Size(statsImg.Data[i, 2, 0], statsImg.Data[i, 3, 0]);
                     Image<Rgb, byte> cropNew = imgOriginalColor.Clone();
                     cropNew.ROI = oneChar;
-                    //for (int r = 0; r < imgOriginalColor.Height; r++) {
-                    //    for (int c = 0; c < imgOriginalColor.Width; c++) {
-                    //        if (labelsImg.Data[r, c, 0] == i) {
-                    //            Console.WriteLine("row = " + r + " col= " + c);
-                    //        }
-                    //    }
-                    //}
-
-                    getRefColor(labelsImg, cropNew, i, out redRef, out greenRef, out blueRef, oneChar);
-                    cropNew.Save("Candidate" + i + "R=" + redRef + "G=" + greenRef + "B=" + blueRef + ".jpeg");
+                    getRefColor(labelsImg, cropNew, i, out redAvg, out greenAvg, out blueAvg, oneChar);
+                    if (redAvg >= redRef - 50 && redAvg <= redRef + 50 && greenAvg >= greenRef - 50 && greenAvg <= greenRef + 50 && blueAvg >= blueRef - 50 && blueAvg <= blueRef + 50)
+                    {
+                        cropNew.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + ".jpeg");
+                    }
                 }
             }
 
             ibCamera.Image = bwImgOriginal;
         }
 
-        private void getRefColor(Image<Gray, Int16> labelsImg, Image<Rgb, byte> cropNew, int labelI, out int redRef, out int greenRef, out int blueRef, Rectangle oneChar)
+        private void getRefColor(Image<Gray, Int16> labelsImg, Image<Rgb, byte> cropNew, int labelI, out int redAvg, out int greenAvg, out int blueAvg, Rectangle oneChar)
         {
             int actualLabel = labelI;
             int blue = 0;
@@ -514,6 +513,8 @@ namespace Diploma
             ////labelsImg.ROI = oneChar;
             //Console.WriteLine(labelsImg.Width + " |labelsAfterRoi| " + labelsImg.Height);
             //go throught whole symbol and obtain a avg value of color
+
+            Image<Gray, Byte>[] channels = cropNew.Split();
             for (int i = 0; i < cropNew.Height; i++)
             {
                 for (int j = 0; j < cropNew.Width; j++)
@@ -523,17 +524,17 @@ namespace Diploma
                     if (labelsImg.Data[i + oneChar.Location.Y, j + oneChar.Location.X, 0] == actualLabel)
                     {
                         counter++;
-                        red += cropNew.Data[i, j, 0];//red
-                        green += cropNew.Data[i, j, 1];//green
-                        blue += cropNew.Data[i, j, 2];//blue
+                        red += channels[0].Data[i, j, 0];
+                        green += channels[1].Data[i, j, 0];
+                        blue += channels[2].Data[i, j, 0];
                     }
                 }
                 //Console.WriteLine("");
             }
 
-            redRef = red / counter;
-            greenRef = green / counter;
-            blueRef = blue / counter;
+            redAvg = red / counter;
+            greenAvg = green / counter;
+            blueAvg = blue / counter;
             //Console.WriteLine(" red = " + redRef + " green = " + greenRef + "blue = " + blueRef + " COUNTER = " + counter);
         }
 

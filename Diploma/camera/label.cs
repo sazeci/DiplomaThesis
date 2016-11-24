@@ -146,6 +146,7 @@ namespace Diploma.camera
             actualCroppedImage.ROI = roi;
             //threshold
             actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+            //actualCroppedImage.Save("actualCroppedImageOriginal.jpeg");
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -196,7 +197,7 @@ namespace Diploma.camera
         {
             oneChar.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);
             oneChar.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);
-            Image<Gray, byte> cropNew = actualCroppedImage;
+            Image<Gray, byte> cropNew = actualCroppedImage.Clone();
             cropNew.ROI = oneChar;
             //cropNew = cropNew.Resize(5, Inter.Cubic);
 
@@ -205,15 +206,15 @@ namespace Diploma.camera
             ocr.Recognize(invert);
             counterFirstCharSave++;
 
-            cropNew.Save("FirstChar" + counterFirstCharSave + ".jpeg");
-            Console.WriteLine("Number of obtained symbols: " + ocr.GetText().Length);
+            //cropNew.Save("FirstChar" + counterFirstCharSave + ".jpeg");
+            //Console.WriteLine("Number of obtained symbols: " + ocr.GetText().Length);
             if (ocr.GetText().Length < 1)
             {
-                return true; //only for testing, bad classifier
-                //return false;
+                //return true; //only for testing, bad classifier
+                return false;
             }
             else {
-                Console.WriteLine("First char = " + ocr.GetText());
+                //Console.WriteLine("First char = " + ocr.GetText());
                 return true;
             }
         }
@@ -354,14 +355,7 @@ namespace Diploma.camera
                 leftCollumBB = startCollum;
                 widthBB = 0;
                 heightBB = 0;
-                if (topRowBB + heightBB < actualImage.Height)
-                {
-                    lowRowBB = topRowBB + heightBB;
-                }
-                else
-                {
-                    lowRowBB = actualImage.Height - 1;
-                }
+                lowRowBB = startRow;
                 Console.WriteLine("No symbol find after snail - set defaul values");
 
                 //FOR TESTING
@@ -401,124 +395,164 @@ namespace Diploma.camera
 
         /////////////////////////////////////////////////////////////////////////////////////
         //chceck candidate on left if its a symbol
-        private void checkLeftFindBounding()
+        private void checkLeftFindBounding(ref int startRow, ref int startCollum,ref int i,ref int step, Mat actualImage)
         {
-            throw new NotImplementedException();
+            //basic condition for tested label(not background, between 0.5-1.5 refHeight, width < 1.5*refHeight, bigger than 20 px)
+            if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
+            {
+                //color check works badly
+                //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
+                if (checkIfChar(labelsImg.Data[startRow, i, 0]) == true)
+                {
+                    //add new letter
+                    candidates.Add(labelsImg.Data[startRow, i, 0]);
+                    //calculate distance between chars
+                    step = (statsImg.Data[actualLabel, 0, 0] - (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0]));
+                    //choose new initial letter
+                    actualLabel = labelsImg.Data[startRow, i, 0];
+                    //set row and collum
+                    if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2 < actualImage.Height)
+                    {
+                        startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
+                    }
+                    else
+                    {
+                        startRow = actualImage.Height - 1;
+                    }
+                    startCollum = statsImg.Data[actualLabel, 0, 0];
+                    i = startCollum - 1;
+                    //set new BB
+                    if (statsImg.Data[actualLabel, 1, 0] < topRowBB)
+                    {
+                        topRowBB = statsImg.Data[actualLabel, 1, 0];
+                    }
+                    if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB && statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] < actualImage.Height)
+                    {
+                        lowRowBB = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0];
+                    }
+                    leftCollumBB = startCollum;
+                    widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
+                    heightBB = lowRowBB - topRowBB;
+                }
+                else {
+                    i = i - statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0];
+                    step = step + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0];
+                }
+            }
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////
+        //chceck candidate on right if its a symbol
+        private void checkRightFindBounding(ref int startRow, ref int startCollum,ref int i,ref int step, Mat actualImage)
+        {
+            //basic condition for tested label(not background, between 0.5-1.5 refHeight, width < 1.5*refHeight, bigger than 20 px)
+            if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
+            {
+                //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
+                if (checkIfChar(labelsImg.Data[startRow, i, 0]) == true)
+                {
+                    //add new letter
+                    candidates.Add(labelsImg.Data[startRow, i, 0]);
+                    //calculate distance between chars
+                    step = (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] - (statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0]));
+                    //choose new initial letter
+                    actualLabel = labelsImg.Data[startRow, i, 0];
+                    //set row and collum
+                    startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
+                    startCollum = statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
+                    i = startCollum + 1;
+                    //set new BB
+                    if (statsImg.Data[actualLabel, 1, 0] < topRowBB)
+                    {
+                        topRowBB = statsImg.Data[actualLabel, 1, 0];
+                    }
+                    if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB)
+                    {
+                        lowRowBB = topRowBB + (int)statsImg.Data[actualLabel, 3, 0];
+                    }
+                    widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
+                    heightBB = lowRowBB - topRowBB;
+                }
+                else
+                {
+                    i = i + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0];
+                    step = step + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0];
+                }
+            }
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
         //go to the left and right(max distance is equal to 2*letter width) and check if: its letter
         private void findBounding(Mat actualImage)
         {
+            //recovery values
+            int topRowBBOld = topRowBB;
+            int lowRowBBOld = lowRowBB;
+            int leftCollumBBOld = leftCollumBB;
+            int widthBBOld = widthBB;
+            int heightBBOld = heightBB;
+            //local values
             int startRow;
             int startCollum;
             int startLabel;
             int step = 0;
             //candidates to symbols/symbols
             candidates = new ArrayList();
-
+            //set start values for method findBounding
             setStartValuesFindBounding(out startRow, out startCollum, out startLabel, actualImage);
 
+            //find symbols on the left
             for (int i = startCollum - 1; i > startCollum - 2*statsImg.Data[actualLabel, 2, 0] || i > 0; i--)
             {
                 if (i <= 0) {
                     break;
                 }
-                checkLeftFindBounding();
-                //Console.WriteLine("heighRef= " + heightRef + " (int)(heightRef * 1.5)= " + (int)(heightRef * 1.5));
-                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
-                {//not background and bigger than 20px
-                    //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
-                    //{
-                        //TODO next conditions
-                        candidates.Add(labelsImg.Data[startRow, i, 0]);
-                        //calculate distance between chars
-                        step = (statsImg.Data[actualLabel, 0, 0] - (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0]));
-                        //choose new initial letter and cotinue to left
-                        actualLabel = labelsImg.Data[startRow, i, 0];
-                        if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2 < actualImage.Height)
-                        {
-                            startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
-                        }
-                        else
-                        {
-                            startRow = actualImage.Height - 1;
-                        }
-                        startCollum = statsImg.Data[actualLabel, 0, 0];
-                        i = startCollum - 1;
-                        //set new BB
-                        if (statsImg.Data[actualLabel, 1, 0] < topRowBB)
-                        {
-                            topRowBB = statsImg.Data[actualLabel, 1, 0];
-                        }
-                        if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB && statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] < actualImage.Height)
-                        {
-                            lowRowBB = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0];
-                        }
-                        leftCollumBB = startCollum;
-                        widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
-                        heightBB = lowRowBB - topRowBB;
-                        centroidBB.Y = (topRowBB + heightBB) / 2;
-                        centroidBB.X = (leftCollumBB + widthBB) / 2;
-                    }
-                    step++;
-                //}
+                checkLeftFindBounding(ref startRow, ref startCollum,ref i,ref step, actualImage);
+                step++;
             }
-            //go to the right(max distance is equal to 2*letter width) and check if: size, color 
+
+            //set new refernce values before go to right
             step = 0;
             startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
-            startCollum = statsImg.Data[startLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
+            startCollum = statsImg.Data[startLabel, 0, 0] + statsImg.Data[startLabel, 2, 0];
             actualLabel = startLabel;
+
+            //Console.WriteLine("actualCroppedImage.Height " + actualCroppedImage.Height + " actualCroppedImage.Width " + actualCroppedImage.Width);
+            //Console.WriteLine("startRow " + startRow + " startCollum " + startCollum + " actualLabel " + actualLabel);
+            //actualCroppedImage.Save("actualCroppedImage.jpeg");
+            //find symbols on the right
             for (int i = startCollum + 1; i < startCollum + 2*statsImg.Data[actualLabel, 2, 0]; i++)
             {
                 if (i >= actualCroppedImage.Width) {
                     break;
                 }
-
-                //Console.WriteLine("row= " + startRow + " collum= " + i);
-                if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
-                {//not background and bigger than 20px
-                    //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
-                    //{
-                        //TODO next conditions
-                        candidates.Add(labelsImg.Data[startRow, i, 0]);
-                        //choose new initial letter and cotinue to left
-                        step = (statsImg.Data[labelsImg.Data[startRow, i, 0], 0, 0] - (statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0]));
-                        actualLabel = labelsImg.Data[startRow, i, 0];
-                        startRow = statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] / 2;
-                        startCollum = statsImg.Data[actualLabel, 0, 0] + statsImg.Data[actualLabel, 2, 0];
-                        i = startCollum + 1;
-                        //set new BB
-                        if (statsImg.Data[actualLabel, 1, 0] < topRowBB)
-                        {
-                            topRowBB = statsImg.Data[actualLabel, 1, 0];
-                        }
-                        if (statsImg.Data[actualLabel, 1, 0] + (int)statsImg.Data[actualLabel, 3, 0] > lowRowBB)
-                        {
-                            lowRowBB = topRowBB + (int)statsImg.Data[actualLabel, 3, 0];
-                        }
-                        widthBB = widthBB + (int)statsImg.Data[actualLabel, 2, 0] + step;
-                        heightBB = lowRowBB - topRowBB;
-                        centroidBB.Y = (topRowBB + heightBB) / 2;
-                        centroidBB.X = (leftCollumBB + widthBB) / 2;
-                    }
-                    step++;
-                //}
+                checkRightFindBounding(ref startRow, ref startCollum,ref i,ref step, actualImage);
+                step++;
             }
 
-            //ATENTIONE + point to bounding
+            //ATENTIONE + point to bounding (bounding in whole image)
             topRowBB = topRowBB + roi.Location.Y;
             leftCollumBB = leftCollumBB + roi.Location.X;
 
-            //Point location = new Point();
-            //location.Y = topRowBB;
-            //location.X = leftCollumBB;
+            //areas is probably hidden now or not showing numbers
+            if (candidates.Count < 1) {
+                topRowBB = topRowBBOld;
+                lowRowBB = lowRowBBOld;
+                leftCollumBB = leftCollumBBOld;
+                widthBB = widthBBOld;
+                heightBB = heightBBOld;
+                Console.WriteLine("NO SYMBOLS");
+            }
             BB.Location = new Point(leftCollumBB, topRowBB);
             BB.Size = new Size(widthBB, heightBB);
             //Console.WriteLine("candidates " + candidates.Count);
+
+            centroidBB.Y = (topRowBB + heightBB) / 2;
+            centroidBB.X = (leftCollumBB + widthBB) / 2;
         }
 
-
+        /////////////////////////////////////////////////////////////////////////////////////
+        //actual BB for OCR
         internal void saveBBFill(Mat actualImage)
         {
             actualBBFill = actualImage.ToImage<Gray, byte>();

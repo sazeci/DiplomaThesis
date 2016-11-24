@@ -14,6 +14,7 @@ using Emgu.CV.Structure;        //
 using Emgu.CV.UI;               //
 using System.Collections;
 using Emgu.CV.OCR;
+using Emgu.CV.Util;
 
 namespace Diploma
 {
@@ -288,16 +289,19 @@ namespace Diploma
             drChosenFile = ofdOpenFile.ShowDialog();
             Mat imgOriginal;
             imgOriginal = new Mat(ofdOpenFile.FileName, LoadImageType.Color);
-            //Mat invert = new Mat();
-            //CvInvoke.BitwiseNot(imgOriginal, invert);
+                        //Mat invert = new Mat();
+                        //CvInvoke.BitwiseNot(imgOriginal, invert);
+            //threshold binary
+            Image<Gray, byte> BW = imgOriginal.ToImage<Gray, byte>();
+            BW = BW.ThresholdBinary(new Gray(100), new Gray(255));
             //give black border
             var valueScalar = new MCvScalar(0);
-            CvInvoke.CopyMakeBorder(imgOriginal, imgOriginal, 100, 100, 100, 100, BorderType.Constant, valueScalar);
-            Image<Gray, byte> cropped = imgOriginal.ToImage<Gray, byte>();
+            CvInvoke.CopyMakeBorder(BW, BW, 100, 100, 100, 100, BorderType.Constant, valueScalar);
+            //Image<Gray, byte> cropped = imgOriginal.ToImage<Gray, byte>();
             //make it bigger
-            cropped.Resize(5, Inter.Cubic);
-            ibCamera.Image = imgOriginal;
-            ocr.Recognize(imgOriginal);
+            BW.Resize(5, Inter.Cubic);
+            ibCamera.Image = BW;
+            ocr.Recognize(BW);
             Console.WriteLine("Text = " + ocr.GetText());
         }
 
@@ -419,5 +423,120 @@ namespace Diploma
                 listCounter++;
             }
         }
+
+        private void btnFindText_Click(object sender, EventArgs e)
+        {
+            Mat imgOriginal;
+            Mat gray = new Mat();
+            Mat canny = new Mat();
+            VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
+            //dialog to open new photo
+            DialogResult drChosenFile;
+            drChosenFile = ofdOpenFile.ShowDialog();
+            imgOriginal = new Mat(ofdOpenFile.FileName, LoadImageType.Color);
+
+            //actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+
+            //CvInvoke.CvtColor(imgOriginal, gray, ColorConversion.Bgr2Gray);
+            Image<Gray, byte> bwImgOriginal = imgOriginal.ToImage<Gray, byte>();
+            bwImgOriginal = bwImgOriginal.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+
+            //label image
+            Mat labels = new Mat();
+            Mat stats = new Mat();
+            Mat centroids = new Mat();
+            int numberOfLabels;
+            numberOfLabels = CvInvoke.ConnectedComponentsWithStats(bwImgOriginal, labels, stats, centroids, LineType.FourConnected, DepthType.Cv32S);
+            Image<Gray, Int16> labelsImg = labels.ToImage<Gray, Int16>();
+            Image<Gray, Int16> statsImg = stats.ToImage<Gray, Int16>();
+            Image<Gray, Int16> centroidsImg = centroids.ToImage<Gray, Int16>();
+
+            int refHeight = 311 - 273;
+            int refWidth = 772 - 746;
+            Rectangle oneChar = new Rectangle();
+
+            Console.WriteLine(numberOfLabels);
+            Image<Rgb,byte> imgOriginalColor = imgOriginal.ToImage<Rgb, byte>();
+            int redRef;
+            int greenRef;
+            int blueRef;
+            for (int i = 0; i < numberOfLabels; i++) {
+                //too small
+                if (statsImg.Data[i, 4, 0] < 20) {
+                    continue;
+                }
+                //too big
+                if (statsImg.Data[i, 4, 0] > (int)((imgOriginal.Size.Width * imgOriginal.Size.Height)/16))//for whole image
+                {
+                    continue;
+                }
+                //wider than higher
+                if (statsImg.Data[i, 2, 0] > statsImg.Data[i, 3, 0])
+                {
+                    continue;
+                }
+                //similar size of reference
+                if (statsImg.Data[i, 3, 0] > (int)(refHeight * 0.75) && statsImg.Data[i, 3, 0] < (int)(refHeight * 1.3) && statsImg.Data[i, 2, 0] > (int)(refWidth * 0.4) && statsImg.Data[i, 2, 0] < (int)(refWidth * 1.7)) {
+                    oneChar.Location = new Point(statsImg.Data[i, 0, 0], statsImg.Data[i, 1, 0]);
+                    oneChar.Size = new Size(statsImg.Data[i, 2, 0], statsImg.Data[i, 3, 0]);
+                    Image<Rgb, byte> cropNew = imgOriginalColor.Clone();
+                    cropNew.ROI = oneChar;
+                    //for (int r = 0; r < imgOriginalColor.Height; r++) {
+                    //    for (int c = 0; c < imgOriginalColor.Width; c++) {
+                    //        if (labelsImg.Data[r, c, 0] == i) {
+                    //            Console.WriteLine("row = " + r + " col= " + c);
+                    //        }
+                    //    }
+                    //}
+
+                    getRefColor(labelsImg, cropNew, i, out redRef, out greenRef, out blueRef, oneChar);
+                    cropNew.Save("Candidate" + i + "R=" + redRef + "G=" + greenRef + "B=" + blueRef + ".jpeg");
+                }
+            }
+
+            ibCamera.Image = bwImgOriginal;
+        }
+
+        private void getRefColor(Image<Gray, Int16> labelsImg, Image<Rgb, byte> cropNew, int labelI, out int redRef, out int greenRef, out int blueRef, Rectangle oneChar)
+        {
+            int actualLabel = labelI;
+            int blue = 0;
+            int green = 0;
+            int red = 0;
+            int counter = 0;
+
+            //Console.WriteLine("Looking for: " + actualLabel);
+            //Console.WriteLine(cropNew.Width + " |crop| " + cropNew.Height);
+            //Console.WriteLine(labelsImg.Width + " |labels| " + labelsImg.Height);
+            //Console.WriteLine("Start of roi: row = " + oneChar.Location.Y + " col = " + oneChar.Location.X);
+            //Console.WriteLine(labelsImg.Data[47, 1187, 0]);
+            //Console.WriteLine(labelsImg.Data[47 - oneChar.Location.Y, 1187 - oneChar.Location.X, 0]);
+            ////labelsImg.ROI = oneChar;
+            //Console.WriteLine(labelsImg.Width + " |labelsAfterRoi| " + labelsImg.Height);
+            //go throught whole symbol and obtain a avg value of color
+            for (int i = 0; i < cropNew.Height; i++)
+            {
+                for (int j = 0; j < cropNew.Width; j++)
+                {
+                    //Console.Write(" | " + (i + oneChar.Location.Y) + "////" + (j + oneChar.Location.X));
+                    //Console.Write(" | " + labelsImg.Data[i+ oneChar.Location.Y, j+ oneChar.Location.X, 0]);
+                    if (labelsImg.Data[i + oneChar.Location.Y, j + oneChar.Location.X, 0] == actualLabel)
+                    {
+                        counter++;
+                        red += cropNew.Data[i, j, 0];//red
+                        green += cropNew.Data[i, j, 1];//green
+                        blue += cropNew.Data[i, j, 2];//blue
+                    }
+                }
+                //Console.WriteLine("");
+            }
+
+            redRef = red / counter;
+            greenRef = green / counter;
+            blueRef = blue / counter;
+            //Console.WriteLine(" red = " + redRef + " green = " + greenRef + "blue = " + blueRef + " COUNTER = " + counter);
+        }
+
+
     }
 }

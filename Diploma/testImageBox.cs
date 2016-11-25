@@ -451,8 +451,8 @@ namespace Diploma
             Image<Gray, Int16> statsImg = stats.ToImage<Gray, Int16>();
             Image<Gray, Int16> centroidsImg = centroids.ToImage<Gray, Int16>();
 
-            int refHeight = 311 - 273;
-            int refWidth = 772 - 746;
+            int refHeight = 50;//311 - 273;
+            int refWidth = 33;//772 - 746;
             Rectangle oneChar = new Rectangle();
 
             Console.WriteLine(numberOfLabels);
@@ -486,10 +486,10 @@ namespace Diploma
                     Image<Rgb, byte> cropNew = imgOriginalColor.Clone();
                     cropNew.ROI = oneChar;
                     getRefColor(labelsImg, cropNew, i, out redAvg, out greenAvg, out blueAvg, oneChar);
-                    if (redAvg >= redRef - 50 && redAvg <= redRef + 50 && greenAvg >= greenRef - 50 && greenAvg <= greenRef + 50 && blueAvg >= blueRef - 50 && blueAvg <= blueRef + 50)
-                    {
+                    //if (redAvg >= redRef - 50 && redAvg <= redRef + 50 && greenAvg >= greenRef - 50 && greenAvg <= greenRef + 50 && blueAvg >= blueRef - 50 && blueAvg <= blueRef + 50)
+                    //{
                         cropNew.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + ".jpeg");
-                    }
+                    //}
                 }
             }
 
@@ -538,6 +538,55 @@ namespace Diploma
             //Console.WriteLine(" red = " + redRef + " green = " + greenRef + "blue = " + blueRef + " COUNTER = " + counter);
         }
 
+        //variables for backUpRoi
+        int redRef = 137;
+        int greenRef = 214;
+        int blueRef = 85;
 
+        private void btnBackUpRoi_Click(object sender, EventArgs e)
+        {
+            //open image which i send to method in backUpProcess
+            Mat imgOriginal;
+            int refHeight = 50;
+            int refWidth = 33;
+            int bbCol;
+            int bbRow;
+            int bbWidth;
+            int bbHeight;
+            //dialog to open new photo
+            DialogResult drChosenFile;
+            drChosenFile = ofdOpenFile.ShowDialog();
+            imgOriginal = new Mat(ofdOpenFile.FileName, LoadImageType.Color);
+
+            //allready done in label
+            //CvInvoke.CvtColor(imgOriginal, gray, ColorConversion.Bgr2Gray);
+            Image<Gray, byte> bwImgOriginal = imgOriginal.ToImage<Gray, byte>();
+            bwImgOriginal = bwImgOriginal.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+
+            //label image
+            Mat labels = new Mat();
+            Mat stats = new Mat();
+            Mat centroids = new Mat();
+            int numberOfLabels;
+            numberOfLabels = CvInvoke.ConnectedComponentsWithStats(bwImgOriginal, labels, stats, centroids, LineType.FourConnected, DepthType.Cv32S);
+            Image<Gray, Int16> labelsImg = labels.ToImage<Gray, Int16>();
+            Image<Gray, Int16> statsImg = stats.ToImage<Gray, Int16>();
+
+
+            //call backUp
+            camera.backUpProcess backUpProcess = new camera.backUpProcess();
+            backUpProcess.backUpLabel(imgOriginal, numberOfLabels, labelsImg, statsImg, redRef, greenRef, blueRef, refHeight, refWidth, out bbCol, out bbRow, out bbWidth, out bbHeight);
+
+            if (bbWidth > 0)
+            {
+                Image<Rgb, byte> imgOriginalColor = imgOriginal.ToImage<Rgb, byte>();
+                var color = new Rgb(255, 0, 0);
+                Rectangle dodo = new Rectangle();
+                dodo.Location = new Point(bbCol, bbRow);
+                dodo.Size = new Size(bbWidth, bbHeight);
+                imgOriginalColor.Draw(dodo, color, 3);
+                ibCamera.Image = imgOriginalColor;
+            }
+        }
     }
 }

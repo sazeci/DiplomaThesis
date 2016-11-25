@@ -39,9 +39,10 @@
             this.btnOCR = new System.Windows.Forms.Button();
             this.btnTemplates = new System.Windows.Forms.Button();
             this.btnDiff = new System.Windows.Forms.Button();
+            this.btnFindText = new System.Windows.Forms.Button();
             this.ofdOpenFile = new System.Windows.Forms.OpenFileDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.btnFindText = new System.Windows.Forms.Button();
+            this.btnBackUpRoi = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ibCamera)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
@@ -79,15 +80,16 @@
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 8;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.84484F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.84484F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.84484F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.84484F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.84484F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.06002F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.92732F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.788456F));
+            this.tableLayoutPanel2.ColumnCount = 9;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.67713F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.67713F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.67713F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.67713F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.67713F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 11.87275F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.57029F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.080414F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 9.090909F));
             this.tableLayoutPanel2.Controls.Add(this.btnNewCapture, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnMarkers, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.ibMarker, 2, 0);
@@ -96,6 +98,7 @@
             this.tableLayoutPanel2.Controls.Add(this.btnTemplates, 5, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnDiff, 6, 0);
             this.tableLayoutPanel2.Controls.Add(this.btnFindText, 7, 0);
+            this.tableLayoutPanel2.Controls.Add(this.btnBackUpRoi, 8, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -107,7 +110,7 @@
             // btnNewCapture
             // 
             this.btnNewCapture.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnNewCapture.Location = new System.Drawing.Point(12, 20);
+            this.btnNewCapture.Location = new System.Drawing.Point(7, 20);
             this.btnNewCapture.Name = "btnNewCapture";
             this.btnNewCapture.Size = new System.Drawing.Size(75, 23);
             this.btnNewCapture.TabIndex = 0;
@@ -118,7 +121,7 @@
             // btnMarkers
             // 
             this.btnMarkers.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnMarkers.Location = new System.Drawing.Point(111, 20);
+            this.btnMarkers.Location = new System.Drawing.Point(97, 20);
             this.btnMarkers.Name = "btnMarkers";
             this.btnMarkers.Size = new System.Drawing.Size(75, 23);
             this.btnMarkers.TabIndex = 1;
@@ -129,10 +132,10 @@
             // ibMarker
             // 
             this.ibMarker.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ibMarker.Location = new System.Drawing.Point(203, 5);
+            this.ibMarker.Location = new System.Drawing.Point(185, 5);
             this.ibMarker.Margin = new System.Windows.Forms.Padding(5);
             this.ibMarker.Name = "ibMarker";
-            this.ibMarker.Size = new System.Drawing.Size(89, 54);
+            this.ibMarker.Size = new System.Drawing.Size(80, 54);
             this.ibMarker.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ibMarker.TabIndex = 2;
             this.ibMarker.TabStop = false;
@@ -140,7 +143,7 @@
             // btnSelectText
             // 
             this.btnSelectText.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnSelectText.Location = new System.Drawing.Point(309, 20);
+            this.btnSelectText.Location = new System.Drawing.Point(277, 20);
             this.btnSelectText.Name = "btnSelectText";
             this.btnSelectText.Size = new System.Drawing.Size(75, 23);
             this.btnSelectText.TabIndex = 3;
@@ -151,7 +154,7 @@
             // btnOCR
             // 
             this.btnOCR.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnOCR.Location = new System.Drawing.Point(408, 20);
+            this.btnOCR.Location = new System.Drawing.Point(367, 20);
             this.btnOCR.Name = "btnOCR";
             this.btnOCR.Size = new System.Drawing.Size(75, 23);
             this.btnOCR.TabIndex = 4;
@@ -162,7 +165,7 @@
             // btnTemplates
             // 
             this.btnTemplates.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnTemplates.Location = new System.Drawing.Point(508, 20);
+            this.btnTemplates.Location = new System.Drawing.Point(458, 20);
             this.btnTemplates.Name = "btnTemplates";
             this.btnTemplates.Size = new System.Drawing.Size(75, 23);
             this.btnTemplates.TabIndex = 5;
@@ -173,13 +176,24 @@
             // btnDiff
             // 
             this.btnDiff.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnDiff.Location = new System.Drawing.Point(616, 20);
+            this.btnDiff.Location = new System.Drawing.Point(557, 20);
             this.btnDiff.Name = "btnDiff";
             this.btnDiff.Size = new System.Drawing.Size(75, 23);
             this.btnDiff.TabIndex = 6;
             this.btnDiff.Text = "DiffTemplate";
             this.btnDiff.UseVisualStyleBackColor = true;
             this.btnDiff.Click += new System.EventHandler(this.btnDiff_Click);
+            // 
+            // btnFindText
+            // 
+            this.btnFindText.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnFindText.Location = new System.Drawing.Point(650, 20);
+            this.btnFindText.Name = "btnFindText";
+            this.btnFindText.Size = new System.Drawing.Size(49, 23);
+            this.btnFindText.TabIndex = 7;
+            this.btnFindText.Text = "findText";
+            this.btnFindText.UseVisualStyleBackColor = true;
+            this.btnFindText.Click += new System.EventHandler(this.btnFindText_Click);
             // 
             // ofdOpenFile
             // 
@@ -190,16 +204,16 @@
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // btnFindText
+            // btnBackUpRoi
             // 
-            this.btnFindText.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnFindText.Location = new System.Drawing.Point(715, 20);
-            this.btnFindText.Name = "btnFindText";
-            this.btnFindText.Size = new System.Drawing.Size(60, 23);
-            this.btnFindText.TabIndex = 7;
-            this.btnFindText.Text = "findText";
-            this.btnFindText.UseVisualStyleBackColor = true;
-            this.btnFindText.Click += new System.EventHandler(this.btnFindText_Click);
+            this.btnBackUpRoi.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnBackUpRoi.Location = new System.Drawing.Point(705, 20);
+            this.btnBackUpRoi.Name = "btnBackUpRoi";
+            this.btnBackUpRoi.Size = new System.Drawing.Size(70, 23);
+            this.btnBackUpRoi.TabIndex = 8;
+            this.btnBackUpRoi.Text = "backUpRoi";
+            this.btnBackUpRoi.UseVisualStyleBackColor = true;
+            this.btnBackUpRoi.Click += new System.EventHandler(this.btnBackUpRoi_Click);
             // 
             // testImageBox
             // 
@@ -234,5 +248,6 @@
         private System.Windows.Forms.Button btnDiff;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button btnFindText;
+        private System.Windows.Forms.Button btnBackUpRoi;
     }
 }

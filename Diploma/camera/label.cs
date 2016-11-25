@@ -47,12 +47,14 @@ namespace Diploma.camera
         Image<Gray, Int16> labelsImg;
         Image<Gray, Int16> statsImg;
         Image<Gray, Int16> centroidsImg;
+        int numberOfLabels;
         int actualLabel;
         //tesseract
         private Tesseract ocr;
         private Rectangle oneChar;
 
         bool initialStep = true;
+        backUpProcess backUpProcess;
 
         public label(Rectangle roi)
         {
@@ -62,6 +64,7 @@ namespace Diploma.camera
             centroids = new Mat();
             BB = new Rectangle();
             oneChar = new Rectangle();
+            backUpProcess = new backUpProcess();
 
             //tessarect
             ocr = new Tesseract("", "eng", OcrEngineMode.TesseractOnly);
@@ -154,7 +157,6 @@ namespace Diploma.camera
         private void markAreas()
         {
             //label image
-            int numberOfLabels;
             numberOfLabels = CvInvoke.ConnectedComponentsWithStats(actualCroppedImage, labels, stats, centroids, LineType.EightConnected, DepthType.Cv32S);
             labelsImg = labels.ToImage<Gray, Int16>();
             statsImg = stats.ToImage<Gray, Int16>();
@@ -360,6 +362,14 @@ namespace Diploma.camera
 
                 //FOR TESTING
                 startLabel = actualLabel;
+
+                //TODO use backUpProcess
+                int bbCol;
+                int bbRow;
+                int bbWidth;
+                int bbHeight;
+                backUpProcess.backUpLabel(actualCroppedImageColor, numberOfLabels, labelsImg, statsImg, redRef, greenRef, blueRef, heightRef, widthRef, out bbCol, out bbRow, out bbWidth, out bbHeight);
+
             }
             //first candidate is symbol
             else

@@ -93,6 +93,7 @@
     <Compile Include="bwTresholdSettings.Designer.cs">
       <DependentUpon>bwTresholdSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="camera\backUpProcess.cs" />
     <Compile Include="camera\camera.cs" />
     <Compile Include="camera\cameraSettings.cs" />
     <Compile Include="camera\label.cs" />

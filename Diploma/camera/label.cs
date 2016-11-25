@@ -39,7 +39,7 @@ namespace Diploma.camera
         ArrayList candidates;
         //helpy
         Image<Gray, byte> actualCroppedImage;
-        Image<Rgb, Int16> actualCroppedImageColor;
+        Image<Rgb, byte> actualCroppedImageColor;
         private int counterFirstCharSave;
         Mat labels;
         Mat stats;
@@ -82,7 +82,6 @@ namespace Diploma.camera
             binarizeCrop(actualImage);
             markAreas();
             findSymbolBySnail();
-            getRefColor();
             findBounding(actualImage);
         }
 
@@ -142,7 +141,7 @@ namespace Diploma.camera
         private void binarizeCrop(Mat actualImage)
         {
             //clop color one
-            actualCroppedImageColor = actualImage.ToImage<Rgb, Int16>();
+            actualCroppedImageColor = actualImage.ToImage<Rgb, byte>();
             actualCroppedImageColor.ROI = roi;
             //gray image crop
             actualCroppedImage = actualImage.ToImage<Gray, byte>();
@@ -165,24 +164,25 @@ namespace Diploma.camera
 
         /////////////////////////////////////////////////////////////////////////////////////
         //obtain referene color from first found symbol
-        private void getRefColor()
+        private void setRefColor(int label)
         {
             int blue = 0;
             int green = 0;
             int red = 0;
             int counter = 0;
 
+            Image<Gray, Byte>[] channels = actualCroppedImageColor.Split();
             //go throught whole symbol and obtain a avg value of color
             for (int i = 0; i < actualCroppedImageColor.Height; i++)
             {
                 for (int j = 0; j < actualCroppedImageColor.Width; j++)
                 {
-                    if (labelsImg.Data[i, j, 0] == actualLabel)
+                    if (labelsImg.Data[i, j, 0] == label)
                     {
                         counter++;
-                        red += actualCroppedImageColor.Data[i, j, 0];//red
-                        green += actualCroppedImageColor.Data[i, j, 1];//green
-                        blue += actualCroppedImageColor.Data[i, j, 2];//blue
+                        red += channels[0].Data[i, j, 0];
+                        green += channels[1].Data[i, j, 0];
+                        blue += channels[2].Data[i, j, 0];
                     }
                 }
             }
@@ -190,7 +190,7 @@ namespace Diploma.camera
             redRef = red / counter;
             greenRef = green / counter;
             blueRef = blue / counter;
-            //Console.WriteLine(" red = " + redRef + " green = " + greenRef + "blue = " + blueRef + " COUNTER = " + counter);
+            Console.WriteLine(" red = " + redRef + " green = " + greenRef + " blue = " + blueRef + " COUNTER = " + counter);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -348,28 +348,76 @@ namespace Diploma.camera
             //check if symbol finded by snail is symbol
             if (checkIfChar(actualLabel) == false)
             {
-                //TODO set new coordinates/ probbably middle of the roi	
-                //set row and collum
-                startRow = (int)(actualCroppedImage.Height - 1) / 2 + roi.Y;
-                startCollum = (int)(actualCroppedImage.Height - 1) / 2 + roi.X;
-                //set start bounding
-                topRowBB = startRow;
-                leftCollumBB = startCollum;
-                widthBB = 0;
-                heightBB = 0;
-                lowRowBB = startRow;
-                Console.WriteLine("No symbol find after snail - set defaul values");
+                ////TODO set new coordinates/ probbably middle of the roi	
+                ////set row and collum
+                //startRow = (int)(actualCroppedImage.Height - 1) / 2 + roi.Y;
+                //startCollum = (int)(actualCroppedImage.Height - 1) / 2 + roi.X;
+                ////set start bounding
+                //topRowBB = startRow;
+                //leftCollumBB = startCollum;
+                //widthBB = 0;
+                //heightBB = 0;
+                //lowRowBB = startRow;
+                //Console.WriteLine("No symbol find after snail - set defaul values");
 
-                //FOR TESTING
-                startLabel = actualLabel;
+                ////FOR TESTING
+                //startLabel = actualLabel;
 
                 //TODO use backUpProcess
                 int bbCol;
                 int bbRow;
                 int bbWidth;
                 int bbHeight;
-                backUpProcess.backUpLabel(actualCroppedImageColor, numberOfLabels, labelsImg, statsImg, redRef, greenRef, blueRef, heightRef, widthRef, out bbCol, out bbRow, out bbWidth, out bbHeight);
-
+                int labelCandidate;
+                labelCandidate = backUpProcess.backUpLabel(actualCroppedImageColor, numberOfLabels, labelsImg, statsImg, redRef, greenRef, blueRef, heightRef, widthRef, out bbCol, out bbRow, out bbWidth, out bbHeight);
+                //candidate on letter founded
+                if (labelCandidate > 0 && checkIfChar(labelCandidate) == true)
+                {
+                    //set new actual label
+                    startLabel = labelCandidate;
+                    //set variables to find 
+                    startRow = bbRow + (int)(bbHeight / 2);
+                    startCollum = bbCol;
+                    //set start bounding
+                    topRowBB = bbRow;
+                    leftCollumBB = startCollum;
+                    widthBB = bbWidth;
+                    heightBB = bbHeight;
+                    if (topRowBB + heightBB < actualImage.Height)
+                    {
+                        lowRowBB = topRowBB + heightBB;
+                    }
+                    else
+                    {
+                        lowRowBB = actualImage.Height - 1;
+                    }
+                    //setRefColor
+                    setRefColor(startLabel);
+                }
+                else {
+                    //area contain 0 symbols = is covered by something/monitor is off/monitor has been moven so quickly
+                    ////////////////////////////////////////TODO
+                    Console.WriteLine("No symbol in label: " + this.name);
+                    //set new actual label
+                    startLabel = labelCandidate;
+                    //set variables to find 
+                    startRow = bbRow + (int)(bbHeight / 2);
+                    startCollum = bbCol;
+                    //set start bounding
+                    topRowBB = bbRow;
+                    leftCollumBB = startCollum;
+                    widthBB = bbWidth;
+                    heightBB = bbHeight;
+                    if (topRowBB + heightBB < actualImage.Height)
+                    {
+                        lowRowBB = topRowBB + heightBB;
+                    }
+                    else
+                    {
+                        lowRowBB = actualImage.Height - 1;
+                    }
+                    //////////////////////////////////////////TODO
+                }
             }
             //first candidate is symbol
             else
@@ -400,6 +448,8 @@ namespace Diploma.camera
                 {
                     lowRowBB = actualImage.Height - 1;
                 }
+                //get new refColor
+                setRefColor(startLabel);
             }
         }
 

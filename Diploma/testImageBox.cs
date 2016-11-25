@@ -574,12 +574,14 @@ namespace Diploma
 
 
             //call backUp
+            int label;
             camera.backUpProcess backUpProcess = new camera.backUpProcess();
-            backUpProcess.backUpLabel(imgOriginal, numberOfLabels, labelsImg, statsImg, redRef, greenRef, blueRef, refHeight, refWidth, out bbCol, out bbRow, out bbWidth, out bbHeight);
+            Image<Rgb, byte> imgOriginalColor = imgOriginal.ToImage<Rgb, byte>();
+            label = backUpProcess.backUpLabel(imgOriginalColor, numberOfLabels, labelsImg, statsImg, redRef, greenRef, blueRef, refHeight, refWidth, out bbCol, out bbRow, out bbWidth, out bbHeight);
 
-            if (bbWidth > 0)
+            if (label > 0)
             {
-                Image<Rgb, byte> imgOriginalColor = imgOriginal.ToImage<Rgb, byte>();
+                Console.WriteLine("Candiadte: " + label);
                 var color = new Rgb(255, 0, 0);
                 Rectangle dodo = new Rectangle();
                 dodo.Location = new Point(bbCol, bbRow);

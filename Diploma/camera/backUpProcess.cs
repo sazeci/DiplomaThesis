@@ -11,13 +11,13 @@ namespace Diploma.camera
 {
     class backUpProcess
     {
-        public void backUpLabel(Mat imgOriginal, int numberOfLabels, Image<Gray, short> labelsImg, Image<Gray, short> statsImg, int redRef, int greenRef, int blueRef, int refHeight, int refWidth, out int bbCol, out int bbRow, out int bbWidth, out int bbHeight)
+        public int backUpLabel(Image<Rgb, byte> imgOriginalColor, int numberOfLabels, Image<Gray, short> labelsImg, Image<Gray, short> statsImg, int redRef, int greenRef, int blueRef, int refHeight, int refWidth, out int bbCol, out int bbRow, out int bbWidth, out int bbHeight)
         {
             Rectangle oneChar = new Rectangle();
             int redAvg;
             int greenAvg;
             int blueAvg;
-            Image<Rgb, byte> imgOriginalColor = imgOriginal.ToImage<Rgb, byte>();
+            //Image<Rgb, byte> imgOriginalColor = imgOriginal.ToImage<Rgb, byte>();
 
             for (int i = 0; i < numberOfLabels; i++)
             {
@@ -28,7 +28,7 @@ namespace Diploma.camera
                     continue;
                 }
                 //too big
-                if (statsImg.Data[i, 4, 0] > (int)((imgOriginal.Size.Width * imgOriginal.Size.Height) / 4))//for label only
+                if (statsImg.Data[i, 4, 0] > (int)((imgOriginalColor.Size.Width * imgOriginalColor.Size.Height) / 4))//for label only
                 {
                     continue;
                 }
@@ -54,7 +54,7 @@ namespace Diploma.camera
                         bbRow = statsImg.Data[i, 1, 0];
                         bbWidth = statsImg.Data[i, 2, 0];
                         bbHeight = statsImg.Data[i, 3, 0];
-                        return;
+                        return i;
                     }
                 }
             }
@@ -63,7 +63,7 @@ namespace Diploma.camera
             bbRow = 0;
             bbWidth = 0;
             bbHeight = 0;
-            return;
+            return -1;
         }
 
         private void getRefColor(Image<Gray, Int16> labelsImg, Image<Rgb, byte> cropNew, int labelI, out int redAvg, out int greenAvg, out int blueAvg, Rectangle oneChar)

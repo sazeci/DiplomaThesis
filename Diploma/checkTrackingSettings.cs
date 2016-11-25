@@ -101,7 +101,7 @@ namespace Diploma
                 //bounding
                 Image<Gray, byte> boundingImage;
                 boundingImage = actualImage.ToImage<Gray, byte>();
-                boundingImage.ROI = camera.labelSettings.labelList[i].BB;
+                boundingImage.ROI = camera.labelSettings.labelList[i].roi;
                 //binarize image
                 boundingImage = boundingImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
                 ibCamera2.Image = boundingImage;

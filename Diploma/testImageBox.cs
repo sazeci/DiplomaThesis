@@ -451,8 +451,8 @@ namespace Diploma
             Image<Gray, Int16> statsImg = stats.ToImage<Gray, Int16>();
             Image<Gray, Int16> centroidsImg = centroids.ToImage<Gray, Int16>();
 
-            int refHeight = 50;//311 - 273;
-            int refWidth = 33;//772 - 746;
+            int refHeight = 311 - 273;//50
+            int refWidth = 772 - 746;//33;//
             Rectangle oneChar = new Rectangle();
 
             Console.WriteLine(numberOfLabels);
@@ -486,10 +486,10 @@ namespace Diploma
                     Image<Rgb, byte> cropNew = imgOriginalColor.Clone();
                     cropNew.ROI = oneChar;
                     getRefColor(labelsImg, cropNew, i, out redAvg, out greenAvg, out blueAvg, oneChar);
-                    //if (redAvg >= redRef - 50 && redAvg <= redRef + 50 && greenAvg >= greenRef - 50 && greenAvg <= greenRef + 50 && blueAvg >= blueRef - 50 && blueAvg <= blueRef + 50)
-                    //{
+                    if (redAvg >= redRef - 50 && redAvg <= redRef + 50 && greenAvg >= greenRef - 50 && greenAvg <= greenRef + 50 && blueAvg >= blueRef - 50 && blueAvg <= blueRef + 50)
+                    {
                         cropNew.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + ".jpeg");
-                    //}
+                    }
                 }
             }
 

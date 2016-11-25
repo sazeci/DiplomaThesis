@@ -21,7 +21,7 @@ namespace Diploma.camera
 
             for (int i = 0; i < numberOfLabels; i++)
             {
-                Console.WriteLine(i);
+                //Console.WriteLine(i);
                 //too small
                 if (statsImg.Data[i, 4, 0] < 20)
                 {
@@ -37,7 +37,7 @@ namespace Diploma.camera
                 {
                     continue;
                 }
-                Console.WriteLine("After Basic = " + i);
+                //Console.WriteLine("After Basic = " + i);
                 //similar size of reference
                 if (statsImg.Data[i, 3, 0] > (int)(refHeight * 0.75) && statsImg.Data[i, 3, 0] < (int)(refHeight * 1.3) && statsImg.Data[i, 2, 0] > (int)(refWidth * 0.4) && statsImg.Data[i, 2, 0] < (int)(refWidth * 1.7))
                 {
@@ -63,7 +63,7 @@ namespace Diploma.camera
             bbRow = 0;
             bbWidth = 0;
             bbHeight = 0;
-            return -1;
+            return 0;
         }
 
         private void getRefColor(Image<Gray, Int16> labelsImg, Image<Rgb, byte> cropNew, int labelI, out int redAvg, out int greenAvg, out int blueAvg, Rectangle oneChar)

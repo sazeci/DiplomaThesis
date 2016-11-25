@@ -55,6 +55,7 @@ namespace Diploma.camera
 
         bool initialStep = true;
         backUpProcess backUpProcess;
+        bool noTextInRoi = false;
 
         public label(Rectangle roi)
         {
@@ -190,13 +191,17 @@ namespace Diploma.camera
             redRef = red / counter;
             greenRef = green / counter;
             blueRef = blue / counter;
-            Console.WriteLine(" red = " + redRef + " green = " + greenRef + " blue = " + blueRef + " COUNTER = " + counter);
+            //Console.WriteLine(" red = " + redRef + " green = " + greenRef + " blue = " + blueRef + " COUNTER = " + counter);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
         //check if found marked area contains symbol
         private bool checkIfChar(int startLabel)
         {
+            if (startLabel < 0) {
+                return false;
+            }
+
             oneChar.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);
             oneChar.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);
             Image<Gray, byte> cropNew = actualCroppedImage.Clone();
@@ -259,6 +264,12 @@ namespace Diploma.camera
                             break;
                         }
                         pointRow--;
+                        //out of range
+                        if (pointRow < 0) {
+                            Console.WriteLine("NO AREA FOUND IN THIS ROI");
+                            actualLabel = -1;
+                            return;
+                        }
                     }
                     height++;
                     //right
@@ -272,6 +283,12 @@ namespace Diploma.camera
                             break;
                         }
                         pointCollum++;
+                        //out of range
+                        if (pointCollum > actualCroppedImageColor.Width - 1) {
+                            Console.WriteLine("NO AREA FOUND IN THIS ROI");
+                            actualLabel = -1;
+                            return;
+                        }
                     }
                     width++;
                     //down
@@ -285,6 +302,13 @@ namespace Diploma.camera
                             break;
                         }
                         pointRow++;
+                        //out of range
+                        if (pointRow > actualCroppedImageColor.Height-1)
+                        {
+                            Console.WriteLine("NO AREA FOUND IN THIS ROI");
+                            actualLabel = -1;
+                            return;
+                        }
                     }
                     height++;
                     //left
@@ -298,6 +322,13 @@ namespace Diploma.camera
                             break;
                         }
                         pointCollum--;
+                        //out of range
+                        if (pointCollum < 0)
+                        {
+                            Console.WriteLine("NO AREA FOUND IN THIS ROI");
+                            actualLabel = -1;
+                            return;
+                        }
                     }
                     width++;
                 }
@@ -318,26 +349,26 @@ namespace Diploma.camera
             }
 
 
-            //ref width and height
-            if (initialStep == false)
-            {
-                //update ref value only if change is really small because of perspective disortion
-                if (Math.Abs((int)statsImg.Data[actualLabel, 2, 0] - widthRef) < 3)
-                {
-                    widthRef = (int)statsImg.Data[actualLabel, 2, 0];
-                }
-                if (Math.Abs((int)statsImg.Data[actualLabel, 3, 0] - heightRef) < 3)
-                {
-                    heightRef = (int)statsImg.Data[actualLabel, 3, 0];
-                }
-            }
-            else
-            {
-                //referece value of symbol in label
-                widthRef = (int)statsImg.Data[actualLabel, 2, 0];
-                heightRef = (int)statsImg.Data[actualLabel, 3, 0];
-                initialStep = false;
-            }
+            ////ref width and height
+            //if (initialStep == false)
+            //{
+            //    //update ref value only if change is really small because of perspective disortion
+            //    if (Math.Abs((int)statsImg.Data[actualLabel, 2, 0] - widthRef) < 3)
+            //    {
+            //        widthRef = (int)statsImg.Data[actualLabel, 2, 0];
+            //    }
+            //    if (Math.Abs((int)statsImg.Data[actualLabel, 3, 0] - heightRef) < 3)
+            //    {
+            //        heightRef = (int)statsImg.Data[actualLabel, 3, 0];
+            //    }
+            //}
+            //else
+            //{
+            //    //referece value of symbol in label
+            //    widthRef = (int)statsImg.Data[actualLabel, 2, 0];
+            //    heightRef = (int)statsImg.Data[actualLabel, 3, 0];
+            //    initialStep = false;
+            //}
 
         }
 
@@ -371,85 +402,140 @@ namespace Diploma.camera
                 int labelCandidate;
                 labelCandidate = backUpProcess.backUpLabel(actualCroppedImageColor, numberOfLabels, labelsImg, statsImg, redRef, greenRef, blueRef, heightRef, widthRef, out bbCol, out bbRow, out bbWidth, out bbHeight);
                 //candidate on letter founded
-                if (labelCandidate > 0 && checkIfChar(labelCandidate) == true)
+                if (labelCandidate > 0)// && checkIfChar(labelCandidate) == true
                 {
-                    //set new actual label
-                    startLabel = labelCandidate;
-                    //set variables to find 
-                    startRow = bbRow + (int)(bbHeight / 2);
-                    startCollum = bbCol;
-                    //set start bounding
-                    topRowBB = bbRow;
-                    leftCollumBB = startCollum;
-                    widthBB = bbWidth;
-                    heightBB = bbHeight;
-                    if (topRowBB + heightBB < actualImage.Height)
+                    if (checkIfChar(labelCandidate) == true)
                     {
-                        lowRowBB = topRowBB + heightBB;
+                        //set new actual label
+                        startLabel = labelCandidate;
+                        //set variables to find 
+                        startRow = bbRow + (int)(bbHeight / 2);
+                        startCollum = bbCol;
+                        //set start bounding
+                        topRowBB = bbRow;
+                        leftCollumBB = startCollum;
+                        widthBB = bbWidth;
+                        heightBB = bbHeight;
+                        if (topRowBB + heightBB < actualImage.Height)
+                        {
+                            lowRowBB = topRowBB + heightBB;
+                        }
+                        else
+                        {
+                            lowRowBB = actualImage.Height - 1;
+                        }
+                        //setRefColor
+                        setRefColor(startLabel);
+                        noTextInRoi = false;
+                        //setRef size of char
+                        setRefSize(startLabel);
+                        Console.WriteLine("BACKUP - symbol was found | ROI: " + roi.Width + " | " + roi.Height);
                     }
                     else
                     {
-                        lowRowBB = actualImage.Height - 1;
+                        //area contain 0 symbols = is covered by something/monitor is off/monitor has been moven so quickly
+                        ////////////////////////////////////////TODO
+                        //set new actual label
+                        startLabel = labelCandidate;
+                        //set variables to find 
+                        startRow = bbRow + (int)(bbHeight / 2);
+                        startCollum = bbCol;
+                        //set actual state of labe
+                        noTextInRoi = true;
+                        Console.WriteLine("BACKUP - symbol was NOT found | ROI: " + roi.Width + " | " + roi.Height);
+                        //////////////////////////////////////////TODO
                     }
-                    //setRefColor
-                    setRefColor(startLabel);
                 }
                 else {
                     //area contain 0 symbols = is covered by something/monitor is off/monitor has been moven so quickly
                     ////////////////////////////////////////TODO
-                    Console.WriteLine("No symbol in label: " + this.name);
                     //set new actual label
                     startLabel = labelCandidate;
                     //set variables to find 
                     startRow = bbRow + (int)(bbHeight / 2);
                     startCollum = bbCol;
-                    //set start bounding
-                    topRowBB = bbRow;
-                    leftCollumBB = startCollum;
-                    widthBB = bbWidth;
-                    heightBB = bbHeight;
-                    if (topRowBB + heightBB < actualImage.Height)
-                    {
-                        lowRowBB = topRowBB + heightBB;
-                    }
-                    else
-                    {
-                        lowRowBB = actualImage.Height - 1;
-                    }
+                    //set actual state of labe
+                    noTextInRoi = true;
+                    Console.WriteLine("BACKUP - symbol was NOT found | ROI: " + roi.Width + " | " + roi.Height);
                     //////////////////////////////////////////TODO
                 }
             }
             //first candidate is symbol
             else
             {
-                candidates.Add(actualLabel);
-                startLabel = actualLabel;
-                //set start finding row, check is maybe useless
-                if (statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2 < actualImage.Height)
+                //initialStep = false &&
+                Console.WriteLine("widthRef: " + widthRef + " heightRef " + heightRef + " widthLabel " + statsImg.Data[actualLabel, 2, 0] + " heightLabel " + statsImg.Data[actualLabel, 3, 0] + " initialStep " + initialStep);
+                if (initialStep == true || ((statsImg.Data[actualLabel, 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[actualLabel, 3, 0] < (int)(heightRef * 1.3) && statsImg.Data[actualLabel, 2, 0] > (int)(widthRef * 0.4) && statsImg.Data[actualLabel, 2, 0] < (int)(widthRef * 1.7))))
                 {
-                    startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
+                    candidates.Add(actualLabel);
+                    startLabel = actualLabel;
+                    //set start finding row, check is maybe useless
+                    if (statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2 < actualImage.Height)
+                    {
+                        startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
+                    }
+                    else
+                    {
+                        startRow = actualImage.Height - 1;
+                    }
+                    //start collum
+                    startCollum = statsImg.Data[startLabel, 0, 0];
+                    //set bounding
+                    topRowBB = statsImg.Data[startLabel, 1, 0];
+                    leftCollumBB = startCollum;
+                    widthBB = (int)statsImg.Data[startLabel, 2, 0];
+                    heightBB = (int)statsImg.Data[startLabel, 3, 0];
+                    if (topRowBB + heightBB < actualImage.Height)
+                    {
+                        lowRowBB = topRowBB + heightBB;
+                    }
+                    else
+                    {
+                        lowRowBB = actualImage.Height - 1;
+                    }
+                    //get new refColor
+                    setRefColor(startLabel);
+                    noTextInRoi = false;
+                    //setRef size of char
+                    setRefSize(startLabel);
+                    Console.WriteLine("NORMAL - symbol was found | ROI: " + roi.Width + " | " + roi.Height);
                 }
-                else
+                else {
+                    //set new actual label
+                    startLabel = 0;
+                    //set variables to find 
+                    startRow = 0;
+                    startCollum = 0;
+                    //set actual state of labe
+                    noTextInRoi = true;
+                    Console.WriteLine("NORMAL - symbol was NOT found | ROI: " + roi.Width + " | " + roi.Height);
+                }
+            }
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////
+        //set ref size of char
+        private void setRefSize(int label)
+        {
+            //ref width and height
+            if (initialStep == false)
+            {
+                //update ref value only if change is really small because of perspective disortion
+                if (Math.Abs((int)statsImg.Data[label, 2, 0] - widthRef) < 3)
                 {
-                    startRow = actualImage.Height - 1;
+                    widthRef = (int)statsImg.Data[label, 2, 0];
                 }
-                //start collum
-                startCollum = statsImg.Data[startLabel, 0, 0];
-                //set bounding
-                topRowBB = statsImg.Data[startLabel, 1, 0];
-                leftCollumBB = startCollum;
-                widthBB = (int)statsImg.Data[startLabel, 2, 0];
-                heightBB = (int)statsImg.Data[startLabel, 3, 0];
-                if (topRowBB + heightBB < actualImage.Height)
+                if (Math.Abs((int)statsImg.Data[label, 3, 0] - heightRef) < 3)
                 {
-                    lowRowBB = topRowBB + heightBB;
+                    heightRef = (int)statsImg.Data[label, 3, 0];
                 }
-                else
-                {
-                    lowRowBB = actualImage.Height - 1;
-                }
-                //get new refColor
-                setRefColor(startLabel);
+            }
+            else
+            {
+                //referece value of symbol in label
+                widthRef = (int)statsImg.Data[label, 2, 0];
+                heightRef = (int)statsImg.Data[label, 3, 0];
+                initialStep = false;
             }
         }
 
@@ -495,8 +581,8 @@ namespace Diploma.camera
                     heightBB = lowRowBB - topRowBB;
                 }
                 else {
-                    i = i - statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0];
                     step = step + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0];
+                    i = i - statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0];
                 }
             }
         }
@@ -535,8 +621,8 @@ namespace Diploma.camera
                 }
                 else
                 {
-                    i = i + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0];
                     step = step + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0];
+                    i = i + statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0];
                 }
             }
         }
@@ -561,38 +647,43 @@ namespace Diploma.camera
             //set start values for method findBounding
             setStartValuesFindBounding(out startRow, out startCollum, out startLabel, actualImage);
 
-            //find symbols on the left
-            for (int i = startCollum - 1; i > startCollum - 2*statsImg.Data[actualLabel, 2, 0] || i > 0; i--)
+            if (noTextInRoi == false)
             {
-                if (i <= 0) {
-                    break;
+                //find symbols on the left
+                for (int i = startCollum - 1; i > startCollum - 2 * statsImg.Data[actualLabel, 2, 0] || i > 0; i--)
+                {
+                    if (i <= 0)
+                    {
+                        break;
+                    }
+                    checkLeftFindBounding(ref startRow, ref startCollum, ref i, ref step, actualImage);
+                    step++;
                 }
-                checkLeftFindBounding(ref startRow, ref startCollum,ref i,ref step, actualImage);
-                step++;
-            }
 
-            //set new refernce values before go to right
-            step = 0;
-            startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
-            startCollum = statsImg.Data[startLabel, 0, 0] + statsImg.Data[startLabel, 2, 0];
-            actualLabel = startLabel;
+                //set new refernce values before go to right
+                step = 0;
+                startRow = statsImg.Data[startLabel, 1, 0] + (int)statsImg.Data[startLabel, 3, 0] / 2;
+                startCollum = statsImg.Data[startLabel, 0, 0] + statsImg.Data[startLabel, 2, 0];
+                actualLabel = startLabel;
 
-            //Console.WriteLine("actualCroppedImage.Height " + actualCroppedImage.Height + " actualCroppedImage.Width " + actualCroppedImage.Width);
-            //Console.WriteLine("startRow " + startRow + " startCollum " + startCollum + " actualLabel " + actualLabel);
-            //actualCroppedImage.Save("actualCroppedImage.jpeg");
-            //find symbols on the right
-            for (int i = startCollum + 1; i < startCollum + 2*statsImg.Data[actualLabel, 2, 0]; i++)
-            {
-                if (i >= actualCroppedImage.Width) {
-                    break;
+                //Console.WriteLine("actualCroppedImage.Height " + actualCroppedImage.Height + " actualCroppedImage.Width " + actualCroppedImage.Width);
+                //Console.WriteLine("startRow " + startRow + " startCollum " + startCollum + " actualLabel " + actualLabel);
+                //actualCroppedImage.Save("actualCroppedImage.jpeg");
+                //find symbols on the right
+                for (int i = startCollum + 1; i < startCollum + 2 * statsImg.Data[actualLabel, 2, 0]; i++)
+                {
+                    if (i >= actualCroppedImage.Width)
+                    {
+                        break;
+                    }
+                    checkRightFindBounding(ref startRow, ref startCollum, ref i, ref step, actualImage);
+                    step++;
                 }
-                checkRightFindBounding(ref startRow, ref startCollum,ref i,ref step, actualImage);
-                step++;
-            }
 
-            //ATENTIONE + point to bounding (bounding in whole image)
-            topRowBB = topRowBB + roi.Location.Y;
-            leftCollumBB = leftCollumBB + roi.Location.X;
+                //ATENTIONE + point to bounding (bounding in whole image)
+                topRowBB = topRowBB + roi.Location.Y;
+                leftCollumBB = leftCollumBB + roi.Location.X;
+            }
 
             //areas is probably hidden now or not showing numbers
             if (candidates.Count < 1) {

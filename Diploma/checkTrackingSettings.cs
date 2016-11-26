@@ -83,7 +83,7 @@ namespace Diploma
                 //compare to old one
                 //var a = camera.labelSettings.labelList[i].actualBBFill.AbsDiff(actualCroppedImage);
                 //int[] nonZeroPixels = a.CountNonzero();
-                //double percent = (nonZeroPixels.Max()*100)/ (actualCroppedImage.Width * actualCroppedImage.Height);
+                //double percent = (nonZeroPixels.Max() * 100) / (actualCroppedImage.Width * actualCroppedImage.Height);
                 //nonZeroPixels.Max() / (actualCroppedImage.Width * actualCroppedImage.Height);
                 //if (percent > 3)
                 //{

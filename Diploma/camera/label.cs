@@ -213,9 +213,9 @@ namespace Diploma.camera
             Rectangle roicek = new Rectangle();
             roicek.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);//left top
             roicek.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);//width height
-            Image<Gray, byte> save = this.actualCroppedImage;
+            Image<Gray, byte> save = this.actualCroppedImage.Clone();
             save.ROI = roicek;
-            if (((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) < 1.3) || ((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) > 2.5))
+            if (((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) < 1.1) || ((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) > 2.5))
             {
                 Console.WriteLine("Bad WhiteRatio " + (((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()));
                 return false;
@@ -235,8 +235,44 @@ namespace Diploma.camera
                 return false;
             }
 
+            //color
+            Image<Rgb, byte> cropNew = this.actualCroppedImageColor.Clone();
+            cropNew.ROI = roicek;
+            int blue = 0;
+            int green = 0;
+            int red = 0;
+            int redAvg;
+            int greenAvg;
+            int blueAvg;
+            int counter = 0;
 
-            return true;
+            Image<Gray, Byte>[] channels = cropNew.Split();
+            for (int i = 0; i < cropNew.Height; i++)
+            {
+                for (int j = 0; j < cropNew.Width; j++)
+                {
+                    if (labelsImg.Data[i + roicek.Location.Y, j + roicek.Location.X, 0] == startLabel)
+                    {
+                        counter++;
+                        red += channels[0].Data[i, j, 0];
+                        green += channels[1].Data[i, j, 0];
+                        blue += channels[2].Data[i, j, 0];
+                    }
+                }
+                //Console.WriteLine("");
+            }
+
+            redAvg = red / counter;
+            greenAvg = green / counter;
+            blueAvg = blue / counter;
+
+            if (redAvg <= redRef - 50 && redAvg >= redRef + 50 && greenAvg <= greenRef - 50 && greenAvg >= greenRef + 50 && blueAvg <= blueRef - 50 && blueAvg >= blueRef + 50)
+            {
+                Console.WriteLine("Bad Color ");
+                return false;
+            }
+
+                return true;
 
             //oneChar.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);
             //oneChar.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);

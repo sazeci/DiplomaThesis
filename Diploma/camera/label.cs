@@ -203,30 +203,65 @@ namespace Diploma.camera
             if (startLabel < 0) {
                 return false;
             }
-
-            oneChar.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);
-            oneChar.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);
-            Image<Gray, byte> cropNew = actualCroppedImage.Clone();
-            cropNew.ROI = oneChar;
-            //cropNew = cropNew.Resize(5, Inter.Cubic);
-
-            Mat invert = cropNew.Mat;
-            CvInvoke.CopyMakeBorder(invert, invert, 100, 100, 100, 100, BorderType.Constant, new MCvScalar(0));
-            ocr.Recognize(invert);
-            counterFirstCharSave++;
-
-            //cropNew.Save("FirstChar" + counterFirstCharSave + ".jpeg");
-            //Console.WriteLine("Number of obtained symbols: " + ocr.GetText().Length);
-            if (ocr.GetText().Length < 1 || ocr.GetText().Length > 5)
-            {
-                //return true; //only for testing, bad classifier
+            //aspect ratioCheck
+            if ((((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) < 1.1) || (((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) > 4)) {
+                Console.WriteLine("Bad AspectRatio " + ((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]));
                 return false;
             }
-            else {
-                string dodo = ocr.GetText();
-                Console.WriteLine("First char = " + dodo);
-                return true;
+
+            //white ratio
+            Rectangle roicek = new Rectangle();
+            roicek.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);//left top
+            roicek.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);//width height
+            Image<Gray, byte> save = this.actualCroppedImage;
+            save.ROI = roicek;
+            if (((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) < 1.3) || ((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) > 2.5))
+            {
+                Console.WriteLine("Bad WhiteRatio " + (((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()));
+                return false;
             }
+
+            //number of lakes
+            var valueScalar = new MCvScalar(0);
+            int numberOfLakes;
+            CvInvoke.CopyMakeBorder(save, save, 100, 100, 100, 100, BorderType.Constant, valueScalar);
+            CvInvoke.BitwiseNot(save, save);//invert
+            Mat labels = new Mat();
+            Mat stats = new Mat();
+            Mat centroids = new Mat();
+            numberOfLakes = CvInvoke.ConnectedComponentsWithStats(save, labels, stats, centroids, LineType.FourConnected, DepthType.Cv32S);
+            if (numberOfLakes > 4) {
+                Console.WriteLine("Bad Lakes " + (numberOfLakes-2));
+                return false;
+            }
+
+
+            return true;
+
+            //oneChar.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);
+            //oneChar.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);
+            //Image<Gray, byte> cropNew = actualCroppedImage.Clone();
+            //cropNew.ROI = oneChar;
+            ////cropNew = cropNew.Resize(5, Inter.Cubic);
+
+            //Mat invert = cropNew.Mat;
+            //CvInvoke.CopyMakeBorder(invert, invert, 100, 100, 100, 100, BorderType.Constant, new MCvScalar(0));
+            //ocr.Recognize(invert);
+            //counterFirstCharSave++;
+
+            ////cropNew.Save("FirstChar" + counterFirstCharSave + ".jpeg");
+            ////Console.WriteLine("Number of obtained symbols: " + ocr.GetText().Length);
+            //if (ocr.GetText().Length < 1 || ocr.GetText().Length > 5)
+            //{
+            //    //return true; //only for testing, bad classifier
+            //    return false;
+            //}
+            //else
+            //{
+            //    string dodo = ocr.GetText();
+            //    Console.WriteLine("First char = " + dodo);
+            //    return true;
+            //}
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -553,11 +588,11 @@ namespace Diploma.camera
             //basic condition for tested label(not background, between 0.5-1.5 refHeight, width < 1.5*refHeight, bigger than 20 px)
             if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
             {
+                Console.WriteLine("ZLEVA");
                 //color check works badly
                 //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
                 if (checkIfChar(labelsImg.Data[startRow, i, 0]) == true)
                 {
-                    Console.WriteLine("ZLEVA");
                     //add new letter
                     candidates.Add(labelsImg.Data[startRow, i, 0]);
                     //calculate distance between chars
@@ -602,10 +637,10 @@ namespace Diploma.camera
             //basic condition for tested label(not background, between 0.5-1.5 refHeight, width < 1.5*refHeight, bigger than 20 px)
             if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
             {
+                Console.WriteLine("ZPRAVA");
                 //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
                 if (checkIfChar(labelsImg.Data[startRow, i, 0]) == true)
                 {
-                    Console.WriteLine("ZPRAVA");
                     //add new letter
                     candidates.Add(labelsImg.Data[startRow, i, 0]);
                     //calculate distance between chars
@@ -659,7 +694,7 @@ namespace Diploma.camera
             if (noTextInRoi == false)
             {
                 //find symbols on the left
-                for (int i = startCollum - 1; i > startCollum - 2 * statsImg.Data[actualLabel, 2, 0] || i > 0; i--)
+                for (int i = startCollum - 1; i > startCollum - statsImg.Data[actualLabel, 2, 0] || i > 0; i--)//how far to find a symbol
                 {
                     if (i <= 0)
                     {
@@ -676,12 +711,12 @@ namespace Diploma.camera
                 actualLabel = startLabel;
 
                 //Console.WriteLine("actualCroppedImage.Height " + actualCroppedImage.Height + " actualCroppedImage.Width " + actualCroppedImage.Width);
-                //Console.WriteLine("startRow " + startRow + " startCollum " + startCollum + " actualLabel " + actualLabel);
+                Console.WriteLine("startRow " + startRow + " startCollum " + startCollum + " actualLabel " + actualLabel);
                 //actualCroppedImage.Save("actualCroppedImage.jpeg");
                 //find symbols on the right
-                for (int i = startCollum + 1; i < startCollum + 2 * statsImg.Data[actualLabel, 2, 0]; i++)
+                for (int i = startCollum + 1; i < startCollum + statsImg.Data[actualLabel, 2, 0]; i++)//how far to find a symbol
                 {
-                    if (i >= actualCroppedImage.Width)
+                    if (i >= labelsImg.Width)//actualCroppedImage.width
                     {
                         break;
                     }

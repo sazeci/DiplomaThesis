@@ -609,10 +609,54 @@ namespace Diploma
             }
 
             Image<Gray, byte> save;
-            int size = 50;
-            for (int i = 0; i < listOfImages.Count; i++) {
-                save = makeNewImage(listOfImages[i], size);
-                save.Save("New35x35" + i + ".jpeg");
+            //int size = 50;
+            //new resized images
+            //for (int i = 0; i < listOfImages.Count; i++) {
+            //    save = makeNewImage(listOfImages[i], size);
+            //    save.Save("New35x35" + i + ".jpeg");
+            //}
+
+            Console.WriteLine("ASPECT RATIO");
+            double aspectRatio;
+            for (int i = 0; i < listOfImages.Count; i++)
+            {
+                aspectRatio = (double)listOfImages[i].Height /(double)listOfImages[i].Width;
+                save = listOfImages[i];
+                Console.WriteLine("Symbol(" + i + ")| AspectRatio(" + aspectRatio + ")");
+                save.Save("AspectRatio" + aspectRatio + ".jpeg");
+            }
+
+            Console.WriteLine("NUMBER OF LAKES");
+            //Mat invert = new Mat();
+            Mat labels = new Mat();
+            Mat stats = new Mat();
+            Mat centroids = new Mat();
+            int numberOfLabels;
+            var valueScalar = new MCvScalar(0);
+            for (int i = 0; i < listOfImages.Count; i++)
+            {
+                listOfImages[i] = listOfImages[i].ThresholdBinary(new Gray(100), new Gray(255));
+                //give black border
+                save = new Image<Gray, byte>(listOfImages[i].Size);
+                CvInvoke.CopyMakeBorder(listOfImages[i], save, 100, 100, 100, 100, BorderType.Constant, valueScalar);
+                //invert
+                CvInvoke.BitwiseNot(save, save);
+                //label image
+                numberOfLabels = CvInvoke.ConnectedComponentsWithStats(save, labels, stats, centroids, LineType.FourConnected, DepthType.Cv32S);
+                //
+                Console.WriteLine("Symbol(" + i + ")| NumberOfLakes(" + (numberOfLabels-2) + ")");
+                save.Save(i + "-numberOfLabels" + (numberOfLabels-2) + ".jpeg");
+            }
+
+            Console.WriteLine("RATIO OF WHITE");
+            double whiteRatio;
+            for (int i = 0; i < listOfImages.Count; i++)
+            {
+                listOfImages[i] = listOfImages[i].ThresholdBinary(new Gray(100), new Gray(255));
+                whiteRatio = ((double)listOfImages[i].Height* (double)listOfImages[i].Width) / (double)listOfImages[i].CountNonzero().Max();
+                save = listOfImages[i];
+                Console.WriteLine("Symbol(" + i + ")| WhiteRatio(" + whiteRatio + ")");
+                save.Save(i + "-WhiteRatio" + whiteRatio + ".jpeg");
             }
         }
 

@@ -37,6 +37,7 @@ namespace Diploma.camera
         public int widthRef;
         public int heightRef;
         ArrayList candidates;
+        private int oldNumberOfCandidates = -1;
         //helpy
         Image<Gray, byte> actualCroppedImage;
         Image<Rgb, byte> actualCroppedImageColor;
@@ -84,6 +85,7 @@ namespace Diploma.camera
             markAreas();
             findSymbolBySnail();
             findBounding(actualImage);
+            saveBBFill(actualImage);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -203,9 +205,11 @@ namespace Diploma.camera
             if (startLabel < 0) {
                 return false;
             }
+
             //aspect ratioCheck
             if ((((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) < 1.1) || (((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) > 4)) {
                 Console.WriteLine("Bad AspectRatio " + ((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]));
+
                 return false;
             }
 
@@ -764,6 +768,30 @@ namespace Diploma.camera
                 topRowBB = topRowBB + roi.Location.Y;
                 leftCollumBB = leftCollumBB + roi.Location.X;
             }
+
+            //diference in number of candidates
+            if (oldNumberOfCandidates == -1)
+            {
+                oldNumberOfCandidates = candidates.Count;
+            }
+            else {
+                //too many numbers has been changed = wrong position of label
+                Console.WriteLine("oldNumberOfCandidates " + oldNumberOfCandidates + " Actual number of candidates: " + candidates.Count);
+                if (oldNumberOfCandidates > candidates.Count + 2 || oldNumberOfCandidates < candidates.Count - 2)
+                {
+                    topRowBB = topRowBBOld;
+                    lowRowBB = lowRowBBOld;
+                    leftCollumBB = leftCollumBBOld;
+                    widthBB = widthBBOld;
+                    heightBB = heightBBOld;
+                    Console.WriteLine("BAD CANDIDATES");
+                }
+                else
+                {
+                    oldNumberOfCandidates = candidates.Count;
+                }
+            }
+
 
             //areas is probably hidden now or not showing numbers
             if (candidates.Count < 1) {

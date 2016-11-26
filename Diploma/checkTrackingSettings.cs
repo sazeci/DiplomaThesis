@@ -73,7 +73,7 @@ namespace Diploma
         {
             //pause for testing
             //isStreamEnabled = false;
-
+            Image<Gray, byte> save; 
             for (int i = 0; i < camera.labelSettings.labelList.Count; i++) {
                 //get roi from image
                 actualCroppedImage = actualImage.ToImage<Gray, byte>();
@@ -81,21 +81,28 @@ namespace Diploma
                 //binarize image
                 actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
                 //compare to old one
-                //var a = camera.labelSettings.labelList[i].actualBBFill.AbsDiff(actualCroppedImage);
-                //int[] nonZeroPixels = a.CountNonzero();
-                //double percent = (nonZeroPixels.Max() * 100) / (actualCroppedImage.Width * actualCroppedImage.Height);
+                //Console.WriteLine("camera.labelSettings.labelList[i].actualBBFill " + camera.labelSettings.labelList[i].actualBBFill.Size + " | " + camera.labelSettings.labelList[i].actualBBFill.NumberOfChannels);
+                //Console.WriteLine("actualCroppedImage " + actualCroppedImage.Size + " | " + actualCroppedImage.NumberOfChannels);
+                //a = new Image<Gray, byte>(actualCroppedImage.Size);
+                //CvInvoke.AbsDiff(actualCroppedImage, camera.labelSettings.labelList[i].actualBBFill, a);
+                save = camera.labelSettings.labelList[i].actualBBFill.Clone();
+                save = save.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+                var a = save.AbsDiff(actualCroppedImage);
+                int[] nonZeroPixels = a.CountNonzero();
+                double percent = (nonZeroPixels.Max() * 100) / (actualCroppedImage.Width * actualCroppedImage.Height);
                 //nonZeroPixels.Max() / (actualCroppedImage.Width * actualCroppedImage.Height);
-                //if (percent > 3)
-                //{
-                    //Console.WriteLine("nonZeroPixels.Max() " + nonZeroPixels.Max() + " number of pixels " + (actualCroppedImage.Width * actualCroppedImage.Height) + " CHANGE CHANGE percent: " + percent);
+                if (percent > 3)
+                {
+                    Console.WriteLine("nonZeroPixels.Max() " + nonZeroPixels.Max() + " number of pixels " + (actualCroppedImage.Width * actualCroppedImage.Height) + " CHANGE CHANGE percent: " + percent);
                     camera.labelSettings.labelList[i].actualizeLabel(actualImage);
                     //actualCroppedImage.Save(camera.labelSettings.labelList[i].name + counter + ".jpeg");
                     counter++;
-                //}
-                if (actualCroppedImage.Size.Height * actualCroppedImage.Size.Width > 100)
-                {
-                    ibCamera.Image = actualCroppedImage;
+                    if (actualCroppedImage.Size.Height * actualCroppedImage.Size.Width > 100)
+                    {
+                        ibCamera.Image = actualCroppedImage;
+                    }
                 }
+
                 //refresh
 
                 //bounding

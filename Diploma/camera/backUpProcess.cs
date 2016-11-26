@@ -66,7 +66,7 @@ namespace Diploma.camera
             return 0;
         }
 
-        private void getRefColor(Image<Gray, Int16> labelsImg, Image<Rgb, byte> cropNew, int labelI, out int redAvg, out int greenAvg, out int blueAvg, Rectangle oneChar)
+        public void getRefColor(Image<Gray, Int16> labelsImg, Image<Rgb, byte> cropNew, int labelI, out int redAvg, out int greenAvg, out int blueAvg, Rectangle oneChar)
         {
             int actualLabel = labelI;
             int blue = 0;
@@ -93,7 +93,7 @@ namespace Diploma.camera
             redAvg = red / counter;
             greenAvg = green / counter;
             blueAvg = blue / counter;
-            Console.WriteLine(" red = " + redAvg + " green = " + greenAvg + "blue = " + blueAvg + " COUNTER = " + counter);
+            //Console.WriteLine(" red = " + redAvg + " green = " + greenAvg + "blue = " + blueAvg + " COUNTER = " + counter);
         }
     }
 }

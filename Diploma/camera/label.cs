@@ -90,6 +90,8 @@ namespace Diploma.camera
         //actualize label after change in BB
         internal void actualizeLabel(Mat actualImage)
         {
+            Console.WriteLine("------------------------------------------------------------------------");
+            Console.WriteLine("widthRef " + widthRef + " heightRef " + heightRef + " redRef " + redRef + " greenRef " + greenRef + " blueRef " + blueRef);
             //new roi from old bounding
             newRoi(actualImage);
             //actualize roi + gray
@@ -106,9 +108,9 @@ namespace Diploma.camera
         {
             //checks if roi is in the image
             int leftRoi = 1;
-            if (leftCollumBB - heightBB > 0)
+            if (leftCollumBB - 2 * heightBB > 0)
             {
-                leftRoi = leftCollumBB - heightBB;
+                leftRoi = leftCollumBB - 2 * heightBB;
             }
 
             int topRoi = 1;
@@ -118,13 +120,13 @@ namespace Diploma.camera
             }
 
             int widthRoi = actualImage.Width - 1;
-            if (widthBB + 2 * heightBB < actualImage.Width)
+            if (widthBB + 4 * heightBB + leftRoi < actualImage.Width)
             {
-                widthRoi = widthBB + 2 * heightBB;
+                widthRoi = widthBB + 4 * heightBB;
             }
 
             int heightRoi = actualImage.Height - 1;
-            if (3 * heightBB < actualImage.Height)
+            if (3 * heightBB + topRoi < actualImage.Height)
             {
                 heightRoi = 3 * heightBB;
             }
@@ -215,13 +217,14 @@ namespace Diploma.camera
 
             //cropNew.Save("FirstChar" + counterFirstCharSave + ".jpeg");
             //Console.WriteLine("Number of obtained symbols: " + ocr.GetText().Length);
-            if (ocr.GetText().Length < 1)
+            if (ocr.GetText().Length < 1 || ocr.GetText().Length > 5)
             {
                 //return true; //only for testing, bad classifier
                 return false;
             }
             else {
-                //Console.WriteLine("First char = " + ocr.GetText());
+                string dodo = ocr.GetText();
+                Console.WriteLine("First char = " + dodo);
                 return true;
             }
         }
@@ -404,6 +407,7 @@ namespace Diploma.camera
                 //candidate on letter founded
                 if (labelCandidate > 0)// && checkIfChar(labelCandidate) == true
                 {
+                    Console.WriteLine("BACKUP - i have candidate");
                     if (checkIfChar(labelCandidate) == true)
                     {
                         //set new actual label
@@ -467,6 +471,9 @@ namespace Diploma.camera
                 Console.WriteLine("widthRef: " + widthRef + " heightRef " + heightRef + " widthLabel " + statsImg.Data[actualLabel, 2, 0] + " heightLabel " + statsImg.Data[actualLabel, 3, 0] + " initialStep " + initialStep);
                 if (initialStep == true || ((statsImg.Data[actualLabel, 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[actualLabel, 3, 0] < (int)(heightRef * 1.3) && statsImg.Data[actualLabel, 2, 0] > (int)(widthRef * 0.4) && statsImg.Data[actualLabel, 2, 0] < (int)(widthRef * 1.7))))
                 {
+                    //check color
+                    //TODO
+
                     candidates.Add(actualLabel);
                     startLabel = actualLabel;
                     //set start finding row, check is maybe useless
@@ -550,6 +557,7 @@ namespace Diploma.camera
                 //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
                 if (checkIfChar(labelsImg.Data[startRow, i, 0]) == true)
                 {
+                    Console.WriteLine("ZLEVA");
                     //add new letter
                     candidates.Add(labelsImg.Data[startRow, i, 0]);
                     //calculate distance between chars
@@ -597,6 +605,7 @@ namespace Diploma.camera
                 //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
                 if (checkIfChar(labelsImg.Data[startRow, i, 0]) == true)
                 {
+                    Console.WriteLine("ZPRAVA");
                     //add new letter
                     candidates.Add(labelsImg.Data[startRow, i, 0]);
                     //calculate distance between chars

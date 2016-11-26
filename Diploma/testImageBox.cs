@@ -590,5 +590,78 @@ namespace Diploma
                 ibCamera.Image = imgOriginalColor;
             }
         }
+
+        private void btnSymbolProperties_Click(object sender, EventArgs e)
+        {
+            //load all templates
+            ////load all templates to array
+            //number of files in directory
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo("TemplatesTestMonitor");
+            int count = dir.GetFiles().Length;
+            Console.WriteLine(count);
+            //load all templates
+            Mat imgOriginal;
+            listOfImages = new List<Image<Gray, byte>>();
+            for (int i = 0; i < count; i++)
+            {
+                imgOriginal = new Mat("./TemplatesTestMonitor/" + (i + 1) + ".jpeg", LoadImageType.Color);
+                listOfImages.Add(imgOriginal.ToImage<Gray, byte>());
+            }
+
+            Image<Gray, byte> save;
+            int size = 50;
+            for (int i = 0; i < listOfImages.Count; i++) {
+                save = makeNewImage(listOfImages[i], size);
+                save.Save("New35x35" + i + ".jpeg");
+            }
+        }
+
+        private Image<Gray, byte> makeNewImage(Image<Gray, byte> image, int size)
+        {
+            Image<Gray, byte> save;
+
+
+            double h1 = size * (image.Height / (double)image.Width);
+            double w2 = size * (image.Width / (double)image.Height);
+            //wider
+            if (h1 <= size)
+            {
+                save = image.Resize(size, (int)h1, Inter.Cubic);
+            }
+            //heigher
+            else
+            {
+                save = image.Resize((int)w2, size, Inter.Cubic);
+            }
+
+            int top = (size - save.Height) / 2;
+            int down = (size - save.Height + 1) / 2;
+            int left = (size - save.Width) / 2;
+            int right = (size - save.Width + 1) / 2;
+
+            var valueScalar = new MCvScalar(0);
+            CvInvoke.CopyMakeBorder(save, save, top, down, left, right, BorderType.Constant, valueScalar);
+
+            return save;
+        }
+
+        private void btnTestChar_Click(object sender, EventArgs e)
+        {
+            DialogResult drChosenFile;
+            drChosenFile = ofdOpenFile.ShowDialog();
+            Mat imgOriginal;
+            imgOriginal = new Mat(ofdOpenFile.FileName, LoadImageType.Color);
+            //Mat invert = new Mat();
+            //CvInvoke.BitwiseNot(imgOriginal, invert);
+            //threshold binary
+            Image<Gray, byte> BW = imgOriginal.ToImage<Gray, byte>();
+            BW = BW.ThresholdBinary(new Gray(100), new Gray(255));
+
+            Image<Gray, byte> save;
+            int size = 35;
+            save = makeNewImage(BW, size);
+            save.Save("New35x35.jpeg");
+
+        }
     }
 }

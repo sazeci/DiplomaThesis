@@ -24,6 +24,8 @@ namespace Diploma
         Image<Gray, byte> actualCroppedImage;
         private bool isStreamEnabled = true;
         private Tesseract ocr;
+        private save.saveToFile saveToFile;
+        private bool isCsvOpened = false;
 
         private int counter = 0;
 
@@ -43,6 +45,9 @@ namespace Diploma
             //tessarect
             ocr = new Tesseract("", "eng", OcrEngineMode.TesseractOnly);
             ocr.SetVariable("tessedit_char_whitelist", "0123456789/()");
+
+            //save to file
+            saveToFile = new save.saveToFile();
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -99,16 +104,16 @@ namespace Diploma
                     counter++;
                     if (actualCroppedImage.Size.Height * actualCroppedImage.Size.Width > 100)
                     {
-                        ibCamera.Image = actualCroppedImage;
+                        //ibCamera.Image = actualCroppedImage;
                     }
                 }
 
-                //refresh
+                
 
                 //bounding
                 Image<Gray, byte> boundingImage;
                 boundingImage = actualImage.ToImage<Gray, byte>();
-                boundingImage.ROI = camera.labelSettings.labelList[i].roi;
+                boundingImage.ROI = camera.labelSettings.labelList[0].BB;
                 //binarize image
                 boundingImage = boundingImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
                 ibCamera2.Image = boundingImage;
@@ -117,11 +122,17 @@ namespace Diploma
 
         private void checkTrackingSettings_FormClosing(object sender, FormClosingEventArgs e)
         {
+            saveToFile.closeCsv();
             Application.Exit();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            if (isCsvOpened == false) {
+                saveToFile.openCsv();
+                isCsvOpened = true;
+            }
+            saveToFile.saveToCsv();
             //Mat invert = new Mat();
             //CvInvoke.BitwiseNot(camera.labelSettings.labelList[0].actualBBFill, invert);
 
@@ -135,7 +146,7 @@ namespace Diploma
 
             ocr.Recognize(invert);
             //ibCamera.Image = camera.labelSettings.labelList[0].actualBBFill;
-            Console.WriteLine("Text = " + ocr.GetText());
+            //Console.WriteLine("Text = " + ocr.GetText());
         }
     }
 }

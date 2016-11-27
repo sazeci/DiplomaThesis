@@ -57,6 +57,7 @@ namespace Diploma.camera
         bool initialStep = true;
         backUpProcess backUpProcess;
         bool noTextInRoi = false;
+        public bool noText = false;
 
         int counterSave = 0;
 
@@ -215,7 +216,7 @@ namespace Diploma.camera
 
             //aspect ratioCheck
             if ((((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) < 1.1) || (((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) > 4)) {
-                Console.WriteLine("Bad AspectRatio " + ((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]));
+                //Console.WriteLine("Bad AspectRatio " + ((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]));
 
                 return false;
             }
@@ -231,7 +232,7 @@ namespace Diploma.camera
             //save.Save("whiteRatio AFTER ROI" + (counterSave) + ".jpeg");
             if (((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) < 1.1) || ((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) > 2.5))
             {
-                Console.WriteLine("Bad WhiteRatio " + (((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()));
+                //Console.WriteLine("Bad WhiteRatio " + (((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()));
                 return false;
             }
 
@@ -245,7 +246,7 @@ namespace Diploma.camera
             Mat centroids = new Mat();
             numberOfLakes = CvInvoke.ConnectedComponentsWithStats(save, labels, stats, centroids, LineType.FourConnected, DepthType.Cv32S);
             if (numberOfLakes > 4) {
-                Console.WriteLine("Bad Lakes " + (numberOfLakes-2));
+                //Console.WriteLine("Bad Lakes " + (numberOfLakes-2));
                 return false;
             }
 
@@ -285,12 +286,12 @@ namespace Diploma.camera
             greenAvg = green / counter;
             blueAvg = blue / counter;
 
-            Console.WriteLine(" red = " + redAvg + " green = " + greenAvg + " blue = " + blueAvg + " COUNTER = " + counter);
-            Console.WriteLine(" redRef = " + redRef + " greenRef = " + greenRef + " blueRef = " + blueRef);
+            //Console.WriteLine(" red = " + redAvg + " green = " + greenAvg + " blue = " + blueAvg + " COUNTER = " + counter);
+            //Console.WriteLine(" redRef = " + redRef + " greenRef = " + greenRef + " blueRef = " + blueRef);
 
             if (redAvg <= redRef - 50 || redAvg >= redRef + 50 || greenAvg <= greenRef - 50 || greenAvg >= greenRef + 50 || blueAvg <= blueRef - 50 || blueAvg >= blueRef + 50)
             {
-                Console.WriteLine("Bad Color ");
+                //Console.WriteLine("Bad Color ");
                 return false;
             }
 
@@ -362,7 +363,7 @@ namespace Diploma.camera
                         pointRow--;
                         //out of range
                         if (pointRow < 0) {
-                            Console.WriteLine("NO AREA FOUND IN THIS ROI");
+                            //Console.WriteLine("NO AREA FOUND IN THIS ROI");
                             actualLabel = -1;
                             return;
                         }
@@ -381,7 +382,7 @@ namespace Diploma.camera
                         pointCollum++;
                         //out of range
                         if (pointCollum > actualCroppedImageColor.Width - 1) {
-                            Console.WriteLine("NO AREA FOUND IN THIS ROI");
+                            //Console.WriteLine("NO AREA FOUND IN THIS ROI");
                             actualLabel = -1;
                             return;
                         }
@@ -401,7 +402,7 @@ namespace Diploma.camera
                         //out of range
                         if (pointRow > actualCroppedImageColor.Height-1)
                         {
-                            Console.WriteLine("NO AREA FOUND IN THIS ROI");
+                            //Console.WriteLine("NO AREA FOUND IN THIS ROI");
                             actualLabel = -1;
                             return;
                         }
@@ -421,7 +422,7 @@ namespace Diploma.camera
                         //out of range
                         if (pointCollum < 0)
                         {
-                            Console.WriteLine("NO AREA FOUND IN THIS ROI");
+                            //Console.WriteLine("NO AREA FOUND IN THIS ROI");
                             actualLabel = -1;
                             return;
                         }
@@ -440,7 +441,7 @@ namespace Diploma.camera
             //if no area bigger than 20px wasnt found
             if (actualLabel == 0 && closestLabel == 0)
             {
-                Console.WriteLine("NO AREA FOUND IN THIS ROI");
+                //Console.WriteLine("NO AREA FOUND IN THIS ROI");
                 actualLabel = -1;
             }
 
@@ -500,7 +501,7 @@ namespace Diploma.camera
                 //candidate on letter founded
                 if (labelCandidate > 0)// && checkIfChar(labelCandidate) == true
                 {
-                    Console.WriteLine("BACKUP - i have candidate");
+                    //Console.WriteLine("BACKUP - i have candidate");
                     if (checkIfChar(labelCandidate) == true)
                     {
                         //set new actual label
@@ -526,7 +527,8 @@ namespace Diploma.camera
                         noTextInRoi = false;
                         //setRef size of char
                         setRefSize(startLabel);
-                        Console.WriteLine("BACKUP - symbol was found | ROI: " + roi.Width + " | " + roi.Height);
+                        //Console.WriteLine("BACKUP - symbol was found | ROI: " + roi.Width + " | " + roi.Height);
+                        noText = false;
                     }
                     else
                     {
@@ -539,8 +541,9 @@ namespace Diploma.camera
                         startCollum = bbCol;
                         //set actual state of labe
                         noTextInRoi = true;
-                        Console.WriteLine("BACKUP - symbol was NOT found | ROI: " + roi.Width + " | " + roi.Height);
+                        //Console.WriteLine("BACKUP - symbol was NOT found | ROI: " + roi.Width + " | " + roi.Height);
                         //////////////////////////////////////////TODO
+                        noText = true;
                     }
                 }
                 else {
@@ -553,7 +556,8 @@ namespace Diploma.camera
                     startCollum = bbCol;
                     //set actual state of labe
                     noTextInRoi = true;
-                    Console.WriteLine("BACKUP - symbol was NOT found | ROI: " + roi.Width + " | " + roi.Height);
+                    //Console.WriteLine("BACKUP - symbol was NOT found | ROI: " + roi.Width + " | " + roi.Height);
+                    noText = true;
                     //////////////////////////////////////////TODO
                 }
             }
@@ -561,7 +565,7 @@ namespace Diploma.camera
             else
             {
                 //initialStep = false &&
-                Console.WriteLine("widthRef: " + widthRef + " heightRef " + heightRef + " widthLabel " + statsImg.Data[actualLabel, 2, 0] + " heightLabel " + statsImg.Data[actualLabel, 3, 0] + " initialStep " + initialStep);
+                //Console.WriteLine("widthRef: " + widthRef + " heightRef " + heightRef + " widthLabel " + statsImg.Data[actualLabel, 2, 0] + " heightLabel " + statsImg.Data[actualLabel, 3, 0] + " initialStep " + initialStep);
                 if (initialStep == true || ((statsImg.Data[actualLabel, 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[actualLabel, 3, 0] < (int)(heightRef * 1.3) && statsImg.Data[actualLabel, 2, 0] > (int)(widthRef * 0.4) && statsImg.Data[actualLabel, 2, 0] < (int)(widthRef * 1.7))))
                 {
                     //check color
@@ -598,7 +602,8 @@ namespace Diploma.camera
                     noTextInRoi = false;
                     //setRef size of char
                     setRefSize(startLabel);
-                    Console.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++NORMAL - symbol was found | ROI: " + roi.Width + " | " + roi.Height);
+                    noText = false;
+                    //Console.WriteLine("NORMAL - symbol was found | ROI: " + roi.Width + " | " + roi.Height);
 
                     Rectangle dodo = new Rectangle();
                     dodo.Location = new Point(leftCollumBB, topRowBB);
@@ -616,7 +621,8 @@ namespace Diploma.camera
                     startCollum = 0;
                     //set actual state of labe
                     noTextInRoi = true;
-                    Console.WriteLine("NORMAL - symbol was NOT found | ROI: " + roi.Width + " | " + roi.Height);
+                    noText = true;
+                    //Console.WriteLine("NORMAL - symbol was NOT found | ROI: " + roi.Width + " | " + roi.Height);
                 }
             }
         }
@@ -654,7 +660,7 @@ namespace Diploma.camera
             //basic condition for tested label(not background, between 0.5-1.5 refHeight, width < 1.5*refHeight, bigger than 20 px)
             if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
             {
-                Console.WriteLine("ZLEVA");
+                //Console.WriteLine("ZLEVA");
                 //color check works badly
                 //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
                 if (checkIfChar(labelsImg.Data[startRow, i, 0]) == true)
@@ -703,7 +709,7 @@ namespace Diploma.camera
             //basic condition for tested label(not background, between 0.5-1.5 refHeight, width < 1.5*refHeight, bigger than 20 px)
             if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
             {
-                Console.WriteLine("ZPRAVA");
+                //Console.WriteLine("ZPRAVA");
                 //if ((actualCroppedImageColor.Data[startRow, i, 0] > redRef - 50 && actualCroppedImageColor.Data[startRow, i, 0] < redRef + 50) && (actualCroppedImageColor.Data[startRow, i, 1] > greenRef - 50 && actualCroppedImageColor.Data[startRow, i, 1] < greenRef + 50) && (actualCroppedImageColor.Data[startRow, i, 2] > blueRef - 50 && actualCroppedImageColor.Data[blueRef, i, 2] < blueRef + 50))
                 if (checkIfChar(labelsImg.Data[startRow, i, 0]) == true)
                 {
@@ -777,7 +783,7 @@ namespace Diploma.camera
                 actualLabel = startLabel;
 
                 //Console.WriteLine("actualCroppedImage.Height " + actualCroppedImage.Height + " actualCroppedImage.Width " + actualCroppedImage.Width);
-                Console.WriteLine("startRow " + startRow + " startCollum " + startCollum + " actualLabel " + actualLabel);
+                //Console.WriteLine("startRow " + startRow + " startCollum " + startCollum + " actualLabel " + actualLabel);
                 //actualCroppedImage.Save("actualCroppedImage.jpeg");
                 //find symbols on the right
                 for (int i = startCollum + 1; i < startCollum + statsImg.Data[actualLabel, 2, 0]; i++)//how far to find a symbol
@@ -802,7 +808,7 @@ namespace Diploma.camera
             }
             else {
                 //too many numbers has been changed = wrong position of label
-                Console.WriteLine("oldNumberOfCandidates " + oldNumberOfCandidates + " Actual number of candidates: " + candidates.Count);
+                //Console.WriteLine("oldNumberOfCandidates " + oldNumberOfCandidates + " Actual number of candidates: " + candidates.Count);
                 if (oldNumberOfCandidates > candidates.Count + 2 || oldNumberOfCandidates < candidates.Count - 2)
                 {
                     topRowBB = topRowBBOld;
@@ -810,7 +816,7 @@ namespace Diploma.camera
                     leftCollumBB = leftCollumBBOld;
                     widthBB = widthBBOld;
                     heightBB = heightBBOld;
-                    Console.WriteLine("BAD CANDIDATES");
+                    //Console.WriteLine("BAD CANDIDATES");
                 }
                 else
                 {
@@ -826,7 +832,7 @@ namespace Diploma.camera
                 leftCollumBB = leftCollumBBOld;
                 widthBB = widthBBOld;
                 heightBB = heightBBOld;
-                Console.WriteLine("NO SYMBOLS");
+                //Console.WriteLine("NO SYMBOLS");
             }
             BB.Location = new Point(leftCollumBB, topRowBB);
             BB.Size = new Size(widthBB, heightBB);

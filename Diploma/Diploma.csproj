@@ -122,6 +122,7 @@
     <Compile Include="roiSettings.Designer.cs">
       <DependentUpon>roiSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="save\saveToFile.cs" />
     <Compile Include="selectCameraSettings.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -470,7 +470,7 @@ namespace Diploma
                     continue;
                 }
                 //too big
-                if (statsImg.Data[i, 4, 0] > (int)((imgOriginal.Size.Width * imgOriginal.Size.Height)/16))//for whole image
+                if (statsImg.Data[i, 4, 0] > (int)((imgOriginal.Size.Width * imgOriginal.Size.Height)/4))//for whole image 16
                 {
                     continue;
                 }
@@ -480,17 +480,17 @@ namespace Diploma
                     continue;
                 }
                 //similar size of reference
-                if (statsImg.Data[i, 3, 0] > (int)(refHeight * 0.75) && statsImg.Data[i, 3, 0] < (int)(refHeight * 1.3) && statsImg.Data[i, 2, 0] > (int)(refWidth * 0.4) && statsImg.Data[i, 2, 0] < (int)(refWidth * 1.7)) {
+                //if (statsImg.Data[i, 3, 0] > (int)(refHeight * 0.75) && statsImg.Data[i, 3, 0] < (int)(refHeight * 1.3) && statsImg.Data[i, 2, 0] > (int)(refWidth * 0.4) && statsImg.Data[i, 2, 0] < (int)(refWidth * 1.7)) {
                     oneChar.Location = new Point(statsImg.Data[i, 0, 0], statsImg.Data[i, 1, 0]);
                     oneChar.Size = new Size(statsImg.Data[i, 2, 0], statsImg.Data[i, 3, 0]);
                     Image<Rgb, byte> cropNew = imgOriginalColor.Clone();
                     cropNew.ROI = oneChar;
                     getRefColor(labelsImg, cropNew, i, out redAvg, out greenAvg, out blueAvg, oneChar);
-                    if (redAvg >= redRef - 50 && redAvg <= redRef + 50 && greenAvg >= greenRef - 50 && greenAvg <= greenRef + 50 && blueAvg >= blueRef - 50 && blueAvg <= blueRef + 50)
-                    {
+                    //if (redAvg >= redRef - 50 && redAvg <= redRef + 50 && greenAvg >= greenRef - 50 && greenAvg <= greenRef + 50 && blueAvg >= blueRef - 50 && blueAvg <= blueRef + 50)
+                    //{
                         cropNew.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + ".jpeg");
-                    }
-                }
+                    //}
+                //}
             }
 
             ibCamera.Image = bwImgOriginal;

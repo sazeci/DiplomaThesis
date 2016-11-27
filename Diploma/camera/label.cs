@@ -38,10 +38,10 @@ namespace Diploma.camera
         public int heightRef;
         ArrayList candidates;
         private int oldNumberOfCandidates = -1;
+        bool isFirstLetter = true;
         //helpy
         Image<Gray, byte> actualCroppedImage;
         Image<Rgb, byte> actualCroppedImageColor;
-        private int counterFirstCharSave;
         Mat labels;
         Mat stats;
         Mat centroids;
@@ -57,6 +57,8 @@ namespace Diploma.camera
         bool initialStep = true;
         backUpProcess backUpProcess;
         bool noTextInRoi = false;
+
+        int counterSave = 0;
 
         public label(Rectangle roi)
         {
@@ -202,6 +204,11 @@ namespace Diploma.camera
         //check if found marked area contains symbol
         private bool checkIfChar(int startLabel)
         {
+            if (isFirstLetter == true) {
+                isFirstLetter = false;
+                return true;
+            }
+
             if (startLabel < 0) {
                 return false;
             }
@@ -218,7 +225,10 @@ namespace Diploma.camera
             roicek.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);//left top
             roicek.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);//width height
             Image<Gray, byte> save = this.actualCroppedImage.Clone();
+            //save.Save("whiteRatio" + (counterSave) + ".jpeg");
+            //Console.WriteLine("roicek 1 : " + roicek.Size + " location: " + roicek.Location);
             save.ROI = roicek;
+            //save.Save("whiteRatio AFTER ROI" + (counterSave) + ".jpeg");
             if (((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) < 1.1) || ((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) > 2.5))
             {
                 Console.WriteLine("Bad WhiteRatio " + (((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()));
@@ -241,7 +251,11 @@ namespace Diploma.camera
 
             //color
             Image<Rgb, byte> cropNew = this.actualCroppedImageColor.Clone();
+            //cropNew.Save("RoicekColor" + (counterSave) + ".jpeg");
+            //Console.WriteLine("roicek 2 : " + roicek.Size + " location: " + roicek.Location);
+            roicek.Location = new Point(roi.X+roicek.Location.X, roi.Y+roicek.Location.Y);//left top
             cropNew.ROI = roicek;
+            //cropNew.Save("RoicekColor AFTER ROI" + (counterSave) + ".jpeg");
             int blue = 0;
             int green = 0;
             int red = 0;
@@ -249,13 +263,14 @@ namespace Diploma.camera
             int greenAvg;
             int blueAvg;
             int counter = 0;
+            counterSave++;
 
             Image<Gray, Byte>[] channels = cropNew.Split();
             for (int i = 0; i < cropNew.Height; i++)
             {
                 for (int j = 0; j < cropNew.Width; j++)
                 {
-                    if (labelsImg.Data[i + roicek.Location.Y, j + roicek.Location.X, 0] == startLabel)
+                    if (labelsImg.Data[i + roicek.Location.Y-roi.Y, j + roicek.Location.X-roi.X, 0] == startLabel)//if (labelsImg.Data[i + roicek.Location.Y, j + roicek.Location.X, 0] == startLabel)
                     {
                         counter++;
                         red += channels[0].Data[i, j, 0];
@@ -270,13 +285,16 @@ namespace Diploma.camera
             greenAvg = green / counter;
             blueAvg = blue / counter;
 
-            if (redAvg <= redRef - 50 && redAvg >= redRef + 50 && greenAvg <= greenRef - 50 && greenAvg >= greenRef + 50 && blueAvg <= blueRef - 50 && blueAvg >= blueRef + 50)
+            Console.WriteLine(" red = " + redAvg + " green = " + greenAvg + " blue = " + blueAvg + " COUNTER = " + counter);
+            Console.WriteLine(" redRef = " + redRef + " greenRef = " + greenRef + " blueRef = " + blueRef);
+
+            if (redAvg <= redRef - 50 || redAvg >= redRef + 50 || greenAvg <= greenRef - 50 || greenAvg >= greenRef + 50 || blueAvg <= blueRef - 50 || blueAvg >= blueRef + 50)
             {
                 Console.WriteLine("Bad Color ");
                 return false;
             }
 
-                return true;
+            return true;
 
             //oneChar.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);
             //oneChar.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);
@@ -580,7 +598,15 @@ namespace Diploma.camera
                     noTextInRoi = false;
                     //setRef size of char
                     setRefSize(startLabel);
-                    Console.WriteLine("NORMAL - symbol was found | ROI: " + roi.Width + " | " + roi.Height);
+                    Console.WriteLine("++++++++++++++++++++++++++++++++++++++++++++++++++++++++NORMAL - symbol was found | ROI: " + roi.Width + " | " + roi.Height);
+
+                    Rectangle dodo = new Rectangle();
+                    dodo.Location = new Point(leftCollumBB, topRowBB);
+                    dodo.Size = new Size(widthBB, heightBB);
+                    Image<Gray, byte> dodik = actualCroppedImage.Clone();
+                    dodik.ROI = dodo;
+                    //dodik.Save("NormalSYmbol" + (counterSave) + ".jpeg");
+                    counterSave++;
                 }
                 else {
                     //set new actual label

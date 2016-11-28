@@ -189,13 +189,13 @@ namespace Diploma.camera
                         {
                             //Console.WriteLine("COLOR OK");
                             //chceck color of back
-                            if (background < 50)
+                            if (background < 60)
                             {
                                 findedMatches[i, positionInFindedMatches] = j;
                                 positionInFindedMatches++;
                                 //Console.WriteLine("BACKGROUND OK");
-                                cropNew.Save("Candidate(" + j + ").jpeg");
-                                //cropNew.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + "Background=" + background + ".jpeg");
+                                //cropNew.Save("Candidate(" + j + ").jpeg");
+                                cropNew.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + "Background=" + background + ".jpeg");
                             }
                         }
                     }
@@ -247,7 +247,7 @@ namespace Diploma.camera
                         }
                         //calculate distance in X
                         distanceX = Math.Abs(centroidsImg.Data[findedMatches[i, j], 0, 0] - centroidsImg.Data[findedMatches[i, k], 0, 0]);
-                        Console.WriteLine("Distence between|" + findedMatches[i, j] + "|" + findedMatches[i, k] + "| is " + distanceX + " should be smaller than: " + (statsImg.Data[findedMatches[i, j], 2, 0] * 2));
+                        //Console.WriteLine("Distence between|" + findedMatches[i, j] + "|" + findedMatches[i, k] + "| is " + distanceX + " should be smaller than: " + (statsImg.Data[findedMatches[i, j], 2, 0] * 2));
 
                         //symbols are in distance < 2*width of symbol
                         if (distanceX < (statsImg.Data[findedMatches[i, j], 2, 0] * 2)) {
@@ -313,14 +313,14 @@ namespace Diploma.camera
 
 
             //check
-            for (int i = 0; i < candidatesInGroups.Count; i++)
-            {
-                for (int j = 0; j < candidatesInGroups[i].Count; j++)
-                {
-                    Console.Write(candidatesInGroups[i][j] + "|");
-                }
-                Console.WriteLine();
-            }
+            //for (int i = 0; i < candidatesInGroups.Count; i++)
+            //{
+            //    for (int j = 0; j < candidatesInGroups[i].Count; j++)
+            //    {
+            //        Console.Write(candidatesInGroups[i][j] + "|");
+            //    }
+            //    Console.WriteLine();
+            //}
 
             //find centroids
             findCentroids(candidatesInGroups, label);
@@ -346,7 +346,7 @@ namespace Diploma.camera
                 }
                 centroids[i].X = centroidX / candidatesInGroups[i].Count;
                 centroids[i].Y = centroidY / candidatesInGroups[i].Count;
-                Console.WriteLine("Centroid = " + centroids[i]);
+                //Console.WriteLine("Centroid = " + centroids[i]);
             }
 
             findWhichOneIsLabelOfInterest(centroids, label);
@@ -355,20 +355,68 @@ namespace Diploma.camera
         private void findWhichOneIsLabelOfInterest(Point[] centroids, int label)
         {
             int distance = int.MaxValue;
+            int helpDistance;
             int whichIsClosest = 0;
+            int[] distanceX = new int[centroids.GetLength(0)];
+            int[] distanceXI = new int[centroids.GetLength(0)];
+            int[] distanceY = new int[centroids.GetLength(0)];
+            int[] distanceYI = new int[centroids.GetLength(0)];
 
             //calculate the distance to the regular label from all of candidates to obtain which one is correct
-            for (int i = 0; i < centroids.Length; i++)
+            for (int i = 0; i < centroids.GetLength(0); i++)
             {
-                distance = Math.Abs(centroids[i].X - labelSettings.labelList[label].centroidBB.X) + Math.Abs(centroids[i].Y - labelSettings.labelList[label].centroidBB.Y);
-                if (Math.Abs(centroids[i].X - labelSettings.labelList[label].centroidBB.X) + Math.Abs(centroids[i].Y - labelSettings.labelList[label].centroidBB.Y) < distance) {
-                    distance = Math.Abs(centroids[i].X - labelSettings.labelList[label].centroidBB.X) + Math.Abs(centroids[i].Y - labelSettings.labelList[label].centroidBB.Y);
+                //distance = Math.Abs(centroids[i].X - (labelSettings.labelList[label].centroidBB.X + labelSettings.labelList[label].roi.Location.X)) + Math.Abs(centroids[i].Y - (labelSettings.labelList[label].centroidBB.Y + labelSettings.labelList[label].roi.Location.Y));
+                //Console.WriteLine(centroids[i].X + " ---- " + centroids[i].Y);
+                //Console.WriteLine((labelSettings.labelList[label].centroidBB.X) + " ---- " + (labelSettings.labelList[label].centroidBB.Y));
+                //Console.WriteLine("Distance: " + (Math.Abs(centroids[i].X - (labelSettings.labelList[label].centroidBB.X)) + Math.Abs(centroids[i].Y - (labelSettings.labelList[label].centroidBB.Y))));
+                helpDistance = Math.Abs(centroids[i].X - (labelSettings.labelList[label].centroidBB.X)) + Math.Abs(centroids[i].Y - (labelSettings.labelList[label].centroidBB.Y));
+                //add info to XY axis
+                distanceXI[i] = i;
+                distanceX[i] = centroids[i].X;
+                distanceYI[i] = i;
+                distanceY[i] = centroids[i].Y;
+
+                if (helpDistance < distance) {
+                    distance = helpDistance;
                     whichIsClosest = i;
                 }
             }
 
-            Console.WriteLine("distance " + distance);
+            findPositionInScene(distanceX, distanceXI, distanceY, distanceYI, whichIsClosest);
         }
+
+        private void findPositionInScene(int[] distanceX, int[] distanceXI, int[] distanceY, int[] distanceYI, int whichIsClosest)
+        {
+            int left = 0;
+            int top = 0;
+
+            //order X by x[1]
+            Array.Sort(distanceX, distanceXI);
+            //order by Y[1]
+            Array.Sort(distanceY, distanceYI);
+
+            //find on which place is my label
+            //left
+            for (int i = 0; i < distanceXI.GetLength(0); i++)
+            {
+                if (distanceXI[i] == whichIsClosest) {
+                    left = i;
+                }
+            }
+
+            //top
+            for (int i = 0; i < distanceYI.GetLength(0); i++)
+            {
+                if (distanceYI[i] == whichIsClosest)
+                {
+                    top = i;
+                }
+            }
+
+            Console.WriteLine("My label is " + left + " from left and " + top + " from top");
+        }
+
+
 
         private void getRefColorBeforeBackUp(Image<Gray, short> labelsImg, Image<Rgb, byte> cropNew, int labelI, out int redAvg, out int greenAvg, out int blueAvg, Rectangle roicek, out int background)
         {

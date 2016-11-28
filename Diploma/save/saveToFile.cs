@@ -19,6 +19,8 @@ namespace Diploma.save
         private StringBuilder csv;
         private Image<Rgb, byte> colorImage;
 
+        private int counterHelpa = 0;
+
         public saveToFile()
         {
             ocr = new Tesseract("", "eng", OcrEngineMode.TesseractOnly);
@@ -48,16 +50,27 @@ namespace Diploma.save
                 if (camera.labelSettings.labelList[i].noText == false)
                 {
                     invert = camera.labelSettings.labelList[i].actualBBFill.Mat;
-                    CvInvoke.CopyMakeBorder(invert, invert, 100, 100, 100, 100, BorderType.Constant, new MCvScalar(0));
-                    ocr.Recognize(invert);
+                    //CvInvoke.CopyMakeBorder(invert, invert, 100, 100, 100, 100, BorderType.Constant, new MCvScalar(0));
+                    //test
+                    Image<Gray, byte> invertGray = invert.ToImage<Gray, byte>();
+                    invertGray = invertGray.ThresholdBinary(new Gray(100), new Gray(255));
+                    invertGray.Resize(5, Inter.Cubic);
+                    CvInvoke.CopyMakeBorder(invertGray, invertGray, 100, 100, 100, 100, BorderType.Constant, new MCvScalar(0));
+                    invertGray = invertGray.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+                    invertGray.Save("Invert" + counterHelpa + ".jpeg");
+                    //test - end
+                    counterHelpa++;
+                    ocr.Recognize(invertGray);
                     actualOCR = ocr.GetText();
                     if (actualOCR.Length == 0) {
+                        Console.WriteLine("Text length = 0");
                         actualOCR = "NaN";
                     }
 
                     newLine = newLine + actualOCR + "," ;
                 }
                 else {
+                    Console.WriteLine("No text == true");
                     newLine = newLine + "NaN,";
                 }
             }

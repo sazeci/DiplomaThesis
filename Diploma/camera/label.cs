@@ -843,8 +843,8 @@ namespace Diploma.camera
             BB.Size = new Size(widthBB, heightBB);
             //Console.WriteLine("candidates " + candidates.Count);
 
-            centroidBB.Y = (topRowBB + heightBB) / 2;
-            centroidBB.X = (leftCollumBB + widthBB) / 2;
+            centroidBB.Y = (topRowBB + (heightBB/2));
+            centroidBB.X = (leftCollumBB + (widthBB/2));
         }
 
         /////////////////////////////////////////////////////////////////////////////////////

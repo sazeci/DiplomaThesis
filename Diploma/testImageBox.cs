@@ -15,6 +15,7 @@ using Emgu.CV.UI;               //
 using System.Collections;
 using Emgu.CV.OCR;
 using Emgu.CV.Util;
+using System.Linq;
 
 namespace Diploma
 {
@@ -78,7 +79,7 @@ namespace Diploma
 
         private void btnMarkers_Click(object sender, EventArgs e)
         {
-            imageManipulation.findMarkers findMarkers = new imageManipulation.findMarkers();
+            //imageManipulation.findMarkers findMarkers = new imageManipulation.findMarkers();
 
             //template matching
             //DialogResult drChosenFile;
@@ -93,7 +94,21 @@ namespace Diploma
             //ibCamera.Image = findMarkers.hsvTransform(actualImage);
 
             //find red things
-            ibCamera.Image = findMarkers.findColor(actualImage);
+            //ibCamera.Image = findMarkers.findColor(actualImage);
+
+            //sort array
+            int[] array1 = new int[3] { 1, 2, 3 };
+            int[] array2 = new int[3] { 9, 8, 7 };
+            Array.Sort(array2, array1);
+            for (int i = 0; i < array1.GetLength(0); i++)
+            {
+                Console.WriteLine(array1[i]);
+            }
+
+            for (int i = 0; i < array1.GetLength(0); i++)
+            {
+                Console.WriteLine(array2[i]);
+            }
 
         }
 

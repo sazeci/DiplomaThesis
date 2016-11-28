@@ -157,6 +157,10 @@ namespace Diploma.camera
             //threshold
             actualCroppedImage = actualCroppedImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
             //actualCroppedImage.Save("actualCroppedImageOriginal.jpeg");
+
+            //test morphological operation
+            //Mat kernel1 = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Ellipse, new Size(5, 5), new Point(1, 1));
+            //CvInvoke.MorphologyEx(actualCroppedImage, actualCroppedImage, MorphOp.Dilate, kernel1, new Point(0, 0), 2, BorderType.Default, new MCvScalar());
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +202,7 @@ namespace Diploma.camera
             redRef = red / counter;
             greenRef = green / counter;
             blueRef = blue / counter;
-            //Console.WriteLine(" red = " + redRef + " green = " + greenRef + " blue = " + blueRef + " COUNTER = " + counter);
+            Console.WriteLine(" red = " + redRef + " green = " + greenRef + " blue = " + blueRef + " COUNTER = " + counter);
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -215,7 +219,8 @@ namespace Diploma.camera
             }
 
             //aspect ratioCheck
-            if ((((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) < 1.1) || (((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) > 4)) {
+            if ((((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) < 1.1) || (((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) > 4))
+            {
                 //Console.WriteLine("Bad AspectRatio " + ((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]));
 
                 return false;

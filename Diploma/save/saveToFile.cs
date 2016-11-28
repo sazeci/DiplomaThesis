@@ -17,6 +17,7 @@ namespace Diploma.save
     {
         private Tesseract ocr;
         private StringBuilder csv;
+        private Image<Rgb, byte> colorImage;
 
         public saveToFile()
         {

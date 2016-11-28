@@ -26,6 +26,7 @@ namespace Diploma
         private bool isStreamEnabled = true;
         private int actualLabel = 1;
         private bool isStepThree = false;
+        camera.backUpProcess backUpProcess;
 
         /////////////////////////////////////////////////////////////////////////////////////
         public addAreasSettings()
@@ -40,6 +41,7 @@ namespace Diploma
             this.roiSettings = roiSettings;
             ibCamera.FunctionalMode = ImageBox.FunctionalModeOption.Minimum;
             actualImage = new Mat();
+            backUpProcess = new camera.backUpProcess();
 
             //start camera
             startCamera(camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera]._CameraIndex);
@@ -279,6 +281,9 @@ namespace Diploma
 
         private void btnNext_Click(object sender, EventArgs e)
         {
+            //define which one is the chosen label for backup
+            backUpProcess.defineBeforeBackUp(actualImage);
+
             //open new form
             checkTrackingSettings checkTrackingSettings = new checkTrackingSettings(this);
             checkTrackingSettings.Show();

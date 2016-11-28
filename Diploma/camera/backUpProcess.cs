@@ -21,6 +21,7 @@ namespace Diploma.camera
         Image<Gray, Int16> labelsImg;
         Image<Gray, Int16> statsImg;
         Image<Gray, Int16> centroidsImg;
+        int pairsCount;
         private int[,] findedMatches;
 
         public int backUpLabel(Image<Rgb, byte> imgOriginalColor, int numberOfLabels, Image<Gray, short> labelsImg, Image<Gray, short> statsImg, int redRef, int greenRef, int blueRef, int refHeight, int refWidth, out int bbCol, out int bbRow, out int bbWidth, out int bbHeight)
@@ -193,6 +194,7 @@ namespace Diploma.camera
                                 findedMatches[i, positionInFindedMatches] = j;
                                 positionInFindedMatches++;
                                 //Console.WriteLine("BACKGROUND OK");
+                                cropNew.Save("Candidate(" + j + ").jpeg");
                                 //cropNew.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + "Background=" + background + ".jpeg");
                             }
                         }
@@ -204,7 +206,7 @@ namespace Diploma.camera
             //{
             //    for (int j = 0; j < findedMatches.GetLength(1); j++)
             //    {
-            //        Console.Write(findedMatches[i,j] + "|");
+            //        Console.Write(findedMatches[i, j] + "|");
             //    }
             //    Console.WriteLine();
             //}
@@ -215,10 +217,15 @@ namespace Diploma.camera
         private void foundLines(int[,] findedMatches)
         {
             int distanceX = 0;
+            int[,] matchesForOneLabel;
+            int matchesForOneLabelCounter = 0;
 
             //all labels
             for (int i = 0; i < findedMatches.GetLength(0); i++)
             {
+                matchesForOneLabel = new int[2, 100];
+                matchesForOneLabelCounter = 0;
+                pairsCount = 0;
                 //all candidates
                 for (int j = 0; j < 100; j++)
                 {
@@ -234,22 +241,133 @@ namespace Diploma.camera
                             continue;
                         }
                         //end of candidates
-                        if (findedMatches[i, j] == 0)
+                        if (findedMatches[i, k] == 0)
                         {
                             break;
                         }
                         //calculate distance in X
                         distanceX = Math.Abs(centroidsImg.Data[findedMatches[i, j], 0, 0] - centroidsImg.Data[findedMatches[i, k], 0, 0]);
+                        Console.WriteLine("Distence between|" + findedMatches[i, j] + "|" + findedMatches[i, k] + "| is " + distanceX + " should be smaller than: " + (statsImg.Data[findedMatches[i, j], 2, 0] * 2));
+
                         //symbols are in distance < 2*width of symbol
-                        if (distanceX < (statsImg.Data[j, 2, 0] * 2)) {
-                            //centroid of K is in heigh of J (int Y axis)
+                        if (distanceX < (statsImg.Data[findedMatches[i, j], 2, 0] * 2)) {
+                            //centroid of K is in heigh of J (in Y axis)
                             if (centroidsImg.Data[findedMatches[i, k], 1, 0] > statsImg.Data[findedMatches[i, j], 1, 0] && centroidsImg.Data[findedMatches[i, k], 1, 0] < (statsImg.Data[findedMatches[i, j], 1, 0] + statsImg.Data[findedMatches[i, j], 3, 0])) {
+                                matchesForOneLabel[0, matchesForOneLabelCounter] = findedMatches[i, j];
+                                matchesForOneLabel[1, matchesForOneLabelCounter] = findedMatches[i, k];
+                                matchesForOneLabelCounter++;
                                 Console.WriteLine(findedMatches[i, j] + "||" + findedMatches[i, k]);
                             }
                         }
                     }
                 }
+                connectPairsOneLabel(matchesForOneLabel, matchesForOneLabelCounter, i);//i = label
             }
+        }
+
+        private void connectPairsOneLabel(int[,] matchesForOneLabel, int matchesForOneLabelCounter, int label)
+        {
+            List<List<int>> candidatesInGroups = new List<List<int>>(); ;
+            candidatesInGroups.Add(new List<int>());
+            candidatesInGroups[0].Add(matchesForOneLabel[0, 0]);
+            candidatesInGroups[0].Add(matchesForOneLabel[1, 0]);
+            int numberOfLists = 1;
+            bool pairWasFounded = false;
+
+            //through all pairs
+            for (int i = 1; i < matchesForOneLabelCounter; i++)
+            {
+                pairWasFounded = false;
+                //try to found match
+                for (int j = 0; j < candidatesInGroups.Count; j++)
+                {
+                    if (candidatesInGroups[j].Contains(matchesForOneLabel[0, i])) {
+                        if (candidatesInGroups[j].Contains(matchesForOneLabel[1, i])) {
+                            pairWasFounded = true;
+                            break;
+                        }
+                        candidatesInGroups[j].Add(matchesForOneLabel[1, i]);
+                        pairWasFounded = true;
+                        break;
+                    }
+                    if (candidatesInGroups[j].Contains(matchesForOneLabel[1, i]))
+                    {
+                        if (candidatesInGroups[j].Contains(matchesForOneLabel[0, i]))
+                        {
+                            pairWasFounded = true;
+                            break;
+                        }
+                        candidatesInGroups[j].Add(matchesForOneLabel[0, i]);
+                        pairWasFounded = true;
+                        break;
+                    }
+                }
+                //no match with pair
+                if (pairWasFounded == false) {
+                    candidatesInGroups.Add(new List<int>());
+                    candidatesInGroups[numberOfLists].Add(matchesForOneLabel[0, i]);
+                    candidatesInGroups[numberOfLists].Add(matchesForOneLabel[1, i]);
+                    numberOfLists++;
+                }
+            }
+
+
+            //check
+            for (int i = 0; i < candidatesInGroups.Count; i++)
+            {
+                for (int j = 0; j < candidatesInGroups[i].Count; j++)
+                {
+                    Console.Write(candidatesInGroups[i][j] + "|");
+                }
+                Console.WriteLine();
+            }
+
+            //find centroids
+            findCentroids(candidatesInGroups, label);
+        }
+
+        private void findCentroids(List<List<int>> candidatesInGroups, int label)
+        {
+            int centroidX;
+            int centroidY;
+            Point[] centroids = new Point[candidatesInGroups.Count];
+
+
+            //one label
+            for (int i = 0; i < candidatesInGroups.Count; i++)
+            {
+                centroidX = 0;
+                centroidY = 0;
+                //conected candidates in lines
+                for (int j = 0; j < candidatesInGroups[i].Count; j++)
+                {
+                    centroidX += centroidsImg.Data[candidatesInGroups[i][j], 0, 0];
+                    centroidY += centroidsImg.Data[candidatesInGroups[i][j], 1, 0];
+                }
+                centroids[i].X = centroidX / candidatesInGroups[i].Count;
+                centroids[i].Y = centroidY / candidatesInGroups[i].Count;
+                Console.WriteLine("Centroid = " + centroids[i]);
+            }
+
+            findWhichOneIsLabelOfInterest(centroids, label);
+        }
+
+        private void findWhichOneIsLabelOfInterest(Point[] centroids, int label)
+        {
+            int distance = int.MaxValue;
+            int whichIsClosest = 0;
+
+            //calculate the distance to the regular label from all of candidates to obtain which one is correct
+            for (int i = 0; i < centroids.Length; i++)
+            {
+                distance = Math.Abs(centroids[i].X - labelSettings.labelList[label].centroidBB.X) + Math.Abs(centroids[i].Y - labelSettings.labelList[label].centroidBB.Y);
+                if (Math.Abs(centroids[i].X - labelSettings.labelList[label].centroidBB.X) + Math.Abs(centroids[i].Y - labelSettings.labelList[label].centroidBB.Y) < distance) {
+                    distance = Math.Abs(centroids[i].X - labelSettings.labelList[label].centroidBB.X) + Math.Abs(centroids[i].Y - labelSettings.labelList[label].centroidBB.Y);
+                    whichIsClosest = i;
+                }
+            }
+
+            Console.WriteLine("distance " + distance);
         }
 
         private void getRefColorBeforeBackUp(Image<Gray, short> labelsImg, Image<Rgb, byte> cropNew, int labelI, out int redAvg, out int greenAvg, out int blueAvg, Rectangle roicek, out int background)

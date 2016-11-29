@@ -109,7 +109,7 @@ namespace Diploma.camera
             //Console.WriteLine(" red = " + redAvg + " green = " + greenAvg + "blue = " + blueAvg + " COUNTER = " + counter);
         }
 
-        internal void defineBeforeBackUp(Mat actualImage)
+        internal void defineBeforeBackUp(Mat actualImage, bool isBeforeBackUp)
         {
             Image<Rgb, byte> colorWhole = actualImage.ToImage<Rgb, byte>();
             int redAvg;
@@ -189,7 +189,7 @@ namespace Diploma.camera
                         {
                             //Console.WriteLine("COLOR OK");
                             //chceck color of back
-                            if (background < 60)
+                            if (background < 65)
                             {
                                 findedMatches[i, positionInFindedMatches] = j;
                                 positionInFindedMatches++;
@@ -211,10 +211,10 @@ namespace Diploma.camera
             //    Console.WriteLine();
             //}
 
-            foundLines(findedMatches);
+            foundLines(findedMatches, isBeforeBackUp, actualImage);
         }
 
-        private void foundLines(int[,] findedMatches)
+        private void foundLines(int[,] findedMatches, bool isBeforeBackUp, Mat actualImage)
         {
             int distanceX = 0;
             int[,] matchesForOneLabel;
@@ -256,16 +256,16 @@ namespace Diploma.camera
                                 matchesForOneLabel[0, matchesForOneLabelCounter] = findedMatches[i, j];
                                 matchesForOneLabel[1, matchesForOneLabelCounter] = findedMatches[i, k];
                                 matchesForOneLabelCounter++;
-                                Console.WriteLine(findedMatches[i, j] + "||" + findedMatches[i, k]);
+                                //Console.WriteLine(findedMatches[i, j] + "||" + findedMatches[i, k]);
                             }
                         }
                     }
                 }
-                connectPairsOneLabel(matchesForOneLabel, matchesForOneLabelCounter, i);//i = label
+                connectPairsOneLabel(matchesForOneLabel, matchesForOneLabelCounter, i, isBeforeBackUp, actualImage);//i = label
             }
         }
 
-        private void connectPairsOneLabel(int[,] matchesForOneLabel, int matchesForOneLabelCounter, int label)
+        private void connectPairsOneLabel(int[,] matchesForOneLabel, int matchesForOneLabelCounter, int label, bool isBeforeBackUp, Mat actualImage)
         {
             List<List<int>> candidatesInGroups = new List<List<int>>(); ;
             candidatesInGroups.Add(new List<int>());
@@ -323,10 +323,10 @@ namespace Diploma.camera
             //}
 
             //find centroids
-            findCentroids(candidatesInGroups, label);
+            findCentroids(candidatesInGroups, label, isBeforeBackUp, actualImage);
         }
 
-        private void findCentroids(List<List<int>> candidatesInGroups, int label)
+        private void findCentroids(List<List<int>> candidatesInGroups, int label, bool isBeforeBackUp, Mat actualImage)
         {
             int centroidX;
             int centroidY;
@@ -348,8 +348,53 @@ namespace Diploma.camera
                 centroids[i].Y = centroidY / candidatesInGroups[i].Count;
                 //Console.WriteLine("Centroid = " + centroids[i]);
             }
+            if (isBeforeBackUp == true)
+            {
+                findWhichOneIsLabelOfInterest(centroids, label);
+            }
+            else {
+                findDistanceAndPosition(centroids, label, actualImage);
+            }
+        }
 
-            findWhichOneIsLabelOfInterest(centroids, label);
+        private void findDistanceAndPosition(Point[] centroids, int label, Mat actualImage)
+        {
+            int[] distanceX = new int[centroids.GetLength(0)];
+            int[] distanceXI = new int[centroids.GetLength(0)];
+            int[] distanceY = new int[centroids.GetLength(0)];
+            int[] distanceYI = new int[centroids.GetLength(0)];
+
+            //calculate the distance to the regular label in X and Y
+            for (int i = 0; i < centroids.GetLength(0); i++)
+            {
+                //add info to XY axis
+                distanceXI[i] = i;
+                distanceX[i] = centroids[i].X;
+                distanceYI[i] = i;
+                distanceY[i] = centroids[i].Y;
+            }
+
+            //sort by X and Y
+            int left = 0;
+            int top = 0;
+
+            //order X by x[1]
+            Array.Sort(distanceX, distanceXI);
+            //order by Y[1]
+            Array.Sort(distanceY, distanceYI);
+
+            //point 
+            Point localPoint = new Point();
+            if (distanceX.GetLength(0) <= labelSettings.labelList[label].left || distanceY.GetLength(0) <= labelSettings.labelList[label].top)
+            {
+
+            }
+            else {
+                localPoint.X = distanceX[labelSettings.labelList[label].left];
+                localPoint.Y = distanceY[labelSettings.labelList[label].top];
+
+                labelSettings.labelList[label].actualizeAfterBackUp(localPoint, actualImage);
+            }
         }
 
         private void findWhichOneIsLabelOfInterest(Point[] centroids, int label)
@@ -382,10 +427,10 @@ namespace Diploma.camera
                 }
             }
 
-            findPositionInScene(distanceX, distanceXI, distanceY, distanceYI, whichIsClosest);
+            findPositionInScene(distanceX, distanceXI, distanceY, distanceYI, whichIsClosest, label);
         }
 
-        private void findPositionInScene(int[] distanceX, int[] distanceXI, int[] distanceY, int[] distanceYI, int whichIsClosest)
+        private void findPositionInScene(int[] distanceX, int[] distanceXI, int[] distanceY, int[] distanceYI, int whichIsClosest, int label)
         {
             int left = 0;
             int top = 0;
@@ -413,10 +458,11 @@ namespace Diploma.camera
                 }
             }
 
+            labelSettings.labelList[label].top = top;
+            labelSettings.labelList[label].left = left;
+
             Console.WriteLine("My label is " + left + " from left and " + top + " from top");
         }
-
-
 
         private void getRefColorBeforeBackUp(Image<Gray, short> labelsImg, Image<Rgb, byte> cropNew, int labelI, out int redAvg, out int greenAvg, out int blueAvg, Rectangle roicek, out int background)
         {
@@ -465,5 +511,14 @@ namespace Diploma.camera
             //chceck if back is dark
             background = (redBack + greenBack + blueBack) / (3 * counterBack);
         }
+
+        internal void backUpWhole(Mat actualImage)
+        {
+            bool isBeforeBackUp = false;
+            //find candidates
+            defineBeforeBackUp(actualImage, isBeforeBackUp);
+            //
+        }
     }
+
 }

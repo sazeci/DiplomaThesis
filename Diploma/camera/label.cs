@@ -16,6 +16,10 @@ namespace Diploma.camera
 {
     class label
     {
+        //position in scene
+        public int left;
+        public int top;
+
         public Point clickedPoint;//clicked point in whole scene
         public Point localPoint;
         public string name;
@@ -83,6 +87,43 @@ namespace Diploma.camera
             centroidBB = new Point();
             clickedPoint = regularRoiStart;
             this.localPoint = localPoint;
+
+            binarizeCrop(actualImage);
+            markAreas();
+            findSymbolBySnail();
+            findBounding(actualImage);
+            saveBBFill(actualImage);
+        }
+
+        internal void actualizeAfterBackUp(Point localPoint, Mat actualImage)
+        {
+            //new local point
+            this.localPoint = localPoint;
+            Console.WriteLine("Local point " + this.localPoint.X + " | " + this.localPoint.Y);
+            //new roi
+            int left;
+            int top;
+            if ((this.localPoint.X - (int)(this.roi.Size.Width / 2)) > 0)
+            {
+                left = (this.localPoint.X - (int)(this.roi.Size.Width / 2));
+            }
+            else {
+                left = 0;
+            }
+
+            if ((this.localPoint.Y - (int)(this.roi.Size.Height / 2)) > 0)
+            {
+                top = (this.localPoint.Y - (int)(this.roi.Size.Height / 2));
+            }
+            else
+            {
+                top = 0;
+            }
+            this.roi.Location = new Point(left, top);
+
+            this.localPoint.X = localPoint.X - roi.Location.X;
+            this.localPoint.Y = localPoint.Y - roi.Location.Y;
+            Console.WriteLine("Local point " + this.localPoint.X + " | " + this.localPoint.Y);
 
             binarizeCrop(actualImage);
             markAreas();
@@ -662,6 +703,7 @@ namespace Diploma.camera
         //chceck candidate on left if its a symbol
         private void checkLeftFindBounding(ref int startRow, ref int startCollum,ref int i,ref int step, Mat actualImage)
         {
+            //Console.WriteLine("ZLEVA BEFORE");
             //basic condition for tested label(not background, between 0.5-1.5 refHeight, width < 1.5*refHeight, bigger than 20 px)
             if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
             {
@@ -711,6 +753,7 @@ namespace Diploma.camera
         //chceck candidate on right if its a symbol
         private void checkRightFindBounding(ref int startRow, ref int startCollum,ref int i,ref int step, Mat actualImage)
         {
+            //Console.WriteLine("ZPRAVA BEFORE");
             //basic condition for tested label(not background, between 0.5-1.5 refHeight, width < 1.5*refHeight, bigger than 20 px)
             if (labelsImg.Data[startRow, i, 0] > 0 && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] > (int)(heightRef * 0.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 3, 0] < (int)(heightRef * 1.5) && statsImg.Data[labelsImg.Data[startRow, i, 0], 2, 0] < (int)(heightRef * 1.75) && statsImg.Data[labelsImg.Data[startRow, i, 0], 4, 0] > 20)
             {

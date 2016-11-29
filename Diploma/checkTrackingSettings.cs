@@ -26,8 +26,11 @@ namespace Diploma
         private Tesseract ocr;
         private save.saveToFile saveToFile;
         private bool isCsvOpened = false;
+        private camera.backUpProcess backUpProcess;
 
         private int counter = 0;
+
+        private int timerTicker = 0;
 
         public checkTrackingSettings()
         {
@@ -48,6 +51,9 @@ namespace Diploma
 
             //save to file
             saveToFile = new save.saveToFile();
+
+            //backup
+            backUpProcess = new camera.backUpProcess();
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -110,13 +116,21 @@ namespace Diploma
 
                 
 
+                //roi
+                Image<Gray, byte> roiImage;
+                roiImage = actualImage.ToImage<Gray, byte>();
+                roiImage.ROI = camera.labelSettings.labelList[0].roi;
+                //binarize image
+                roiImage = roiImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+                ibCamera2.Image = roiImage;
+
                 //bounding
                 Image<Gray, byte> boundingImage;
                 boundingImage = actualImage.ToImage<Gray, byte>();
                 boundingImage.ROI = camera.labelSettings.labelList[0].BB;
                 //binarize image
                 boundingImage = boundingImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
-                ibCamera2.Image = boundingImage;
+                ibCamera.Image = boundingImage;
             }
         }
 
@@ -133,18 +147,27 @@ namespace Diploma
                 isCsvOpened = true;
             }
             saveToFile.saveToCsv();
+
+            timerTicker++;
+            if (timerTicker == 10)
+            {
+                //BackUp
+                backUpProcess.backUpWhole(actualImage);
+                //reicinalize
+                timerTicker = 0;
+            }
             //Mat invert = new Mat();
             //CvInvoke.BitwiseNot(camera.labelSettings.labelList[0].actualBBFill, invert);
 
-            Mat invert = camera.labelSettings.labelList[0].actualBBFill.Mat;
+            //Mat invert = camera.labelSettings.labelList[0].actualBBFill.Mat;
             //add border to better rocognition
-            CvInvoke.CopyMakeBorder(invert, invert, 100, 100, 100, 100, BorderType.Constant, new MCvScalar(0));
+            //CvInvoke.CopyMakeBorder(invert, invert, 100, 100, 100, 100, BorderType.Constant, new MCvScalar(0));
             ////rescale
             //Image<Gray, byte> cropped = invert.ToImage<Gray, byte>();
             ////make it bigger
             //cropped.Resize(5, Inter.Cubic);
 
-            ocr.Recognize(invert);
+            //ocr.Recognize(invert);
             //ibCamera.Image = camera.labelSettings.labelList[0].actualBBFill;
             //Console.WriteLine("Text = " + ocr.GetText());
         }

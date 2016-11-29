@@ -57,12 +57,13 @@ namespace Diploma.save
                     invertGray.Resize(5, Inter.Cubic);
                     CvInvoke.CopyMakeBorder(invertGray, invertGray, 100, 100, 100, 100, BorderType.Constant, new MCvScalar(0));
                     invertGray = invertGray.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
-                    invertGray.Save("Invert" + counterHelpa + ".jpeg");
+                    //invertGray.Save("Invert" + counterHelpa + ".jpeg");
                     //test - end
                     counterHelpa++;
                     ocr.Recognize(invertGray);
                     actualOCR = ocr.GetText();
                     if (actualOCR.Length == 0) {
+                        //TODO konvoluce s maskou
                         Console.WriteLine("Text length = 0");
                         actualOCR = "NaN";
                     }
@@ -76,7 +77,7 @@ namespace Diploma.save
             }
             newLine = newLine.Replace(System.Environment.NewLine, "");
             newLine = newLine.Replace(" ", "");
-            Console.WriteLine(newLine);
+            //Console.WriteLine(newLine);
             csv.AppendLine(newLine);
         }
 

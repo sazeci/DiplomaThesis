@@ -282,7 +282,8 @@ namespace Diploma
         private void btnNext_Click(object sender, EventArgs e)
         {
             //define which one is the chosen label for backup
-            backUpProcess.defineBeforeBackUp(actualImage);
+            bool isBeforeBackUp = true;
+            backUpProcess.defineBeforeBackUp(actualImage, isBeforeBackUp);
 
             //open new form
             checkTrackingSettings checkTrackingSettings = new checkTrackingSettings(this);

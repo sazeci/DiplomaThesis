@@ -626,64 +626,68 @@ namespace Diploma
             Image<Gray, byte> save;
             //int size = 50;
             //new resized images
-            //for (int i = 0; i < listOfImages.Count; i++) {
+            //for (int i = 0; i < listOfImages.Count; i++)
+            //{
             //    save = makeNewImage(listOfImages[i], size);
             //    save.Save("New35x35" + i + ".jpeg");
             //}
 
-            //Console.WriteLine("ASPECT RATIO");
-            //double aspectRatio;
-            //for (int i = 0; i < listOfImages.Count; i++)
-            //{
-            //    aspectRatio = (double)listOfImages[i].Height /(double)listOfImages[i].Width;
-            //    save = listOfImages[i];
-            //    Console.WriteLine("Symbol(" + i + ")| AspectRatio(" + aspectRatio + ")");
-            //    save.Save("AspectRatio" + aspectRatio + ".jpeg");
-            //}
+            Console.WriteLine("ASPECT RATIO");
+            double aspectRatio;
+            for (int i = 0; i < listOfImages.Count; i++)
+            {
+                aspectRatio = (double)listOfImages[i].Height / (double)listOfImages[i].Width;
+                save = listOfImages[i];
+                Console.WriteLine("Symbol(" + i + ")| AspectRatio(" + aspectRatio + ")");
+                save.Save("AspectRatio" + aspectRatio + ".jpeg");
+            }
 
-            //Console.WriteLine("NUMBER OF LAKES");
-            ////Mat invert = new Mat();
-            //Mat labels = new Mat();
-            //Mat stats = new Mat();
-            //Mat centroids = new Mat();
-            //int numberOfLabels;
-            //var valueScalar = new MCvScalar(0);
-            //for (int i = 0; i < listOfImages.Count; i++)
-            //{
-            //    listOfImages[i] = listOfImages[i].ThresholdBinary(new Gray(100), new Gray(255));
-            //    //give black border
-            //    save = new Image<Gray, byte>(listOfImages[i].Size);
-            //    CvInvoke.CopyMakeBorder(listOfImages[i], save, 100, 100, 100, 100, BorderType.Constant, valueScalar);
-            //    //invert
-            //    CvInvoke.BitwiseNot(save, save);
-            //    //label image
-            //    numberOfLabels = CvInvoke.ConnectedComponentsWithStats(save, labels, stats, centroids, LineType.FourConnected, DepthType.Cv32S);
-            //    //
-            //    Console.WriteLine("Symbol(" + i + ")| NumberOfLakes(" + (numberOfLabels-2) + ")");
-            //    save.Save(i + "-numberOfLabels" + (numberOfLabels-2) + ".jpeg");
-            //}
+            Console.WriteLine("NUMBER OF LAKES");
+            //Mat invert = new Mat();
+            Mat labels = new Mat();
+            Mat stats = new Mat();
+            Mat centroids = new Mat();
+            int numberOfLabels;
+            var valueScalar = new MCvScalar(0);
+            for (int i = 0; i < listOfImages.Count; i++)
+            {
+                listOfImages[i] = listOfImages[i].ThresholdBinary(new Gray(100), new Gray(255));
+                //give black border
+                save = new Image<Gray, byte>(listOfImages[i].Size);
+                CvInvoke.CopyMakeBorder(listOfImages[i], save, 100, 100, 100, 100, BorderType.Constant, valueScalar);
+                //invert
+                CvInvoke.BitwiseNot(save, save);
+                //label image
+                numberOfLabels = CvInvoke.ConnectedComponentsWithStats(save, labels, stats, centroids, LineType.FourConnected, DepthType.Cv32S);
+                //
+                Console.WriteLine("Symbol(" + i + ")| NumberOfLakes(" + (numberOfLabels - 2) + ")");
+                save.Save(i + "-numberOfLabels" + (numberOfLabels - 2) + ".jpeg");
+            }
 
-            //Console.WriteLine("RATIO OF WHITE");
-            //double whiteRatio;
-            //for (int i = 0; i < listOfImages.Count; i++)
-            //{
-            //    listOfImages[i] = listOfImages[i].ThresholdBinary(new Gray(100), new Gray(255));
-            //    whiteRatio = ((double)listOfImages[i].Height* (double)listOfImages[i].Width) / (double)listOfImages[i].CountNonzero().Max();
-            //    save = listOfImages[i];
-            //    Console.WriteLine("Symbol(" + i + ")| WhiteRatio(" + whiteRatio + ")");
-            //    save.Save(i + "-WhiteRatio" + whiteRatio + ".jpeg");
-            //}
+            Console.WriteLine("RATIO OF WHITE");
+            double whiteRatio;
+            for (int i = 0; i < listOfImages.Count; i++)
+            {
+                listOfImages[i] = listOfImages[i].ThresholdBinary(new Gray(100), new Gray(255));
+                whiteRatio = ((double)listOfImages[i].Height * (double)listOfImages[i].Width) / (double)listOfImages[i].CountNonzero().Max();
+                save = listOfImages[i];
+                Console.WriteLine("Symbol(" + i + ")| WhiteRatio(" + whiteRatio + ")");
+                save.Save(i + "-WhiteRatio" + whiteRatio + ".jpeg");
+            }
 
             Console.WriteLine("AVG number of changes in white/black steps");
             int stepsLine = 0;
+            int allSteps = 0;
+            int stepsLineMax = 0;
             double forAllLinesHeight = 0;
             for (int i = 0; i < listOfImages.Count; i++)// listOfImages.Count
             {
+                allSteps = 0;
                 forAllLinesHeight = 0;
-                stepsLine = 0;
                 listOfImages[i] = listOfImages[i].ThresholdBinary(new Gray(100), new Gray(255));
                 for (int j = 0; j < listOfImages[i].Height-1; j++)
                 {
+                    stepsLine = 0;
                     for (int k = 0; k < listOfImages[i].Width-1; k++)
                     {
                         //Console.Write(listOfImages[i].Data[j, k, 0] + "|");
@@ -691,10 +695,16 @@ namespace Diploma
                             stepsLine++;
                         }
                     }
+                    if (stepsLine > stepsLineMax)
+                    {
+                        stepsLineMax = stepsLine;
+                    }
+
+                    allSteps += stepsLine;
                     //Console.WriteLine("For one line = " + stepsLine);
                 }
-                forAllLinesHeight = ((double)stepsLine / listOfImages[i].Height);
-                listOfImages[i].Save("BW" + i + "_" + forAllLinesHeight + ".jpeg");
+                forAllLinesHeight = ((double)allSteps / listOfImages[i].Height);
+                listOfImages[i].Save("BW" + i + "_" + forAllLinesHeight + "_MAX_" + stepsLineMax + ".jpeg");
             }
         }
 

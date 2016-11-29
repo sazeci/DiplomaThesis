@@ -262,7 +262,7 @@ namespace Diploma.camera
             //aspect ratioCheck
             if ((((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) < 1.1) || (((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]) > 4))
             {
-                //Console.WriteLine("Bad AspectRatio " + ((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]));
+                Console.WriteLine("Bad AspectRatio " + ((double)statsImg.Data[startLabel, 3, 0] / (double)statsImg.Data[startLabel, 2, 0]));
 
                 return false;
             }
@@ -278,7 +278,7 @@ namespace Diploma.camera
             //save.Save("whiteRatio AFTER ROI" + (counterSave) + ".jpeg");
             if (((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) < 1.1) || ((((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()) > 2.5))
             {
-                //Console.WriteLine("Bad WhiteRatio " + (((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()));
+                Console.WriteLine("Bad WhiteRatio " + (((double)statsImg.Data[startLabel, 3, 0] * (double)statsImg.Data[startLabel, 2, 0]) / (double)save.CountNonzero().Max()));
                 return false;
             }
 
@@ -292,7 +292,7 @@ namespace Diploma.camera
             Mat centroids = new Mat();
             numberOfLakes = CvInvoke.ConnectedComponentsWithStats(save, labels, stats, centroids, LineType.FourConnected, DepthType.Cv32S);
             if (numberOfLakes > 4) {
-                //Console.WriteLine("Bad Lakes " + (numberOfLakes-2));
+                Console.WriteLine("Bad Lakes " + (numberOfLakes-2));
                 return false;
             }
 
@@ -337,7 +337,7 @@ namespace Diploma.camera
 
             if (redAvg <= redRef - 50 || redAvg >= redRef + 50 || greenAvg <= greenRef - 50 || greenAvg >= greenRef + 50 || blueAvg <= blueRef - 50 || blueAvg >= blueRef + 50)
             {
-                //Console.WriteLine("Bad Color ");
+                Console.WriteLine("Bad Color ");
                 return false;
             }
 
@@ -345,6 +345,8 @@ namespace Diploma.camera
             //check steps B/W W/B
             double forAllLines = 0;
             int stepsLine = 0;
+            int allSteps = 0;
+            int stepsLineMax = 0;
             Rectangle roik = new Rectangle();
             roik.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);//left top
             roik.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);//width height
@@ -352,6 +354,7 @@ namespace Diploma.camera
             bwCount.ROI = roik;
             for (int k = 0; k < bwCount.Height; k++)
             {
+                stepsLine = 0;
                 for (int l = 0; l < bwCount.Width - 1; l++)
                 {
                     if ((bwCount.Data[k + roik.Location.Y, l + roik.Location.X, 0] == 0 && bwCount.Data[k + roik.Location.Y, l + roik.Location.X + 1, 0] == 255) || (bwCount.Data[k + roik.Location.Y, l + roik.Location.X, 0] == 255 && bwCount.Data[k + roik.Location.Y, l + roik.Location.X + 1, 0] == 0))
@@ -359,12 +362,25 @@ namespace Diploma.camera
                         stepsLine++;
                     }
                 }
+                if (stepsLine > stepsLineMax)
+                {
+                    stepsLineMax = stepsLine;
+                }
+                allSteps += stepsLine;
             }
-            forAllLines = ((double)stepsLine / bwCount.Height);
-            if (forAllLines > 3 || forAllLines < 1)
+            forAllLines = ((double)allSteps / bwCount.Height);
+            //bad avg b/w w/b
+            if (forAllLines > 3.5 || forAllLines < 1)
             {
+                Console.WriteLine("Bad BW steps " + forAllLines);
                 return false;
             }
+
+            if (stepsLineMax > 8) {
+                Console.WriteLine("Bad BW MAX steps " + stepsLineMax);
+                return false;
+            }
+
 
 
             return true;

@@ -43,9 +43,9 @@
             this.btnBackUpRoi = new System.Windows.Forms.Button();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.btnSymbolProperties = new System.Windows.Forms.Button();
+            this.btnTestChar = new System.Windows.Forms.Button();
             this.ofdOpenFile = new System.Windows.Forms.OpenFileDialog();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.btnTestChar = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ibCamera)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
@@ -238,15 +238,6 @@
             this.btnSymbolProperties.UseVisualStyleBackColor = true;
             this.btnSymbolProperties.Click += new System.EventHandler(this.btnSymbolProperties_Click);
             // 
-            // ofdOpenFile
-            // 
-            this.ofdOpenFile.FileName = "ofdOpenFile";
-            // 
-            // timer1
-            // 
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // btnTestChar
             // 
             this.btnTestChar.Location = new System.Drawing.Point(3, 32);
@@ -256,6 +247,15 @@
             this.btnTestChar.Text = "testChar";
             this.btnTestChar.UseVisualStyleBackColor = true;
             this.btnTestChar.Click += new System.EventHandler(this.btnTestChar_Click);
+            // 
+            // ofdOpenFile
+            // 
+            this.ofdOpenFile.FileName = "ofdOpenFile";
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // testImageBox
             // 

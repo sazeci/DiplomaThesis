@@ -232,7 +232,9 @@ namespace Diploma.camera
 
                             //check steps B/W W/B
                             double forAllLines = 0;
-                            int stepsLine = 0;
+                            int stepsLine;
+                            int allSteps = 0;
+                            int stepsLineMax = 0;
                             Rectangle roik = new Rectangle();
                             roik.Location = new Point(statsImg.Data[j, 0, 0], statsImg.Data[j, 1, 0]);//left top
                             roik.Size = new Size(statsImg.Data[j, 2, 0], statsImg.Data[j, 3, 0]);//width height
@@ -241,6 +243,7 @@ namespace Diploma.camera
                             //Console.WriteLine("----------------------------------------------------------------------------------------------------------------------------");
                             for (int k = 0; k < bwCount.Height; k++)
                             {
+                                stepsLine = 0;
                                 for (int l = 0; l < bwCount.Width - 1; l++)
                                 {
                                     //Console.Write(bwCount.Data[k + roik.Location.Y, l + roik.Location.X, 0] + "|");
@@ -249,14 +252,24 @@ namespace Diploma.camera
                                         stepsLine++;
                                     }
                                 }
+                                if (stepsLine > stepsLineMax)
+                                {
+                                    stepsLineMax = stepsLine;
+                                }
+                                allSteps += stepsLine;
                                 //Console.WriteLine("");
                             }
-                            forAllLines = ((double)stepsLine / bwCount.Height);
+                            forAllLines = ((double)allSteps / bwCount.Height);
                             //bwCount.Save(i + "_" + j + "__" + forAllLines + ".jpeg");
                             if (forAllLines > 3 || forAllLines < 1)
                             {
                                 continue;
                             }
+                            if (stepsLineMax > 8)
+                            {
+                                continue;
+                            }
+
 
 
                             //Console.WriteLine("COLOR OK");
@@ -267,7 +280,7 @@ namespace Diploma.camera
                                 positionInFindedMatches++;
                                 //Console.WriteLine("BACKGROUND OK");
                                 //cropNew.Save("Candidate(" + j + ").jpeg");
-                                save.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + "Background=" + background + ".jpeg");
+                                //save.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + "Background=" + background + ".jpeg");
                             //}
                         }
                     }

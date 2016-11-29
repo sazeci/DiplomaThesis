@@ -177,6 +177,46 @@ namespace Diploma.camera
                     }
                     double helpic = (((double)statsImg.Data[j, 3, 0] * (double)statsImg.Data[j, 2, 0]) / (double)save.CountNonzero().Max());
 
+
+                    //check number of lakes (0-2)
+                    var valueScalar = new MCvScalar(0);
+                    CvInvoke.CopyMakeBorder(save, save, 100, 100, 100, 100, BorderType.Constant, valueScalar);
+                    CvInvoke.BitwiseNot(save, save);
+                    int numberOfLakes = CvInvoke.ConnectedComponentsWithStats(save, labels, stats, centroids, LineType.FourConnected, DepthType.Cv32S);
+                    if ((numberOfLakes - 2) > 2 || (numberOfLakes - 2) < 0) {
+                        continue;
+                    }
+                    //save.Save("Roicek " + j + "numberOfLakes " + (numberOfLakes - 2) + ".jpeg");
+
+
+                    ////check steps B/W W/B
+                    //double forAllLines = 0;
+                    //int stepsLine = 0;
+                    //Rectangle roik = new Rectangle();
+                    //roik.Location = new Point(statsImg.Data[j, 0, 0], statsImg.Data[j, 1, 0]);//left top
+                    //roik.Size = new Size(statsImg.Data[j, 2, 0], statsImg.Data[j, 3, 0]);//width height
+                    //Image<Gray, byte> BW = bwImgOriginal.Clone();
+                    //BW = BW.ThresholdBinary(new Gray(100), new Gray(255));
+                    //BW.ROI = roik;
+                    //for (int k = 0; k < BW.Height; k++)
+                    //{
+                    //    for (int l = 0; l < BW.Width - 1; l++)
+                    //    {
+                    //        Console.Write(BW.Data[k, l, 0] + "|");
+                    //        if ((BW.Data[k, l, 0] == 0 && BW.Data[k, l + 1, 0] == 255) || (BW.Data[k, l, 0] == 255 && BW.Data[k, l + 1, 0] == 0))
+                    //        {
+                    //            stepsLine++;
+                    //        }
+                    //        Console.WriteLine("");
+                    //    }
+                    //}
+                    ////forAllLines = ((double)stepsLine / BW.Height);
+                    //BW.Save(i + "_" + j + "__" + stepsLine + ".jpeg");
+                    //if (forAllLines > 3 || forAllLines < 1) {
+                    //    continue;
+                    //}
+
+
                     //chcek size and color
                     if (statsImg.Data[j, 3, 0] > (int)(labelSettings.labelList[i].heightRef * 0.75) && statsImg.Data[j, 3, 0] < (int)(labelSettings.labelList[i].heightRef * 1.3) && statsImg.Data[j, 2, 0] > (int)(labelSettings.labelList[i].widthRef * 0.4) && statsImg.Data[j, 2, 0] < (int)(labelSettings.labelList[i].widthRef * 1.7))
                     {
@@ -187,16 +227,48 @@ namespace Diploma.camera
                         //labelSettings.labelList[i].actualBBFill.Save("Candidate" + i + "R=" + labelSettings.labelList[i].redRef + "G=" + labelSettings.labelList[i].greenRef + "B=" + labelSettings.labelList[i].blueRef + ".jpeg");
                         if (redAvg >= labelSettings.labelList[i].redRef - 50 && redAvg <= labelSettings.labelList[i].redRef + 50 && greenAvg >= labelSettings.labelList[i].greenRef - 50 && greenAvg <= labelSettings.labelList[i].greenRef + 50 && blueAvg >= labelSettings.labelList[i].blueRef - 50 && blueAvg <= labelSettings.labelList[i].blueRef + 50)
                         {
+
+
+
+                            //check steps B/W W/B
+                            double forAllLines = 0;
+                            int stepsLine = 0;
+                            Rectangle roik = new Rectangle();
+                            roik.Location = new Point(statsImg.Data[j, 0, 0], statsImg.Data[j, 1, 0]);//left top
+                            roik.Size = new Size(statsImg.Data[j, 2, 0], statsImg.Data[j, 3, 0]);//width height
+                            Image<Gray, byte> bwCount = bwImgOriginal.Clone();
+                            bwCount.ROI = roik;
+                            //Console.WriteLine("----------------------------------------------------------------------------------------------------------------------------");
+                            for (int k = 0; k < bwCount.Height; k++)
+                            {
+                                for (int l = 0; l < bwCount.Width - 1; l++)
+                                {
+                                    //Console.Write(bwCount.Data[k + roik.Location.Y, l + roik.Location.X, 0] + "|");
+                                    if ((bwCount.Data[k + roik.Location.Y, l + roik.Location.X, 0] == 0 && bwCount.Data[k + roik.Location.Y, l + roik.Location.X+1, 0] == 255) || (bwCount.Data[k + roik.Location.Y, l + roik.Location.X, 0] == 255 && bwCount.Data[k + roik.Location.Y, l + roik.Location.X+1, 0] == 0))
+                                    {
+                                        stepsLine++;
+                                    }
+                                }
+                                //Console.WriteLine("");
+                            }
+                            forAllLines = ((double)stepsLine / bwCount.Height);
+                            //bwCount.Save(i + "_" + j + "__" + forAllLines + ".jpeg");
+                            if (forAllLines > 3 || forAllLines < 1)
+                            {
+                                continue;
+                            }
+
+
                             //Console.WriteLine("COLOR OK");
                             //chceck color of back
-                            if (background < 65)
-                            {
-                                findedMatches[i, positionInFindedMatches] = j;
+                            //if (background < 65)
+                            //{
+                            findedMatches[i, positionInFindedMatches] = j;
                                 positionInFindedMatches++;
                                 //Console.WriteLine("BACKGROUND OK");
                                 //cropNew.Save("Candidate(" + j + ").jpeg");
-                                cropNew.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + "Background=" + background + ".jpeg");
-                            }
+                                save.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + "Background=" + background + ".jpeg");
+                            //}
                         }
                     }
 

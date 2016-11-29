@@ -148,14 +148,14 @@ namespace Diploma
             }
             saveToFile.saveToCsv();
 
-            timerTicker++;
-            if (timerTicker == 10)
-            {
-                //BackUp
-                backUpProcess.backUpWhole(actualImage);
-                //reicinalize
-                timerTicker = 0;
-            }
+            //timerTicker++;
+            //if (timerTicker == 5)
+            //{
+            //    //BackUp
+            //    backUpProcess.backUpWhole(actualImage);
+            //    //reicinalize
+            //    timerTicker = 0;
+            //}
             //Mat invert = new Mat();
             //CvInvoke.BitwiseNot(camera.labelSettings.labelList[0].actualBBFill, invert);
 

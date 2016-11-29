@@ -341,6 +341,32 @@ namespace Diploma.camera
                 return false;
             }
 
+            //B/w w/b avg steps
+            //check steps B/W W/B
+            double forAllLines = 0;
+            int stepsLine = 0;
+            Rectangle roik = new Rectangle();
+            roik.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);//left top
+            roik.Size = new Size(statsImg.Data[startLabel, 2, 0], statsImg.Data[startLabel, 3, 0]);//width height
+            Image<Gray, byte> bwCount = this.actualCroppedImage.Clone();
+            bwCount.ROI = roik;
+            for (int k = 0; k < bwCount.Height; k++)
+            {
+                for (int l = 0; l < bwCount.Width - 1; l++)
+                {
+                    if ((bwCount.Data[k + roik.Location.Y, l + roik.Location.X, 0] == 0 && bwCount.Data[k + roik.Location.Y, l + roik.Location.X + 1, 0] == 255) || (bwCount.Data[k + roik.Location.Y, l + roik.Location.X, 0] == 255 && bwCount.Data[k + roik.Location.Y, l + roik.Location.X + 1, 0] == 0))
+                    {
+                        stepsLine++;
+                    }
+                }
+            }
+            forAllLines = ((double)stepsLine / bwCount.Height);
+            if (forAllLines > 3 || forAllLines < 1)
+            {
+                return false;
+            }
+
+
             return true;
 
             //oneChar.Location = new Point(statsImg.Data[startLabel, 0, 0], statsImg.Data[startLabel, 1, 0]);

@@ -70,7 +70,6 @@ namespace Diploma.save
                         //TODO konvoluce s maskou
                         Console.WriteLine("Text length = 0");
                     }
-
                     newLine = newLine + actualOCR + "," ;
                 }
                 else {
@@ -83,6 +82,8 @@ namespace Diploma.save
             //Console.WriteLine(newLine);
             csv.AppendLine(newLine);
         }
+
+
 
         private string testConvolution(Mat invert)
         {

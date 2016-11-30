@@ -23,7 +23,7 @@ namespace Diploma
         Image<Bgr, byte> actualCroppedImage;
         private Point roiStart;
         private Rectangle roi = new Rectangle();
-        private bool isStreamEnabled = true;
+        public bool isStreamEnabled = true;
         private int actualLabel = 1;
         private bool isStepThree = false;
         camera.backUpProcess backUpProcess;
@@ -286,6 +286,7 @@ namespace Diploma
             backUpProcess.defineBeforeBackUp(actualImage, isBeforeBackUp);
 
             //open new form
+            isStreamEnabled = false;
             checkTrackingSettings checkTrackingSettings = new checkTrackingSettings(this);
             checkTrackingSettings.Show();
             this.Hide();

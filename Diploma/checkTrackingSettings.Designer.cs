@@ -34,10 +34,11 @@
             this.btnBack = new System.Windows.Forms.Button();
             this.btnNext = new System.Windows.Forms.Button();
             this.lblTitle = new System.Windows.Forms.Label();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.ibCamera = new Emgu.CV.UI.ImageBox();
             this.ibCamera2 = new Emgu.CV.UI.ImageBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -88,6 +89,7 @@
             this.btnBack.TabIndex = 0;
             this.btnBack.Text = "< Back";
             this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // btnNext
             // 
@@ -109,12 +111,6 @@
             this.lblTitle.Size = new System.Drawing.Size(208, 20);
             this.lblTitle.TabIndex = 1;
             this.lblTitle.Text = "Settings - check tracking";
-            // 
-            // timer1
-            // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // tableLayoutPanel3
             // 
@@ -154,6 +150,18 @@
             this.ibCamera2.TabIndex = 2;
             this.ibCamera2.TabStop = false;
             // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // timer2
+            // 
+            this.timer2.Enabled = true;
+            this.timer2.Interval = 2000;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
             // checkTrackingSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -185,5 +193,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private Emgu.CV.UI.ImageBox ibCamera;
         private Emgu.CV.UI.ImageBox ibCamera2;
+        private System.Windows.Forms.Timer timer2;
     }
 }

@@ -16,6 +16,7 @@ namespace Diploma.camera
 {
     class label
     {
+        public string ActualContain;
         //position in scene
         public int left;
         public int top;

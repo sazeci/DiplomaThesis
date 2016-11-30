@@ -110,27 +110,30 @@ namespace Diploma
                     counter++;
                     if (actualCroppedImage.Size.Height * actualCroppedImage.Size.Width > 100)
                     {
-                        //ibCamera.Image = actualCroppedImage;
+                    //ibCamera.Image = actualCroppedImage;
                     }
                 }
 
-                
 
-                //roi
-                Image<Gray, byte> roiImage;
-                roiImage = actualImage.ToImage<Gray, byte>();
-                roiImage.ROI = camera.labelSettings.labelList[0].roi;
-                //binarize image
-                roiImage = roiImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
-                ibCamera2.Image = roiImage;
 
-                //bounding
-                Image<Gray, byte> boundingImage;
-                boundingImage = actualImage.ToImage<Gray, byte>();
-                boundingImage.ROI = camera.labelSettings.labelList[0].BB;
-                //binarize image
-                boundingImage = boundingImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
-                ibCamera.Image = boundingImage;
+                ////roi
+                //Image<Gray, byte> roiImage;
+                //roiImage = actualImage.ToImage<Gray, byte>();
+                //roiImage.ROI = camera.labelSettings.labelList[0].roi;
+                ////binarize image
+                //roiImage = roiImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+                //ibCamera.Image = roiImage;
+
+                //////bounding
+                //Image<Gray, byte> boundingImage;
+                //boundingImage = actualImage.ToImage<Gray, byte>();
+                //boundingImage.ROI = camera.labelSettings.labelList[0].BB;
+                ////binarize image
+                //boundingImage = boundingImage.ThresholdAdaptive(new Gray(255), AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 101, new Gray(0));
+                ////Mat kernel1 = CvInvoke.GetStructuringElement(Emgu.CV.CvEnum.ElementShape.Ellipse, new Size(2, 2), new Point(1, 1));
+                ////CvInvoke.MorphologyEx(boundingImage, boundingImage, MorphOp.Erode, kernel1, new Point(0, 0), 2, BorderType.Default, new MCvScalar());
+                ////boundingImage = boundingImage.SmoothMedian(3);
+                //ibCamera2.Image = boundingImage;
             }
         }
 
@@ -142,20 +145,23 @@ namespace Diploma
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (isCsvOpened == false) {
+            if (isCsvOpened == false)
+            {
                 saveToFile.openCsv();
                 isCsvOpened = true;
             }
             saveToFile.saveToCsv();
 
-            //timerTicker++;
-            //if (timerTicker == 5)
-            //{
-            //    //BackUp
-            //    backUpProcess.backUpWhole(actualImage);
-            //    //reicinalize
-            //    timerTicker = 0;
-            //}
+            timerTicker++;
+            if (timerTicker == 5)
+            {
+                Console.WriteLine("TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER");
+                Console.WriteLine("ROI location " + camera.labelSettings.labelList[0].roi.Location + " BB centroid " + camera.labelSettings.labelList[0].centroidBB);
+                //BackUp
+                backUpProcess.backUpWhole(actualImage);
+                //reicinalize
+                timerTicker = 0;
+            }
             //Mat invert = new Mat();
             //CvInvoke.BitwiseNot(camera.labelSettings.labelList[0].actualBBFill, invert);
 
@@ -170,6 +176,21 @@ namespace Diploma
             //ocr.Recognize(invert);
             //ibCamera.Image = camera.labelSettings.labelList[0].actualBBFill;
             //Console.WriteLine("Text = " + ocr.GetText());
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            addAreasSettings.Show();
+            addAreasSettings.isStreamEnabled = true;
+            this.Hide();
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            for (int i = 0; i < camera.labelSettings.labelList.Count; i++)
+            {
+                camera.labelSettings.labelList[i].actualizeLabel(actualImage);
+            }
         }
     }
 }

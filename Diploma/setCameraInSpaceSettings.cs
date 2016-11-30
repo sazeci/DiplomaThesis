@@ -21,6 +21,7 @@ namespace Diploma
         public int _CameraIndex;//ktera kamera se pouzije
         Capture capWebcam;
         public Mat actualImage;
+        public bool isStreamEnabled = true;
 
         /////////////////////////////////////////////////////////////////////////////////////
         public setCameraInSpaceSettings()
@@ -80,14 +81,17 @@ namespace Diploma
         ///////////////////////////////////////////////////////////////////////////////////////////
         private void ProcessFrame(object sender, EventArgs e)
         {
-            Mat imgOriginal = new Mat();
-            capWebcam.Grab();
-            capWebcam.Retrieve(imgOriginal, 0);
-            //Image<Bgr, Byte> frame = mat.ToImage<Bgr, Byte>();
-            ibCamera.Image = imgOriginal;
+            if (isStreamEnabled == true)
+            {
+                Mat imgOriginal = new Mat();
+                capWebcam.Grab();
+                capWebcam.Retrieve(imgOriginal, 0);
+                //Image<Bgr, Byte> frame = mat.ToImage<Bgr, Byte>();
+                ibCamera.Image = imgOriginal;
 
-            //for upcomming crop
-            actualImage = imgOriginal;
+                //for upcomming crop
+                actualImage = imgOriginal;
+            }
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -132,6 +136,7 @@ namespace Diploma
             roiSettings roiSettings = new roiSettings(this);
             roiSettings.Show();
 
+            isStreamEnabled = false;
             this.Hide();
         }
     }

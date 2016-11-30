@@ -45,6 +45,7 @@ namespace Diploma
         private void btnBack_Click(object sender, EventArgs e)
         {
             setCameraInSpaceSettings.Show();
+            setCameraInSpaceSettings.isStreamEnabled = true;
             this.Hide();
         }
 

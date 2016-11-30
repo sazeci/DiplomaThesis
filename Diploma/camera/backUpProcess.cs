@@ -61,7 +61,7 @@ namespace Diploma.camera
                     getRefColor(labelsImg, cropNew, i, out redAvg, out greenAvg, out blueAvg, oneChar);
                     if (redAvg >= redRef - 50 && redAvg <= redRef + 50 && greenAvg >= greenRef - 50 && greenAvg <= greenRef + 50 && blueAvg >= blueRef - 50 && blueAvg <= blueRef + 50)
                     {
-                        cropNew.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + ".jpeg");
+                        //cropNew.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + ".jpeg");
                         //maybe check if char
                         bbCol = statsImg.Data[i, 0, 0];
                         bbRow = statsImg.Data[i, 1, 0];
@@ -225,8 +225,8 @@ namespace Diploma.camera
                         cropNew.ROI = roicek;
                         getRefColorBeforeBackUp(labelsImg, cropNew, j, out redAvg, out greenAvg, out blueAvg, roicek, out background);
                         //labelSettings.labelList[i].actualBBFill.Save("Candidate" + i + "R=" + labelSettings.labelList[i].redRef + "G=" + labelSettings.labelList[i].greenRef + "B=" + labelSettings.labelList[i].blueRef + ".jpeg");
-                        if (redAvg >= labelSettings.labelList[i].redRef - 50 && redAvg <= labelSettings.labelList[i].redRef + 50 && greenAvg >= labelSettings.labelList[i].greenRef - 50 && greenAvg <= labelSettings.labelList[i].greenRef + 50 && blueAvg >= labelSettings.labelList[i].blueRef - 50 && blueAvg <= labelSettings.labelList[i].blueRef + 50)
-                        {
+                        //if (redAvg >= labelSettings.labelList[i].redRef - 50 && redAvg <= labelSettings.labelList[i].redRef + 50 && greenAvg >= labelSettings.labelList[i].greenRef - 50 && greenAvg <= labelSettings.labelList[i].greenRef + 50 && blueAvg >= labelSettings.labelList[i].blueRef - 50 && blueAvg <= labelSettings.labelList[i].blueRef + 50)
+                        //{
 
 
 
@@ -280,9 +280,9 @@ namespace Diploma.camera
                                 positionInFindedMatches++;
                                 //Console.WriteLine("BACKGROUND OK");
                                 //cropNew.Save("Candidate(" + j + ").jpeg");
-                                //save.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + "Background=" + background + ".jpeg");
+                                save.Save("Candidate" + i + "R=" + redAvg + "G=" + greenAvg + "B=" + blueAvg + " forAllLines " + forAllLines + " stepsLineMax=" + stepsLineMax + ".jpeg");
                             //}
-                        }
+                        //}
                     }
 
                 }

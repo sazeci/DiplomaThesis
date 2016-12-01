@@ -18,6 +18,10 @@ namespace Diploma
 {
     public partial class checkTrackingSettings : Form
     {
+        private string fileName;
+        private int frame;
+        private bool isBackUpEnabled;
+
         private addAreasSettings addAreasSettings;
         public Mat actualImage;
         Capture capWebcam;
@@ -50,10 +54,28 @@ namespace Diploma
             ocr.SetVariable("tessedit_char_whitelist", "0123456789/()");
 
             //save to file
-            saveToFile = new save.saveToFile();
+            saveToFile = new save.saveToFile(this);
 
             //backup
             backUpProcess = new camera.backUpProcess();
+
+            //options
+            frame = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].frame;
+            timer1.Interval = frame;
+            isBackUpEnabled = camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].isBackUpEnabled;
+
+            //setLabels To zero
+            setLabelsToZero();
+        }
+
+        private void setLabelsToZero()
+        {
+            for (int i = 1; i < 9; i++)
+            {
+                string dodo = "label" + (i);
+                Label tbx = this.Controls.Find(dodo, true).FirstOrDefault() as Label;
+                tbx.Text = "";
+            }
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +159,17 @@ namespace Diploma
             }
         }
 
+        internal void setLabel(string actualOCR, int i)
+        {
+            string newLine;
+            newLine = actualOCR.Replace(System.Environment.NewLine, "");
+            newLine = newLine.Replace(" ", "");
+            //set label
+            string dodo = "label" + (i+1);
+            Label tbx = this.Controls.Find(dodo, true).FirstOrDefault() as Label;
+            tbx.Text = camera.labelSettings.labelList[i].name + "= " + newLine;
+        }
+
         private void checkTrackingSettings_FormClosing(object sender, FormClosingEventArgs e)
         {
             saveToFile.closeCsv();
@@ -152,15 +185,18 @@ namespace Diploma
             }
             saveToFile.saveToCsv();
 
-            timerTicker++;
-            if (timerTicker == 5)
+            if (isBackUpEnabled == true)
             {
-                Console.WriteLine("TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER");
-                Console.WriteLine("ROI location " + camera.labelSettings.labelList[0].roi.Location + " BB centroid " + camera.labelSettings.labelList[0].centroidBB);
-                //BackUp
-                backUpProcess.backUpWhole(actualImage);
-                //reicinalize
-                timerTicker = 0;
+                timerTicker++;
+                if (timerTicker == 5)
+                {
+                    Console.WriteLine("TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER-TIMER");
+                    Console.WriteLine("ROI location " + camera.labelSettings.labelList[0].roi.Location + " BB centroid " + camera.labelSettings.labelList[0].centroidBB);
+                    //BackUp
+                    backUpProcess.backUpWhole(actualImage);
+                    //reicinalize
+                    timerTicker = 0;
+                }
             }
             //Mat invert = new Mat();
             //CvInvoke.BitwiseNot(camera.labelSettings.labelList[0].actualBBFill, invert);
@@ -191,6 +227,12 @@ namespace Diploma
             {
                 camera.labelSettings.labelList[i].actualizeLabel(actualImage);
             }
+        }
+
+        private void btnEndSession_Click(object sender, EventArgs e)
+        {
+            saveToFile.closeCsv();
+            Application.Exit();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Diploma
 {
     public partial class addAreasSettings : Form
     {
-        private roiSettings roiSettings;
+        private additionalSettings additionalSettings;
         public Mat actualImage;
         Capture capWebcam;
         Image<Bgr, byte> actualCroppedImage;
@@ -35,10 +35,10 @@ namespace Diploma
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
-        public addAreasSettings(roiSettings roiSettings)
+        public addAreasSettings(additionalSettings additionalSettings)
         {
             InitializeComponent();
-            this.roiSettings = roiSettings;
+            this.additionalSettings = additionalSettings;
             ibCamera.FunctionalMode = ImageBox.FunctionalModeOption.Minimum;
             actualImage = new Mat();
             backUpProcess = new camera.backUpProcess();
@@ -82,16 +82,20 @@ namespace Diploma
         /////////////////////////////////////////////////////////////////////////////////////
         private void btnBack_Click(object sender, EventArgs e)
         {
-            roiSettings.Show();
+            additionalSettings.Show();
             this.Hide();
         }
 
         /////////////////////////////////////////////////////////////////////////////////////
         private void btnAddArea_Click(object sender, EventArgs e)
         {
+            //enable IBcamera manipulation
             lblInstruction.Text = "2) Select area of interest in image";
             ibCamera.Enabled = true;
+            //disable buttons
             btnAddArea.Enabled = false;
+            btnNext.Enabled = false;
+            btnBack.Enabled = false;
 
             //turn of stream
             //croppedImageInitial = actualCroppedImage;//DOESNT WORK
@@ -113,27 +117,36 @@ namespace Diploma
                 regularRoiStart.X = regularRoiStart.X + camera.labelSettings.labelList[actualLabel - 1].roi.Location.X;
                 regularRoiStart.Y = regularRoiStart.Y + camera.labelSettings.labelList[actualLabel - 1].roi.Location.Y;
                 //set point color and others of label
-                camera.labelSettings.labelList[actualLabel - 1].addClickedPoint(regularRoiStart, localPoint, actualImage);
+                bool symbolWasFounded = camera.labelSettings.labelList[actualLabel - 1].addClickedPoint(regularRoiStart, localPoint, actualImage);
 
-                lblInstruction.Text = "4) Write down the name of the label and click save";
-                //visible TB
-                string dodo = "tb" + actualLabel;
-                TextBox tbx = this.Controls.Find(dodo, true).FirstOrDefault() as TextBox;
-                tbx.Visible = true;
-                //show cropped image
-                dodo = "ib" + actualLabel;
-                Image<Bgr, byte> selectedLabel = actualImage.ToImage<Bgr, byte>();
-                selectedLabel.ROI = camera.labelSettings.labelList[actualLabel - 1].roi;
-                ImageBox ibx = this.Controls.Find(dodo, true).FirstOrDefault() as ImageBox;
-                ibx.Image = selectedLabel;
-                //activate the button
-                //visible save button
-                dodo = "btnSave" + actualLabel;
-                Button btnx = this.Controls.Find(dodo, true).FirstOrDefault() as Button;
-                btnx.Visible = true;
+                if (symbolWasFounded == true)
+                {
+                    lblInstruction.Text = "4) Write down the name of the label and click save";
+                    //visible TB
+                    string dodo = "tb" + actualLabel;
+                    TextBox tbx = this.Controls.Find(dodo, true).FirstOrDefault() as TextBox;
+                    tbx.Visible = true;
+                    //show cropped image
+                    dodo = "ib" + actualLabel;
+                    Image<Bgr, byte> selectedLabel = actualImage.ToImage<Bgr, byte>();
+                    selectedLabel.ROI = camera.labelSettings.labelList[actualLabel - 1].roi;
+                    ImageBox ibx = this.Controls.Find(dodo, true).FirstOrDefault() as ImageBox;
+                    ibx.Image = selectedLabel;
+                    //activate the button
+                    //visible save button
+                    dodo = "btnSave" + actualLabel;
+                    Button btnx = this.Controls.Find(dodo, true).FirstOrDefault() as Button;
+                    btnx.Visible = true;
 
-                ibCamera.Enabled = false;
-                isStepThree = false;
+                    ibCamera.Enabled = false;
+                    isStepThree = false;
+                }
+                else {
+                    lblInstruction.Text = "2) No symbol founded in this ROI please select the new ROI";
+                    isStepThree = false;
+                    camera.labelSettings.removeLastLabel();
+                    ibCamera.Image = actualCroppedImage;
+                }
             }
         }
 
@@ -177,13 +190,20 @@ namespace Diploma
         /////////////////////////////////////////////////////////////////////////////////////
         private void ibCamera_MouseUp(object sender, MouseEventArgs e)
         {
-            camera.labelSettings.addLabel(roi);
-            lblInstruction.Text = "3) Click at required symbol/as close as possible";
-            isStepThree = true;
+            if (roi.Width * roi.Height > 400)
+            {
+                camera.labelSettings.addLabel(roi);
+                lblInstruction.Text = "3) Click at required symbol/as close as possible";
+                isStepThree = true;
 
-            Image<Bgr, byte> selectedLabel = actualImage.ToImage<Bgr, byte>();
-            selectedLabel.ROI = camera.labelSettings.labelList[actualLabel - 1].roi;
-            ibCamera.Image = selectedLabel;
+                Image<Bgr, byte> selectedLabel = actualImage.ToImage<Bgr, byte>();
+                selectedLabel.ROI = camera.labelSettings.labelList[actualLabel - 1].roi;
+                ibCamera.Image = selectedLabel;
+            }
+            else {
+                lblInstruction.Text = "2.5) Selected area is too small. Please repeat the selection or set camera better in space";
+                ibCamera.Image = actualCroppedImage;
+            }
 
             //camera.labelSettings.addLabel(roi);
             //lblInstruction.Text = "3) Write down the name of the label and click save";
@@ -222,6 +242,7 @@ namespace Diploma
                 tbx.Enabled = false;
                 //enable add
                 btnAddArea.Enabled = true;
+                btnNext.Enabled = true;
                 lblInstruction.Text = "1) Click on Add area";
                 actualLabel++;
                 //turn on camera
@@ -283,7 +304,10 @@ namespace Diploma
         {
             //define which one is the chosen label for backup
             bool isBeforeBackUp = true;
-            backUpProcess.defineBeforeBackUp(actualImage, isBeforeBackUp);
+            if (camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].isBackUpEnabled == true)
+            {
+                backUpProcess.defineBeforeBackUp(actualImage, isBeforeBackUp);
+            }
 
             //open new form
             isStreamEnabled = false;

@@ -12,6 +12,9 @@ namespace Diploma.camera
     {
         public int _CameraIndex;
         public Rectangle roi = new Rectangle();
+        public string fileName;
+        public int frame;
+        public bool isBackUpEnabled;
 
         public camera(int _CameraIndex)
         {

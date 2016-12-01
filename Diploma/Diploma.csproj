@@ -87,6 +87,12 @@
     <Compile Include="addAreasSettings.Designer.cs">
       <DependentUpon>addAreasSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="additionalSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="additionalSettings.Designer.cs">
+      <DependentUpon>additionalSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="bwTresholdSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -149,6 +155,9 @@
     </Compile>
     <EmbeddedResource Include="addAreasSettings.resx">
       <DependentUpon>addAreasSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="additionalSettings.resx">
+      <DependentUpon>additionalSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="bwTresholdSettings.resx">
       <DependentUpon>bwTresholdSettings.cs</DependentUpon>

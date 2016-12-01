@@ -25,6 +25,9 @@ namespace Diploma.camera
             labelList.Add(newCamera);
         }
 
-
+        internal static void removeLastLabel()
+        {
+            labelList.RemoveAt(labelList.Count-1);
+        }
     }
 }

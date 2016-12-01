@@ -83,7 +83,7 @@ namespace Diploma.camera
 
         /////////////////////////////////////////////////////////////////////////////////////
         //inicialize label before data aquizition
-        internal void addClickedPoint(Point regularRoiStart, Point localPoint, Mat actualImage)
+        internal bool addClickedPoint(Point regularRoiStart, Point localPoint, Mat actualImage)
         {
             centroidBB = new Point();
             clickedPoint = regularRoiStart;
@@ -91,9 +91,13 @@ namespace Diploma.camera
 
             binarizeCrop(actualImage);
             markAreas();
-            findSymbolBySnail();
+            bool symbolWasFounded = findSymbolBySnail();
+            if (symbolWasFounded == false) {
+                return false;
+            }
             findBounding(actualImage);
             saveBBFill(actualImage);
+            return true;
         }
 
         internal void actualizeAfterBackUp(Point localPoint, Mat actualImage)
@@ -414,7 +418,7 @@ namespace Diploma.camera
 
         /////////////////////////////////////////////////////////////////////////////////////
         //found nearest area to clicked or calculated point (snail process)
-        private void findSymbolBySnail()
+        private bool findSymbolBySnail()
         {
             actualLabel = 0;
             int closestLabel = 0;
@@ -454,7 +458,7 @@ namespace Diploma.camera
                         if (pointRow < 0) {
                             //Console.WriteLine("NO AREA FOUND IN THIS ROI");
                             actualLabel = -1;
-                            return;
+                            return false;
                         }
                     }
                     height++;
@@ -473,7 +477,7 @@ namespace Diploma.camera
                         if (pointCollum > actualCroppedImageColor.Width - 1) {
                             //Console.WriteLine("NO AREA FOUND IN THIS ROI");
                             actualLabel = -1;
-                            return;
+                            return false;
                         }
                     }
                     width++;
@@ -493,7 +497,7 @@ namespace Diploma.camera
                         {
                             //Console.WriteLine("NO AREA FOUND IN THIS ROI");
                             actualLabel = -1;
-                            return;
+                            return false;
                         }
                     }
                     height++;
@@ -513,7 +517,7 @@ namespace Diploma.camera
                         {
                             //Console.WriteLine("NO AREA FOUND IN THIS ROI");
                             actualLabel = -1;
-                            return;
+                            return false;
                         }
                     }
                     width++;
@@ -555,7 +559,7 @@ namespace Diploma.camera
             //    heightRef = (int)statsImg.Data[actualLabel, 3, 0];
             //    initialStep = false;
             //}
-
+            return true;
         }
 
         /////////////////////////////////////////////////////////////////////////////////////

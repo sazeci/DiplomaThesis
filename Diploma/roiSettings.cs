@@ -104,10 +104,15 @@ namespace Diploma
             //bwTresholdSettings.Show();
             //this.Hide();
 
-            //open new form areas
-            addAreasSettings addAreasSettings = new addAreasSettings(this);
-            addAreasSettings.Show();
+            //open adition options
+            additionalSettings additionalSettings = new additionalSettings(this);
+            additionalSettings.Show();
             this.Hide();
+
+            //open new form areas
+            //addAreasSettings addAreasSettings = new addAreasSettings(this);
+            //addAreasSettings.Show();
+            //this.Hide();
         }
     }
 }

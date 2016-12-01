@@ -168,9 +168,10 @@
             this.lblText2.Location = new System.Drawing.Point(5, 82);
             this.lblText2.Margin = new System.Windows.Forms.Padding(5);
             this.lblText2.Name = "lblText2";
-            this.lblText2.Size = new System.Drawing.Size(181, 26);
+            this.lblText2.Size = new System.Drawing.Size(209, 52);
             this.lblText2.TabIndex = 1;
-            this.lblText2.Text = "• The camera should be as close as possible to the patient monitor";
+            this.lblText2.Text = "• The camera should be as close as possible to the patient monitor (closer = bett" +
+    "er result of Classification, too far = zero results from classification)";
             // 
             // lblText3
             // 
@@ -188,9 +189,9 @@
             this.lblText4.Location = new System.Drawing.Point(5, 236);
             this.lblText4.Margin = new System.Windows.Forms.Padding(5);
             this.lblText4.Name = "lblText4";
-            this.lblText4.Size = new System.Drawing.Size(214, 26);
+            this.lblText4.Size = new System.Drawing.Size(204, 13);
             this.lblText4.TabIndex = 3;
-            this.lblText4.Text = "• The camera must scans the entire patient monitor";
+            this.lblText4.Text = "• The should scans whole area of interest";
             // 
             // ibCamera
             // 

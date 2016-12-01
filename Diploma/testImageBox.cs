@@ -344,12 +344,15 @@ namespace Diploma
             Rectangle roicek = new Rectangle();
             Image<Gray, byte> cropped = actualCroppedImage;
             for (int i = 0; i < numberOfLabels; i++) {
-                cropped = actualCroppedImage;
-                //define new roi
-                roicek.Location = new Point(statsImg.Data[i, 0, 0], statsImg.Data[i, 1, 0]);//left top
-                roicek.Size = new Size(statsImg.Data[i, 2, 0], statsImg.Data[i, 3, 0]);//width height
-                cropped.ROI = roicek;
-                cropped.Save("Template" + i + ".jpeg");
+                if (statsImg.Data[i, 4, 0] > 50)
+                {
+                    cropped = actualCroppedImage;
+                    //define new roi
+                    roicek.Location = new Point(statsImg.Data[i, 0, 0], statsImg.Data[i, 1, 0]);//left top
+                    roicek.Size = new Size(statsImg.Data[i, 2, 0], statsImg.Data[i, 3, 0]);//width height
+                    cropped.ROI = roicek;
+                    cropped.Save("Template" + i + ".jpeg");
+                }
             }
 
             //resize work

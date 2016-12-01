@@ -22,11 +22,19 @@ namespace Diploma.save
         int counter = 0;
 
         private int counterHelpa = 0;
+        private checkTrackingSettings checkTrackingSettings;
 
         public saveToFile()
         {
             ocr = new Tesseract("", "eng", OcrEngineMode.TesseractOnly);
             ocr.SetVariable("tessedit_char_whitelist", "0123456789/()");
+        }
+
+        public saveToFile(checkTrackingSettings checkTrackingSettings)
+        {
+            ocr = new Tesseract("", "eng", OcrEngineMode.TesseractOnly);
+            ocr.SetVariable("tessedit_char_whitelist", "0123456789/()");
+            this.checkTrackingSettings = checkTrackingSettings;
         }
 
         internal void openCsv()
@@ -70,11 +78,14 @@ namespace Diploma.save
                         //TODO konvoluce s maskou
                         Console.WriteLine("Text length = 0");
                     }
+                    checkTrackingSettings.setLabel(actualOCR, i);
                     newLine = newLine + actualOCR + "," ;
                 }
                 else {
                     Console.WriteLine("No text == true");
-                    newLine = newLine + "NaN,";
+                    actualOCR = "NaN";
+                    checkTrackingSettings.setLabel(actualOCR, i);
+                    newLine = newLine + actualOCR +",";
                 }
             }
             newLine = newLine.Replace(System.Environment.NewLine, "");
@@ -242,7 +253,7 @@ namespace Diploma.save
         internal void closeCsv()
         {
             DateTime dateTime = DateTime.UtcNow.Date;
-            File.WriteAllText("Monitor", csv.ToString());
+            File.WriteAllText(camera.cameraSettings.cameraList[camera.cameraSettings.ActiveCamera].fileName, csv.ToString());
         }
     }
 }

@@ -1,1 +1,0 @@
-D:\Programko\C#\emgu\Diploma\bin\Debug\Diploma.exe.config

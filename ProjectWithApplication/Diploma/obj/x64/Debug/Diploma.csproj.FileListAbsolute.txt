@@ -1,0 +1,55 @@
+D:\GitHub\Diploma\bin\x64\Debug\Diploma.exe.config
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.exe
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.pdb
+D:\GitHub\Diploma\bin\x64\Debug\Diploma.exe
+D:\GitHub\Diploma\bin\x64\Debug\Diploma.pdb
+D:\GitHub\Diploma\bin\x64\Debug\DirectShowLib-2005.dll
+D:\GitHub\Diploma\bin\x64\Debug\Emgu.CV.UI.dll
+D:\GitHub\Diploma\bin\x64\Debug\Emgu.CV.UI.GL.dll
+D:\GitHub\Diploma\bin\x64\Debug\Emgu.CV.World.dll
+D:\GitHub\Diploma\bin\x64\Debug\ZedGraph.dll
+D:\GitHub\Diploma\bin\x64\Debug\Emgu.CV.UI.xml
+D:\GitHub\Diploma\bin\x64\Debug\Emgu.CV.UI.GL.xml
+D:\GitHub\Diploma\bin\x64\Debug\Emgu.CV.World.xml
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.csprojResolveAssemblyReference.cache
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.bwTresholdSettings.resources
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.frmMain.resources
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.Properties.Resources.resources
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.roiSettings.resources
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.selectCameraSettings.resources
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.setCameraInSpaceSettings.resources
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.testImageBox.resources
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.welcomeSettings.resources
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.csproj.GenerateResource.Cache
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.addAreasSettings.resources
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.checkTrackingSettings.resources
+D:\GitHub\Diploma\obj\x64\Debug\Diploma.additionalSettings.resources
+D:\GitHub\Diploma correct\Diploma\bin\x64\Debug\Diploma.exe.config
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.exe
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.pdb
+D:\GitHub\Diploma correct\Diploma\bin\x64\Debug\Diploma.exe
+D:\GitHub\Diploma correct\Diploma\bin\x64\Debug\Diploma.pdb
+D:\GitHub\Diploma correct\Diploma\bin\x64\Debug\DirectShowLib-2005.dll
+D:\GitHub\Diploma correct\Diploma\bin\x64\Debug\Emgu.CV.UI.dll
+D:\GitHub\Diploma correct\Diploma\bin\x64\Debug\Emgu.CV.UI.GL.dll
+D:\GitHub\Diploma correct\Diploma\bin\x64\Debug\Emgu.CV.World.dll
+D:\GitHub\Diploma correct\Diploma\bin\x64\Debug\ZedGraph.dll
+D:\GitHub\Diploma correct\Diploma\bin\x64\Debug\Emgu.CV.UI.xml
+D:\GitHub\Diploma correct\Diploma\bin\x64\Debug\Emgu.CV.UI.GL.xml
+D:\GitHub\Diploma correct\Diploma\bin\x64\Debug\Emgu.CV.World.xml
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.csprojResolveAssemblyReference.cache
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.addAreasSettings.resources
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.additionalSettings.resources
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.bwTresholdSettings.resources
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.checkTrackingSettings.resources
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.frmMain.resources
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.Properties.Resources.resources
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.roiSettings.resources
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.selectCameraSettings.resources
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.setCameraInSpaceSettings.resources
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.testImageBox.resources
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.welcomeSettings.resources
+D:\GitHub\Diploma correct\Diploma\obj\x64\Debug\Diploma.csproj.GenerateResource.Cache
+D:\GitHub\ProjectWithApplication\Diploma\bin\x64\Debug\Diploma.exe.config
+D:\GitHub\ProjectWithApplication\Diploma\obj\x64\Debug\Diploma.exe
+D:\GitHub\ProjectWithApplication\Diploma\obj\x64\Debug\Diploma.pdb
